@@ -6,6 +6,7 @@
   "author": "simomosi",
   "license": "MIT",
   "private": true,
+  "repository": "github:simomosi/dynamic-forms.git",
   "dependencies": {
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-transform-runtime": "^7.12.1",
