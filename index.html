@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <div class="h1">Test
+            <div id="spinner" class="spinner-border" role="status" style="display: none;">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <p>DynamicForms test file</p>
+        <form id='jsonPlaceholder'>
+            <label for="user">Users</label>
+            <select id="user" name='user'>
+                <option value="" selected> </option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+            </select>
+            <br />
+            <label for="post">Posts</label>
+            <select id="post" name='post'>
+                <option value="" selected></option>
+            </select>
+            <br />
+            
+            <label for="comment">Comments</label>
+            <select id="comment" name='comment'>
+                <option value="" selected></option>
+            </select>
+            <br />
+            
+            <label for="album">Albums</label>
+            <select id="album" name='album'>
+                <option value="" selected></option>
+            </select>
+            <br />
+            
+            <label for="photo">Photo</label>
+            <select id="photo" name='photo'>
+                <option value="" selected></option>
+            </select>
+            <br />
+            
+            <label for="todo">Todo</label>
+            <select id="todo" name='todo'>
+                <option value="" selected></option>
+            </select>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+    crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+    crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
+    
+    <!-- Single file build (dev) --> 
+    <!-- <script src = './dist/dynamicforms.js'></script> -->
+    
+    <script type="module" defer>
+        import './src/index.js'; // Original src
+        
+        let tmpVariableWithAllContent = [
+        {
+            'id': 'prova',
+            'io': { // Personalizza l'input e l'output dell'elemento html
+            'event': 'change',
+            'get': (self,) => { },
+            'set': (self, value) => { },
+        },
+        'fetch': { // Specifica le impostazioni della chiamata asincrona
+            //'url': 'google.com', // Deprecated
+            'method': 'GET',
+            'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`; },
+            'makeBody': (data) => { return JSON.stringify(data); }, // JSON.stringify, formData, text...
+            'fullFetchConfig': {}, //Configurazione per intero in modo da adattare la chiamata a situazioni particolari
+        },
+        'customBehavior': { // Specifica il comportamento da assumere in base alla situazione
+            'postProcessData': (self, data) => {
+                return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+            },
+            'save': (self, data) => { },
+            'triggerRemoteUpdate': (self, data) => { return true; }, // Stabilisce se effettuare la chiamata remota oppure no
+            'clearOnParentVoid': true, // Stabilisce se eliminare direttamente tutti i valori se il subject ha valore vuoto oppure fare una chiamata remota
+            // 'beforeUpdate' : (self, data) => {},
+            // 'aterUpdate': (self, data) => {}
+        },
+        
+    },
+    ];
+    
+    let config = {
+        'forms': [
+        {
+            'id': 'jsonPlaceholder',
+            'debug': true,
+            'customBehavior': {
+                'beforeUpdate': () => { document.getElementById('spinner').style.display = 'inline-block'; },
+                'afterUpdate': () => { document.getElementById('spinner').style.display = 'none'; }
+            },
+            'fields': [
+            {
+                'id': 'user',
+            },
+            {
+                'id': 'post',
+                'fetch': {
+                    'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`; },
+                },
+                'customBehavior': {
+                    'postProcessData': (self, data) => {
+                        return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                    }
+                }
+            },
+            {
+                'id': 'comment',
+                'fetch': {
+                    'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`; },
+                },
+                'customBehavior': {
+                    'postProcessData': (self, data) => {
+                        return data.map(x => { return { 'value': x.id, 'text': x.name }; });
+                    }
+                }
+            },
+            {
+                'id': 'album',
+                'fetch': {
+                    'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`; },
+                },
+                'customBehavior': {
+                    'postProcessData': (self, data) => {
+                        return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                    }
+                }
+            },
+            {
+                'id': 'photo',
+                'fetch': {
+                    'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`; },
+                },
+                'customBehavior': {
+                    'postProcessData': (self, data) => {
+                        return data.map(x => { return { 'value': x.id, 'text': x.url }; });
+                    },
+                    'beforeUpdate': (self, data) => {
+                        let value = self.get();
+                        if (value != '') {
+                            document.getElementById('imgContainer').innerHTML = `<img src=${value}/>`;
+                        }
+                    }
+                }
+            },
+            {
+                'id': 'todo',
+                'fetch': {
+                    'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`; },
+                },
+                'customBehavior': {
+                    'postProcessData': (self, data) => {
+                        return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                    }
+                }
+            },
+            ],
+            'rules': [
+            {
+                'change': 'user',
+                'update': ['post', 'album', 'todo']
+            },
+            {
+                'change': 'post',
+                'update': ['comment']
+            },
+            {
+                'change': 'album',
+                'update': ['photo']
+            },
+            ]
+        }
+        ]
+    };
+    
+    // Init
+    let start = new Date();
+    let forms = dynamicForms.makeMultipleForms(config.forms);
+    let end = new Date();
+    console.log('Benchmark init time: ', end.getMilliseconds() - start.getMilliseconds());
+</script>
+</body>
+
+</html>

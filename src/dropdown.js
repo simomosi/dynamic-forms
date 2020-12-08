@@ -1,0 +1,166 @@
+/**
+* This class represents a dropdown field with dynamic content (like a standard html-select with dynamic options)
+*/
+class DynamicDropdown {
+    
+    /** @param {JSON} config the dropdown configuration */
+    config;
+    /** @param {string} id the dropdown id */
+    id;
+    /** @param {string} method the http request method for async update */
+    method;
+    /** @param {HTMLElement} htmlElement the dropdown HTML Element returned by querySelector */
+    htmlElement;
+    /** @param {string} name the dropdown name */
+    name;
+    /** @param {JSON} config property with default configuration values */
+    static defaultConfig = {
+        'io': {
+            'event': 'change',
+        },
+        'fetch': {
+            'method': 'GET',
+        },
+        'customBehavior': {
+            'clearOnParentVoid': true
+        },
+    }
+    
+    /**
+    * Class constructor
+    * @param {JSON} config the dropdown configuration
+    * @param {JSON} dynamicForm the DynamicForm instance
+    * @async
+    */
+    constructor(config, dynamicForm) {
+        let self = this;
+        new Promise((accept) => {
+            self.config = config;
+            self.id = config.id;
+            self.method = config.method ?? DynamicDropdown.defaultConfig.fetch.method;
+            let event = config.event ?? DynamicDropdown.defaultConfig.io.event;
+            
+            self.htmlElement = dynamicForm.hmtlElement.querySelector('#' + config.id);
+            self.name = self.htmlElement.name;
+            self.htmlElement.addEventListener(event, (e) => { dynamicForm.notify(e.target.name); });
+            // Repairing config file if parameters are missing (to write code easily)
+            self.config.io = self.config.io ?? {};
+            self.config.fetch = self.config.fetch ?? {};
+            self.config.customBehavior = self.config.customBehavior ?? {};
+            accept();
+        });
+    }
+    
+    /**
+    * Method to get the field value
+    * @returns {string} the value
+    */
+    get() {
+        if (this.config.io.get) {
+            return this.config.io.get(this);
+        }
+        return this.htmlElement.value;
+    }
+    
+    /**
+    * Method to set the field value
+    * @param {string} value new value to set
+    */
+    set (value) {
+        if (this.config.io.set) {
+            return this.config.io.set(this, value);
+        }
+        return this.htmlElement.value = value;
+    }
+    
+    /**
+    * Method which execute a pipeline of instructions to update this element with dynamic content.
+    * @param {string} senderName name of the subject who changed
+    * @param {JSON} data data to send with the http request
+    * 
+    * @returns a Promise in fulfilled state when data has been updated
+    * 
+    * @async
+    */
+    async update(senderName, data) {
+        if (senderName) {
+            // If clearOnParentVoid is true and parent value is empty, this element must be cleared aswell
+            var clear = (this.config.customBehavior.clearOnParentVoid !== undefined) ? (this.config.customBehavior.clearOnParentVoid) : (DynamicDropdown.defaultConfig.customBehavior.clearOnParentVoid);
+            if (clear === true && data[senderName] === '') {
+                this.clear();
+                Promise.resolve(data);
+            }
+        }
+        // Async request to fetch data
+        if (this.config.customBehavior.triggerRemoteUpdate == undefined || this.config.customBehavior.triggerRemoteUpdate(this, data) === true) {
+            let requestUrl = this.config.fetch.makeUrl(data);
+            let fetchConfig = null;
+            if (this.config.fetch.fullFetchConfig) {
+                fetchConfig = this.config.fetch.fullFetchConfig;
+            } else {
+                fetchConfig = {};
+                fetchConfig.method = this.method;
+                let body = this.config.fetch.makeBody ? this.config.fetch.makeBody(data) : null;
+                if (body) {
+                    fetchConfig.body = body;
+                }
+            }
+            
+            return fetch(requestUrl, fetchConfig)
+            .then(response => { // Json
+                if (response.ok)
+                return response.json();
+            }).then(data => { // Postprocess data
+                if (this.config.customBehavior.postProcessData)
+                return this.config.customBehavior.postProcessData(this, data);
+                return data;
+            }).then(data => { // Save options
+                if (this.config.customBehavior.save)
+                return this.config.customBehavior.save(this, data);
+                // Standard
+                this.clear();
+                // Add empty option
+                if (!this.htmlElement.querySelector('option:not([value]), option[value=""]')) {
+                    let emptyOption = document.createElement("option");
+                    emptyOption.text = '';
+                    emptyOption.value = '';
+                    this.htmlElement.add(emptyOption);
+                }
+                // Add other options
+                data.forEach(item => {
+                    let option = document.createElement("option");
+                    option.text = item.text;
+                    option.value = item.value;
+                    this.htmlElement.add(option);
+                });
+                return data;
+            }).catch(error => {
+                console.log(error); // tmp
+            });
+        }
+        return Promise.resolve(data);
+    }
+    
+    /**
+    * Method to clear this element from its content
+    * 
+    * @async
+    */
+    async clear () {
+        // Custom
+        if (DynamicDropdown.defaultConfig.customBehavior.clear) {
+            return DynamicDropdown.defaultConfig.customBehavior.clear();
+        }
+        // Standard
+        let options = this.htmlElement.getElementsByTagName('option');
+        for (let i = options.length - 1; i >= 0; i--) {
+            let value = options[i].value;
+            if (value != null && value.trim() != '') { // Leave empty options
+                this.htmlElement.options[i] = null;
+            }
+        }
+    }
+    
+}
+
+export default DynamicDropdown;
