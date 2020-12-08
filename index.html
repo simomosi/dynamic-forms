@@ -19,16 +19,6 @@
             <label for="user">Users</label>
             <select id="user" name='user'>
                 <option value="" selected> </option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-                <option value="8">8</option>
-                <option value="9">9</option>
-                <option value="10">10</option>
             </select>
             <br />
             <label for="post">Posts</label>
@@ -61,7 +51,7 @@
             </select>
         </form>
     </div>
-
+    
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
     integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
     crossorigin="anonymous"></script>
@@ -119,6 +109,14 @@
             'fields': [
             {
                 'id': 'user',
+                'fetch': {
+                    'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/users`; },
+                },
+                'customBehavior': {
+                    'postProcessData': (self, data) => {
+                        return data.map(x => { return { 'value': x.id, 'text': x.username }; });
+                    }
+                }
             },
             {
                 'id': 'post',
@@ -186,16 +184,17 @@
             {
                 'change': 'user',
                 'update': ['post', 'album', 'todo']
-            },
+            }, 
             {
                 'change': 'post',
                 'update': ['comment']
-            },
+            }, 
             {
                 'change': 'album',
                 'update': ['photo']
-            },
-            ]
+            }, 
+            ],
+            'init': ['user'] // TODO: makes an object like {name: 'name', data: {}} ?
         }
         ]
     };

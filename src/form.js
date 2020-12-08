@@ -27,9 +27,16 @@ class DynamicForm {
             self.entities = {};
             self.debug = formConfiguration.debug === true;
             
+            // Create fields instance
             formConfiguration.fields.forEach(element => {
                 self.addDynamicDropdown(element, self);
             });
+
+            // Init fields
+            formConfiguration.init.forEach(element => {
+                self.manualUpdate(element, {});
+            });
+
             accept();
         });
     }
