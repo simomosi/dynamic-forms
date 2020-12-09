@@ -21,7 +21,7 @@ class DynamicDropdown {
         'fetch': {
             'method': 'GET',
         },
-        'customBehavior': {
+        'behavior': {
             'clearOnParentVoid': true
         },
     }
@@ -46,7 +46,7 @@ class DynamicDropdown {
             // Repairing config file if parameters are missing (to write code easily)
             self.config.io = self.config.io ?? {};
             self.config.fetch = self.config.fetch ?? {};
-            self.config.customBehavior = self.config.customBehavior ?? {};
+            self.config.behavior = self.config.behavior ?? {};
             accept();
         });
     }
@@ -85,14 +85,14 @@ class DynamicDropdown {
     async update(senderName, data) {
         if (senderName) {
             // If clearOnParentVoid is true and parent value is empty, this element must be cleared aswell
-            var clear = (this.config.customBehavior.clearOnParentVoid !== undefined) ? (this.config.customBehavior.clearOnParentVoid) : (DynamicDropdown.defaultConfig.customBehavior.clearOnParentVoid);
-            if (clear === true && data[senderName] === '') {
+            var clear = (this.config.behavior.clearOnParentVoid !== undefined) ? (this.config.behavior.clearOnParentVoid) : (DynamicDropdown.defaultConfig.behavior.clearOnParentVoid);
+            if (clear === true && !data[senderName]) {
                 this.clear();
-                Promise.resolve(data);
+                return Promise.resolve(data);
             }
         }
         // Async request to fetch data
-        if (this.config.customBehavior.triggerRemoteUpdate == undefined || this.config.customBehavior.triggerRemoteUpdate(this, data) === true) {
+        if (this.config.behavior.triggerRemoteUpdate == undefined || this.config.behavior.triggerRemoteUpdate(this, data) === true) {
             let requestUrl = this.config.fetch.makeUrl(data);
             let fetchConfig = null;
             if (this.config.fetch.fullFetchConfig) {
@@ -111,12 +111,12 @@ class DynamicDropdown {
                 if (response.ok)
                 return response.json();
             }).then(data => { // Postprocess data
-                if (this.config.customBehavior.postProcessData)
-                return this.config.customBehavior.postProcessData(this, data);
+                if (this.config.behavior.postProcessData)
+                return this.config.behavior.postProcessData(this, data);
                 return data;
             }).then(data => { // Save options
-                if (this.config.customBehavior.save)
-                return this.config.customBehavior.save(this, data);
+                if (this.config.behavior.save)
+                return this.config.behavior.save(this, data);
                 // Standard
                 this.clear();
                 // Add empty option
@@ -148,8 +148,8 @@ class DynamicDropdown {
     */
     async clear () {
         // Custom
-        if (DynamicDropdown.defaultConfig.customBehavior.clear) {
-            return DynamicDropdown.defaultConfig.customBehavior.clear();
+        if (this.config.behavior.clear) {
+            return this.config.behavior.clear();
         }
         // Standard
         let options = this.htmlElement.getElementsByTagName('option');

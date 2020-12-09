@@ -27,6 +27,12 @@ class DynamicForm {
             self.entities = {};
             self.debug = formConfiguration.debug === true;
             
+            // Repairing config file if parameters are missing (to write code easily)
+            self.config.behavior = self.config.behavior ?? {};
+            self.config.fields = self.config.fields ?? {};
+            self.config.rules = self.config.rules ?? {};
+            self.config.init = self.config.init ?? {};
+
             // Create fields instance
             formConfiguration.fields.forEach(element => {
                 self.addDynamicDropdown(element, self);
@@ -59,8 +65,8 @@ class DynamicForm {
         if (this.debug) {
             console.log(`> [${senderName}] Updated. Notifying observers...`);
         }
-        if (this.config.customBehavior.beforeUpdate) {
-            this.config.customBehavior.beforeUpdate();
+        if (this.config.behavior.beforeUpdate) {
+            this.config.behavior.beforeUpdate();
         }
         let updatePromises = [];
         this.config.rules // Todo: use data structure for best performance
@@ -83,9 +89,9 @@ class DynamicForm {
                 this.clearCascade(element); // DFS
             });
         });
-        if (this.config.customBehavior.afterUpdate) {
+        if (this.config.behavior.afterUpdate) {
             Promise.all(updatePromises).then((values) => {
-                this.config.customBehavior.afterUpdate();
+                this.config.behavior.afterUpdate();
             });
         }
     }

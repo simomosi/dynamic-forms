@@ -68,143 +68,154 @@
     <script type="module" defer>
         import './src/index.js'; // Original src
         
-        let tmpVariableWithAllContent = [
-        {
-            'id': 'prova',
-            'io': { // Personalizza l'input e l'output dell'elemento html
-            'event': 'change',
-            'get': (self,) => { },
-            'set': (self, value) => { },
-        },
-        'fetch': { // Specifica le impostazioni della chiamata asincrona
-            //'url': 'google.com', // Deprecated
-            'method': 'GET',
-            'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`; },
-            'makeBody': (data) => { return JSON.stringify(data); }, // JSON.stringify, formData, text...
-            'fullFetchConfig': {}, //Configurazione per intero in modo da adattare la chiamata a situazioni particolari
-        },
-        'customBehavior': { // Specifica il comportamento da assumere in base alla situazione
-            'postProcessData': (self, data) => {
-                return data.map(x => { return { 'value': x.id, 'text': x.title }; });
-            },
-            'save': (self, data) => { },
-            'triggerRemoteUpdate': (self, data) => { return true; }, // Stabilisce se effettuare la chiamata remota oppure no
-            'clearOnParentVoid': true, // Stabilisce se eliminare direttamente tutti i valori se il subject ha valore vuoto oppure fare una chiamata remota
-            // 'beforeUpdate' : (self, data) => {},
-            // 'aterUpdate': (self, data) => {}
-        },
-        
-    },
-    ];
-    
-    let config = {
-        'forms': [
-        {
-            'id': 'jsonPlaceholder',
+        // Debug info
+        let formTemplate = {
+            'id': 'fieldId',
             'debug': true,
-            'customBehavior': {
-                'beforeUpdate': () => { document.getElementById('spinner').style.display = 'inline-block'; },
-                'afterUpdate': () => { document.getElementById('spinner').style.display = 'none'; }
+            'behavior': {
+                'beforeUpdate': () => {}, // function
+                'afterUpdate': () => {}, // function
             },
-            'fields': [
-            {
-                'id': 'user',
-                'fetch': {
-                    'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/users`; },
-                },
-                'customBehavior': {
-                    'postProcessData': (self, data) => {
-                        return data.map(x => { return { 'value': x.id, 'text': x.username }; });
-                    }
-                }
+            'fields': [], // Collection of fields
+            'rules': [], // Collection of ruled
+            'init': [] // Collection of field ids
+        };
+        
+        // Debug info
+        let ruleTemplate = {
+            'change': 'fieldId',
+            'update': []
+        };
+        
+        // Debug info
+        let fieldsTemplate = {
+            'id': 'fieldId',
+            'io': {  // Customize field input/output
+                'event': 'change',
+                'get': (self) => { },
+                'set': (self, value) => { },
             },
-            {
-                'id': 'post',
-                'fetch': {
-                    'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`; },
-                },
-                'customBehavior': {
-                    'postProcessData': (self, data) => {
-                        return data.map(x => { return { 'value': x.id, 'text': x.title }; });
-                    }
-                }
+            'fetch': { // Remote call options
+                'method': 'GET',
+                'makeUrl': (data) => { },
+                'makeBody': (data) => { }, // JSON.stringify, formData, text...
+                'fullFetchConfig': {}, // Fetch whole configuration
             },
-            {
-                'id': 'comment',
-                'fetch': {
-                    'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`; },
+            'behavior': {
+                'triggerRemoteUpdate': (self, data) => { return true; }, // Return true to trigger a remote call, false otherwise
+                'postProcessData': (self, data) => { }, // Process data retrieved by remote call
+                'save': (self, data) => { }, // Save data in html (es: <option id='id'>'text'</option>)
+                'clearOnParentVoid': true, // True to clear field content when subject is void; false to trigger a remote call
+                'clear': (self) => {}, // Clear field from its content
+            }
+        };
+        
+        let config = {
+            'forms': [{
+                'id': 'jsonPlaceholder',
+                'debug': true,
+                'behavior': {
+                    'beforeUpdate': () => { document.getElementById('spinner').style.display = 'inline-block'; },
+                    'afterUpdate': () => { document.getElementById('spinner').style.display = 'none'; }
                 },
-                'customBehavior': {
-                    'postProcessData': (self, data) => {
-                        return data.map(x => { return { 'value': x.id, 'text': x.name }; });
-                    }
-                }
-            },
-            {
-                'id': 'album',
-                'fetch': {
-                    'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`; },
-                },
-                'customBehavior': {
-                    'postProcessData': (self, data) => {
-                        return data.map(x => { return { 'value': x.id, 'text': x.title }; });
-                    }
-                }
-            },
-            {
-                'id': 'photo',
-                'fetch': {
-                    'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`; },
-                },
-                'customBehavior': {
-                    'postProcessData': (self, data) => {
-                        return data.map(x => { return { 'value': x.id, 'text': x.url }; });
+                'fields': [
+                {
+                    'id': 'user',
+                    'fetch': {
+                        'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/users`; },
                     },
-                    'beforeUpdate': (self, data) => {
-                        let value = self.get();
-                        if (value != '') {
-                            document.getElementById('imgContainer').innerHTML = `<img src=${value}/>`;
+                    'behavior': {
+                        'postProcessData': (self, data) => {
+                            return data.map(x => { return { 'value': x.id, 'text': x.username }; }).sort((a,b) => {return a.text > b.text});
                         }
                     }
-                }
-            },
-            {
-                'id': 'todo',
-                'fetch': {
-                    'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`; },
                 },
-                'customBehavior': {
-                    'postProcessData': (self, data) => {
-                        return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                {
+                    'id': 'post',
+                    'fetch': {
+                        'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`; },
+                    },
+                    'behavior': {
+                        'postProcessData': (self, data) => {
+                            return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                        }
                     }
-                }
-            },
-            ],
-            'rules': [
-            {
-                'change': 'user',
-                'update': ['post', 'album', 'todo']
-            }, 
-            {
-                'change': 'post',
-                'update': ['comment']
-            }, 
-            {
-                'change': 'album',
-                'update': ['photo']
-            }, 
-            ],
-            'init': ['user'] // TODO: makes an object like {name: 'name', data: {}} ?
-        }
-        ]
-    };
-    
-    // Init
-    let start = new Date();
-    let forms = dynamicForms.makeMultipleForms(config.forms);
-    let end = new Date();
-    console.log('Benchmark init time: ', end.getMilliseconds() - start.getMilliseconds());
-</script>
+                },
+                {
+                    'id': 'comment',
+                    'fetch': {
+                        'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`; },
+                    },
+                    'behavior': {
+                        'postProcessData': (self, data) => {
+                            return data.map(x => { return { 'value': x.id, 'text': x.name }; });
+                        }
+                    }
+                },
+                {
+                    'id': 'album',
+                    'fetch': {
+                        'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`; },
+                    },
+                    'behavior': {
+                        'postProcessData': (self, data) => {
+                            return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                        }
+                    }
+                },
+                {
+                    'id': 'photo',
+                    'fetch': {
+                        'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`; },
+                    },
+                    'behavior': {
+                        'postProcessData': (self, data) => {
+                            return data.map(x => { return { 'value': x.id, 'text': x.url }; });
+                        },
+                        'beforeUpdate': (self, data) => {
+                            let value = self.get();
+                            if (value != '') {
+                                document.getElementById('imgContainer').innerHTML = `<img src=${value}/>`;
+                            }
+                        }
+                    }
+                },
+                {
+                    'id': 'todo',
+                    'fetch': {
+                        'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`; },
+                    },
+                    'behavior': {
+                        'postProcessData': (self, data) => {
+                            return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                        }
+                    }
+                },
+                ],
+                'rules': [
+                {
+                    'change': 'user',
+                    'update': ['post', 'album', 'todo']
+                }, 
+                {
+                    'change': 'post',
+                    'update': ['comment']
+                }, 
+                {
+                    'change': 'album',
+                    'update': ['photo']
+                }, 
+                ],
+                'init': ['user'] // TODO: makes an object like {name: 'name', data: {}} ?
+            }]
+        };
+        
+        // Init
+        let start = new Date();
+        let forms = dynamicForms.makeMultipleForms(config.forms);
+        let end = new Date();
+        console.log('Benchmark init time: ', end.getMilliseconds() - start.getMilliseconds());
+    </script>
 </body>
 
 </html>
