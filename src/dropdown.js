@@ -119,8 +119,8 @@ class DynamicDropdown {
                     return this.config.behavior.postProcessData(this, data);
                 return data;
             }).then(data => { // Save options
-                if (this.config.behavior.save)
-                    return this.config.behavior.save(this, data);
+                if (this.config.behavior.saveData)
+                    return this.config.behavior.saveData(this, data);
                 // Standard
                 this.clear();
                 // Add empty option

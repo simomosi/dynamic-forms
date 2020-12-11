@@ -104,7 +104,7 @@
             'behavior': {
                 'beforeUpdate': (self, data) => { return true; }, // Executed before the remote call. Return false to block the update
                 'postProcessData': (self, data) => { }, // Process data retrieved by remote call
-                'save': (self, data) => { }, // Save data in html (es: <option id='id'>'text'</option>)
+                'saveData': (self, data) => { }, // Save data in html (es: <option id='id'>'text'</option>)
                 'clearOnParentVoid': true, // True to clear field content when subject is void; false to trigger a remote call
                 'clear': (self) => { }, // Clear field from its content
                 'afterUpdate': () => {} // Executed after the remote call
