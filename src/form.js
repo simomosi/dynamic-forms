@@ -90,7 +90,7 @@ class DynamicForm {
             });
         });
         if (this.config.behavior.afterUpdate) {
-            Promise.all(updatePromises).then((values) => {
+            Promise.allSettled(updatePromises).then((values) => {
                 this.config.behavior.afterUpdate();
             });
         }
