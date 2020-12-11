@@ -4,7 +4,7 @@
 
 <head>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 
 <body>
@@ -26,67 +26,67 @@
                 <option value="" selected></option>
             </select>
             <br />
-            
+
             <label for="comment">Comments</label>
             <select id="comment" name='comment'>
                 <option value="" selected></option>
             </select>
             <br />
-            
+
             <label for="album">Albums</label>
             <select id="album" name='album'>
                 <option value="" selected></option>
             </select>
             <br />
-            
+
             <label for="photo">Photo</label>
             <select id="photo" name='photo'>
                 <option value="" selected></option>
             </select>
             <br />
-            
+
             <label for="todo">Todo</label>
             <select id="todo" name='todo'>
                 <option value="" selected></option>
             </select>
         </form>
     </div>
-    
+
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-    integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-    crossorigin="anonymous"></script>
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-    integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-    crossorigin="anonymous"></script>
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-    crossorigin="anonymous"></script>
-    
-    <!-- Single file build (dev) --> 
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+    <!-- Single file build (dev) -->
     <!-- <script src = './dist/dynamicforms.js'></script> -->
-    
+
     <script type="module" defer>
         import './src/index.js'; // Original src
-        
+
         // Debug info
         let formTemplate = {
             'id': 'fieldId',
             'debug': true,
             'behavior': {
-                'beforeUpdate': () => {}, // function
-                'afterUpdate': () => {}, // function
+                'beforeUpdate': () => { }, // Executed before the update related events. Return false to block all updates
+                'afterUpdate': () => { }, // Executed after the update related events
             },
-            'fields': [], // Collection of fields
-            'rules': [], // Collection of ruled
+            'fields': [], // Collection of fields objects
+            'rules': [], // Collection of rules objects
             'init': [] // Collection of field ids
         };
-        
+
         // Debug info
         let ruleTemplate = {
             'change': 'fieldId',
             'update': []
         };
-        
+
         // Debug info
         let fieldsTemplate = {
             'id': 'fieldId',
@@ -102,14 +102,15 @@
                 'fullFetchConfig': {}, // Fetch whole configuration
             },
             'behavior': {
-                'triggerRemoteUpdate': (self, data) => { return true; }, // Return true to trigger a remote call, false otherwise
+                'beforeUpdate': (self, data) => { return true; }, // Executed before the remote call. Return false to block the update
                 'postProcessData': (self, data) => { }, // Process data retrieved by remote call
                 'save': (self, data) => { }, // Save data in html (es: <option id='id'>'text'</option>)
                 'clearOnParentVoid': true, // True to clear field content when subject is void; false to trigger a remote call
-                'clear': (self) => {}, // Clear field from its content
+                'clear': (self) => { }, // Clear field from its content
+                'afterUpdate': () => {} // Executed after the remote call
             }
         };
-        
+
         let config = {
             'forms': [{
                 'id': 'jsonPlaceholder',
@@ -119,97 +120,97 @@
                     'afterUpdate': () => { document.getElementById('spinner').style.display = 'none'; }
                 },
                 'fields': [
-                {
-                    'id': 'user',
-                    'fetch': {
-                        'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/users`; },
-                    },
-                    'behavior': {
-                        'postProcessData': (self, data) => {
-                            return data.map(x => { return { 'value': x.id, 'text': x.username }; }).sort((a,b) => {return a.text > b.text});
-                        }
-                    }
-                },
-                {
-                    'id': 'post',
-                    'fetch': {
-                        'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`; },
-                    },
-                    'behavior': {
-                        'postProcessData': (self, data) => {
-                            return data.map(x => { return { 'value': x.id, 'text': x.title }; });
-                        }
-                    }
-                },
-                {
-                    'id': 'comment',
-                    'fetch': {
-                        'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`; },
-                    },
-                    'behavior': {
-                        'postProcessData': (self, data) => {
-                            return data.map(x => { return { 'value': x.id, 'text': x.name }; });
-                        }
-                    }
-                },
-                {
-                    'id': 'album',
-                    'fetch': {
-                        'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`; },
-                    },
-                    'behavior': {
-                        'postProcessData': (self, data) => {
-                            return data.map(x => { return { 'value': x.id, 'text': x.title }; });
-                        }
-                    }
-                },
-                {
-                    'id': 'photo',
-                    'fetch': {
-                        'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`; },
-                    },
-                    'behavior': {
-                        'postProcessData': (self, data) => {
-                            return data.map(x => { return { 'value': x.id, 'text': x.url }; });
+                    {
+                        'id': 'user',
+                        'fetch': {
+                            'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/users`; },
                         },
-                        'beforeUpdate': (self, data) => {
-                            let value = self.get();
-                            if (value != '') {
-                                document.getElementById('imgContainer').innerHTML = `<img src=${value}/>`;
+                        'behavior': {
+                            'postProcessData': (self, data) => {
+                                return data.map(x => { return { 'value': x.id, 'text': x.username }; }).sort((a, b) => { return a.text > b.text });
                             }
                         }
-                    }
-                },
-                {
-                    'id': 'todo',
-                    'fetch': {
-                        'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`; },
                     },
-                    'behavior': {
-                        'postProcessData': (self, data) => {
-                            return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                    {
+                        'id': 'post',
+                        'fetch': {
+                            'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`; },
+                        },
+                        'behavior': {
+                            'postProcessData': (self, data) => {
+                                return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                            }
                         }
-                    }
-                },
+                    },
+                    {
+                        'id': 'comment',
+                        'fetch': {
+                            'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`; },
+                        },
+                        'behavior': {
+                            'postProcessData': (self, data) => {
+                                return data.map(x => { return { 'value': x.id, 'text': x.name }; });
+                            }
+                        }
+                    },
+                    {
+                        'id': 'album',
+                        'fetch': {
+                            'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`; },
+                        },
+                        'behavior': {
+                            'postProcessData': (self, data) => {
+                                return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                            }
+                        }
+                    },
+                    {
+                        'id': 'photo',
+                        'fetch': {
+                            'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`; },
+                        },
+                        'behavior': {
+                            'postProcessData': (self, data) => {
+                                return data.map(x => { return { 'value': x.id, 'text': x.url }; });
+                            },
+                            'beforeUpdate': (self, data) => {
+                                let value = self.get();
+                                if (value != '') {
+                                    document.getElementById('imgContainer').innerHTML = `<img src=${value}/>`;
+                                }
+                            }
+                        }
+                    },
+                    {
+                        'id': 'todo',
+                        'fetch': {
+                            'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`; },
+                        },
+                        'behavior': {
+                            'postProcessData': (self, data) => {
+                                return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                            }
+                        }
+                    },
                 ],
                 'rules': [
-                {
-                    'change': 'user',
-                    'update': ['post', 'album', 'todo']
-                }, 
-                {
-                    'change': 'post',
-                    'update': ['comment']
-                }, 
-                {
-                    'change': 'album',
-                    'update': ['photo']
-                }, 
+                    {
+                        'change': 'user',
+                        'update': ['post', 'album', 'todo']
+                    },
+                    {
+                        'change': 'post',
+                        'update': ['comment']
+                    },
+                    {
+                        'change': 'album',
+                        'update': ['photo']
+                    },
                 ],
                 'init': ['user'] // TODO: makes an object like {name: 'name', data: {}} ?
             }]
         };
-        
+
         // Init
         let start = new Date();
         let forms = dynamicForms.makeMultipleForms(config.forms);

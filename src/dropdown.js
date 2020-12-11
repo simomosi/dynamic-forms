@@ -2,7 +2,7 @@
 * This class represents a dropdown field with dynamic content (like a standard html-select with dynamic options)
 */
 class DynamicDropdown {
-    
+
     /** @param {JSON} config the dropdown configuration */
     config;
     /** @param {string} id the dropdown id */
@@ -25,7 +25,7 @@ class DynamicDropdown {
             'clearOnParentVoid': true
         },
     }
-    
+
     /**
     * Class constructor
     * @param {JSON} config the dropdown configuration
@@ -39,7 +39,7 @@ class DynamicDropdown {
             self.id = config.id;
             self.method = config.method ?? DynamicDropdown.defaultConfig.fetch.method;
             let event = config.event ?? DynamicDropdown.defaultConfig.io.event;
-            
+
             self.htmlElement = dynamicForm.hmtlElement.querySelector('#' + config.id);
             self.name = self.htmlElement.name;
             self.htmlElement.addEventListener(event, (e) => { dynamicForm.notify(e.target.name); });
@@ -50,7 +50,7 @@ class DynamicDropdown {
             accept();
         });
     }
-    
+
     /**
     * Method to get the field value
     * @returns {string} the value
@@ -61,18 +61,18 @@ class DynamicDropdown {
         }
         return this.htmlElement.value;
     }
-    
+
     /**
     * Method to set the field value
     * @param {string} value new value to set
     */
-    set (value) {
+    set(value) {
         if (this.config.io.set) {
             return this.config.io.set(this, value);
         }
         return this.htmlElement.value = value;
     }
-    
+
     /**
     * Method which execute a pipeline of instructions to update this element with dynamic content.
     * @param {string} senderName name of the subject who changed
@@ -92,31 +92,35 @@ class DynamicDropdown {
             }
         }
         // Async request to fetch data
-        if (this.config.behavior.triggerRemoteUpdate == undefined || this.config.behavior.triggerRemoteUpdate(this, data) === true) {
-            let requestUrl = this.config.fetch.makeUrl(data);
-            let fetchConfig = null;
-            if (this.config.fetch.fullFetchConfig) {
-                fetchConfig = this.config.fetch.fullFetchConfig;
-            } else {
-                fetchConfig = {};
-                fetchConfig.method = this.method;
-                let body = this.config.fetch.makeBody ? this.config.fetch.makeBody(data) : null;
-                if (body) {
-                    fetchConfig.body = body;
-                }
+        if (this.config.behavior.beforeUpdate && this.config.behavior.beforeUpdate(this, data) === false) {
+            return Promise.resolve(data);
+        }
+
+        let requestUrl = this.config.fetch.makeUrl(data);
+        let fetchConfig = null;
+        if (this.config.fetch.fullFetchConfig) {
+            fetchConfig = this.config.fetch.fullFetchConfig;
+        } else {
+            fetchConfig = {};
+            fetchConfig.method = this.method;
+            let body = this.config.fetch.makeBody ? this.config.fetch.makeBody(data) : null;
+            if (body) {
+                fetchConfig.body = body;
             }
-            
-            return fetch(requestUrl, fetchConfig)
+        }
+
+        let self = this;
+        return fetch(requestUrl, fetchConfig)
             .then(response => { // Json
                 if (response.ok)
-                return response.json();
+                    return response.json();
             }).then(data => { // Postprocess data
                 if (this.config.behavior.postProcessData)
-                return this.config.behavior.postProcessData(this, data);
+                    return this.config.behavior.postProcessData(this, data);
                 return data;
             }).then(data => { // Save options
                 if (this.config.behavior.save)
-                return this.config.behavior.save(this, data);
+                    return this.config.behavior.save(this, data);
                 // Standard
                 this.clear();
                 // Add empty option
@@ -134,19 +138,22 @@ class DynamicDropdown {
                     this.htmlElement.add(option);
                 });
                 return data;
+            }).then(data => { // After update
+                if (self.config.behavior.afterUpdate) {
+                    self.config.behavior.afterUpdate();
+                }
+                return data;
             }).catch(error => {
                 console.log(error); // tmp
             });
-        }
-        return Promise.resolve(data);
     }
-    
+
     /**
     * Method to clear this element from its content
     * 
     * @async
     */
-    async clear () {
+    async clear() {
         // Custom
         if (this.config.behavior.clear) {
             return this.config.behavior.clear();
@@ -160,7 +167,7 @@ class DynamicDropdown {
             }
         }
     }
-    
+
 }
 
 export default DynamicDropdown;
