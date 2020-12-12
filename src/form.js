@@ -9,7 +9,7 @@ class DynamicForm {
     config;
     /** @param {HTMLElement} htmlElement the actual html element returned by getElementById */
     hmtlElement;
-    /** @param {DynamicDropdown[]} entities a collection of form's dynamic fields */
+    /** @param {Map<String, DynamicDropdown>} entities a collection of form's dynamic fields */
     entities;
     /** @param {boolean} debug a flag to enable debug mode */
     debug;
@@ -24,7 +24,7 @@ class DynamicForm {
         new Promise((accept) => {
             self.config = formConfiguration;
             self.hmtlElement = document.getElementById(formConfiguration.id);
-            self.entities = {};
+            self.entities = new Map();
             self.debug = formConfiguration.debug === true;
 
             // Repairing config file if parameters are missing (to write code easily)
@@ -54,7 +54,7 @@ class DynamicForm {
     */
     addDynamicDropdown(ddConfig, dynamicForm) {
         let dd = new DynamicDropdown(ddConfig, dynamicForm);
-        this.entities[dd.name] = dd;
+        this.entities.set(dd.name, dd);
     }
 
     /**
@@ -62,7 +62,7 @@ class DynamicForm {
      * @param {string} senderName the name of the field who changed
      */
     notify(senderName) {
-        let senderValue = this.entities[senderName].get();
+        let senderValue = this.entities.get(senderName).get();
         if (this.debug) {
             console.log(`> [${senderName}] Changed. Notifying observers...`);
         }
@@ -82,13 +82,13 @@ class DynamicForm {
                     params[senderName] = senderValue;
                     if (rule.additionalData) {
                         rule.additionalData.forEach((additional) => {
-                            params[additional] = this.entities[additional].get();
+                            params[additional] = this.entities.get(additional).get();
                         });
                     }
 
                     if (this.debug)
-                        console.log(`> > [${senderName}] ==update==> [${this.entities[element].name}]`);
-                    updatePromises.push(this.entities[element].update(senderName, params));
+                        console.log(`> > [${senderName}] ==update==> [${this.entities.get(element).name}]`);
+                    updatePromises.push(this.entities.get(element).update(senderName, params));
                     // Clear
                     this.clearCascade(element); // DFS
                 });
@@ -115,8 +115,8 @@ class DynamicForm {
                 rule.update.forEach(target => {
                     if (!visited.includes(target)) {
                         if (this.debug)
-                            console.log(`> > > [${actualNodeName}] ==x==> [${this.entities[target].name}]`);
-                        this.entities[target].clear(this.entities[target]);
+                            console.log(`> > > [${actualNodeName}] ==x==> [${this.entities.get(target).name}]`);
+                        this.entities.get(target).clear(this.entities.get(target));
                         this.clearCascade(target, visited);
                     }
                 })
@@ -129,7 +129,7 @@ class DynamicForm {
      * @param {JSON} data data to pass to the update function
      */
     async manualUpdate(name, data) {
-        return this.entities[name].update(null, data);
+        return this.entities.get(name).update(null, data);
     }
 
 }
