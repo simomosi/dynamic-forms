@@ -73,8 +73,8 @@
             'id': 'fieldId',
             'debug': true,
             'behavior': {
-                'beforeUpdate': () => { }, // Executed before the update related events. Return false to block all updates
-                'afterUpdate': () => { }, // Executed after the update related events
+                'beforeUpdate': (dynamicForm, subject) => { }, // Executed before the update related events. Return false to block all updates
+                'afterUpdate': (dynamicForm, subject) => { }, // Executed after the update related events
             },
             'fields': [], // Collection of fields objects
             'rules': [], // Collection of rules objects
@@ -116,8 +116,8 @@
                 'id': 'jsonPlaceholder',
                 'debug': true,
                 'behavior': {
-                    'beforeUpdate': () => { document.getElementById('spinner').style.display = 'inline-block'; },
-                    'afterUpdate': () => { document.getElementById('spinner').style.display = 'none'; }
+                    'beforeUpdate': (dynamicForm, subjectName) => { document.getElementById('spinner').style.display = 'inline-block'; },
+                    'afterUpdate': (dynamicForm, subjectName) => { document.getElementById('spinner').style.display = 'none'; }
                 },
                 'fields': [
                     {

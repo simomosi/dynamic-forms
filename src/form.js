@@ -64,10 +64,10 @@ class DynamicForm {
     notify(senderName) {
         let senderValue = this.entities[senderName].get();
         if (this.debug) {
-            console.log(`> [${senderName}] Updated. Notifying observers...`);
+            console.log(`> [${senderName}] Changed. Notifying observers...`);
         }
         if (senderValue && this.config.behavior.beforeUpdate) { // Check if notify must be aborted (only if selected value is defined)
-            let beforeUpdateResult = this.config.behavior.beforeUpdate();
+            let beforeUpdateResult = this.config.behavior.beforeUpdate(this, senderName);
             if (beforeUpdateResult === false) {
                 return;
             }
@@ -95,7 +95,7 @@ class DynamicForm {
             });
         if (this.config.behavior.afterUpdate) {
             Promise.allSettled(updatePromises).then((values) => {
-                this.config.behavior.afterUpdate();
+                this.config.behavior.afterUpdate(this, senderName);
             });
         }
     }
