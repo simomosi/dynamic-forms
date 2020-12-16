@@ -1,7 +1,7 @@
 /**
 * This class represents a dropdown field with dynamic content (like a standard html-select with dynamic options)
 */
-class DynamicDropdown {
+class DynamicElement {
 
     /** @param {JSON} config the dropdown configuration */
     config;
@@ -37,8 +37,8 @@ class DynamicDropdown {
         new Promise((accept) => {
             self.config = config;
             self.id = config.id;
-            self.method = config.method ?? DynamicDropdown.defaultConfig.fetch.method;
-            let event = config.event ?? DynamicDropdown.defaultConfig.io.event;
+            self.method = config.method ?? DynamicElement.defaultConfig.fetch.method;
+            let event = config.event ?? DynamicElement.defaultConfig.io.event;
 
             self.htmlElement = dynamicForm.htmlElement.querySelector('#' + config.id);
             self.name = self.htmlElement.name;
@@ -85,7 +85,7 @@ class DynamicDropdown {
     async update(senderName, data) {
         if (senderName) {
             // If clearOnParentVoid is true and parent value is empty, this element must be cleared aswell
-            var clear = (this.config.behavior.clearOnParentVoid !== undefined) ? (this.config.behavior.clearOnParentVoid) : (DynamicDropdown.defaultConfig.behavior.clearOnParentVoid);
+            var clear = (this.config.behavior.clearOnParentVoid !== undefined) ? (this.config.behavior.clearOnParentVoid) : (DynamicElement.defaultConfig.behavior.clearOnParentVoid);
             if (clear === true && !data[senderName]) {
                 this.clear();
                 return Promise.resolve(data);
@@ -170,4 +170,4 @@ class DynamicDropdown {
 
 }
 
-export default DynamicDropdown;
+export default DynamicElement;

@@ -24,11 +24,10 @@ let dynamicForms = (function () {
      * @returns A collection of instances of Dynamic Forms
      */
     function _makeMultipleForms(formsConfigCollection) {
-        let formsCollection = [];
         formsConfigCollection.forEach(config => {
-            formsCollection.push(_makeForm(config));
+            _makeForm(config);
         });
-        return formsCollection;
+        return formCollection;
     }
 
     /**

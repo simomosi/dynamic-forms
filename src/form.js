@@ -1,4 +1,4 @@
-import DynamicDropdown from './dropdown.js';
+import DynamicElement from './element.js';
 
 /**
 * This class represents a form with dynamic content, e.g. select with variable options, updating rules and visibility depending on fields' state...
@@ -9,7 +9,7 @@ class DynamicForm {
     config;
     /** @param {HTMLElement} htmlElement the actual html element returned by getElementById */
     htmlElement;
-    /** @param {Map<String, DynamicDropdown>} entities a collection of form's DynamicFields */
+    /** @param {Map<String, DynamicElement>} entities a collection of form's DynamicFields */
     entities;
     /** @param {boolean} debug a flag to enable debug mode */
     debug;
@@ -53,7 +53,7 @@ class DynamicForm {
     * @param {JSON} dynamicForm Dynamic Form (container) Configuration
     */
     addDynamicDropdown(ddConfig, dynamicForm) {
-        let dd = new DynamicDropdown(ddConfig, dynamicForm);
+        let dd = new DynamicElement(ddConfig, dynamicForm);
         this.entities.set(dd.name, dd);
     }
 
