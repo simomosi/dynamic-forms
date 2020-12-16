@@ -8,7 +8,7 @@ class DynamicForm {
     /** @param {JSON} config the form configuration */
     config;
     /** @param {HTMLElement} htmlElement the actual html element returned by getElementById */
-    hmtlElement;
+    htmlElement;
     /** @param {Map<String, DynamicDropdown>} entities a collection of form's DynamicFields */
     entities;
     /** @param {boolean} debug a flag to enable debug mode */
@@ -23,7 +23,7 @@ class DynamicForm {
         let self = this;
         new Promise((accept) => {
             self.config = formConfiguration;
-            self.hmtlElement = document.getElementById(formConfiguration.id);
+            self.htmlElement = document.getElementById(formConfiguration.id);
             self.entities = new Map();
             self.debug = formConfiguration.debug === true;
 

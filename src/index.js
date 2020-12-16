@@ -5,7 +5,7 @@ let dynamicForms = (function () {
     'use strict';
 
     /** @param {Map<String, DynamicForm>} formCollection a collection of DynamicForms instances */
-    formCollection;
+    let formCollection = new Map();
 
     /**
      * Method to instantiate a single Dynamic Form
@@ -13,7 +13,6 @@ let dynamicForms = (function () {
      * @returns Instance of a Dynamic Form
      */
     function _makeForm(formConfiguration) {
-        formCollection = formCollection ?? new Map();
         let form = new DynamicForm(formConfiguration);
         formCollection.set(form.getId(), form);
         return form;
@@ -36,7 +35,7 @@ let dynamicForms = (function () {
      * Credits the author of Dynamic Forms
      */
     function _author() {
-        console.info('DynamicForms! Developed with \u2764 by simomosi - Ping me @ https://github.com/simomosi');
+        console.info('DynamicForms! Developed with \u2764 by simomosi - Ping me @ https://github.com/simomosi/dynamic-forms');
     }
 
     _author();

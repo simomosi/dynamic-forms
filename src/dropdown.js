@@ -40,7 +40,7 @@ class DynamicDropdown {
             self.method = config.method ?? DynamicDropdown.defaultConfig.fetch.method;
             let event = config.event ?? DynamicDropdown.defaultConfig.io.event;
 
-            self.htmlElement = dynamicForm.hmtlElement.querySelector('#' + config.id);
+            self.htmlElement = dynamicForm.htmlElement.querySelector('#' + config.id);
             self.name = self.htmlElement.name;
             self.htmlElement.addEventListener(event, (e) => { dynamicForm.notify(e.target.name); });
             // Repairing config file if parameters are missing (to write code easily)
@@ -77,9 +77,9 @@ class DynamicDropdown {
     * Method which execute a pipeline of instructions to update this element with dynamic content.
     * @param {string} senderName name of the subject who changed
     * @param {JSON} data data to send with the http request
-    * 
+    *
     * @returns a Promise in fulfilled state when data has been updated
-    * 
+    *
     * @async
     */
     async update(senderName, data) {
@@ -150,7 +150,7 @@ class DynamicDropdown {
 
     /**
     * Method to clear this element from its content
-    * 
+    *
     * @async
     */
     async clear() {
