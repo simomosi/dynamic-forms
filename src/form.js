@@ -76,21 +76,14 @@ class DynamicForm {
         this.config.rules // Todo: use data structure for best performance
             .filter((e) => { return e.change === senderName; })
             .forEach(rule => {
+                // Update
+                let params = this.fetchAllParameters(rule);
                 rule.update.forEach(element => {
-                    // Update
-                    let params = {};
-                    params[senderName] = senderValue;
-                    if (rule.additionalData) {
-                        rule.additionalData.forEach((additional) => {
-                            params[additional] = this.entities.get(additional).get();
-                        });
-                    }
-
                     if (this.debug)
                         console.log(`> > [${senderName}] ==update==> [${this.entities.get(element).name}]`);
                     updatePromises.push(this.entities.get(element).update(senderName, params));
                     // Clear
-                    this.clearCascade(element); // DFS
+                    this.clearCascade(element);
                 });
             });
         if (this.config.behavior.afterUpdate) {
@@ -98,6 +91,23 @@ class DynamicForm {
                 this.config.behavior.afterUpdate(this, senderName);
             });
         }
+    }
+
+    /**
+     * Method to retrieve all parameter required for a remote call according to a form update rule
+     * @param {JSON} rule a specific form update rule
+     */
+    fetchAllParameters(rule) {
+        let params = {};
+        let senderName = rule.change;
+        let senderValue = this.entities.get(senderName).get();
+        params[senderName] = senderValue;
+        if (rule.additionalData) {
+            rule.additionalData.forEach((additional) => {
+                params[additional] = this.entities.get(additional).get();
+            });
+        }
+        return params;
     }
 
     /**
