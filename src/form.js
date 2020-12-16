@@ -9,7 +9,7 @@ class DynamicForm {
     config;
     /** @param {HTMLElement} htmlElement the actual html element returned by getElementById */
     hmtlElement;
-    /** @param {Map<String, DynamicDropdown>} entities a collection of form's dynamic fields */
+    /** @param {Map<String, DynamicDropdown>} entities a collection of form's DynamicFields */
     entities;
     /** @param {boolean} debug a flag to enable debug mode */
     debug;
@@ -130,6 +130,14 @@ class DynamicForm {
      */
     async manualUpdate(name, data) {
         return this.entities.get(name).update(null, data);
+    }
+
+    /**
+     * Return form's id
+     * @return {string} the form id
+     */
+    getId() {
+        return this.htmlElement.id;
     }
 
 }
