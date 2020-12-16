@@ -22,4 +22,4 @@ Examples are on their way. Stay tuned!
 - The function used to clear fields *on cascade* is the **Depth-first search (DFS)** used in Graph theory
 
 ## Contribute
-Import *src/index.js* module in your project.
+Import *src/index.js* module in your project. Work on project sources. Build it with *yarn build*.
