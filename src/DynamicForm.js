@@ -1,4 +1,7 @@
-import DynamicElement from './element.js';
+import DynamicDropdown from './DynamicDropdown.js';
+import DynamicElement from './DynamicElement.js';
+import DynamicCheckbox from './DynamicCheckbox.js';
+import DynamicRadio from './DynamicRadio.js';
 
 /**
 * This class represents a form with dynamic content, e.g. select with variable options, updating rules and visibility depending on fields' state...
@@ -9,7 +12,7 @@ class DynamicForm {
     config;
     /** @param {HTMLElement} htmlElement the actual html element returned by getElementById */
     htmlElement;
-    /** @param {Map<String, DynamicElement>} entities a collection of form's DynamicFields */
+    /** @param {Map<String, DynamicDropdown>} entities a collection of form's DynamicFields */
     entities;
     /** @param {boolean} debug a flag to enable debug mode */
     debug;
@@ -17,44 +20,54 @@ class DynamicForm {
     /**
     * Class constructor.
     * @param {JSON} formConfiguration the form configuration in JSON format
-    * @async
     */
     constructor(formConfiguration) {
         let self = this;
-        new Promise((accept) => {
-            self.config = formConfiguration;
-            self.htmlElement = document.getElementById(formConfiguration.id);
-            self.entities = new Map();
-            self.debug = formConfiguration.debug === true;
+        self.config = formConfiguration;
+        self.htmlElement = document.getElementById(formConfiguration.id);
+        self.entities = new Map();
+        self.debug = formConfiguration.debug === true;
 
-            // Repairing config file if parameters are missing (to write code easily)
-            self.config.behavior = self.config.behavior ?? {};
-            self.config.fields = self.config.fields ?? {};
-            self.config.rules = self.config.rules ?? {};
-            self.config.init = self.config.init ?? {};
+        // Repairing config file if parameters are missing (to write code easily)
+        self.config.behavior = self.config.behavior ?? {};
+        self.config.fields = self.config.fields ?? {};
+        self.config.rules = self.config.rules ?? {};
+        self.config.init = self.config.init ?? {};
 
-            // Create fields instance
-            formConfiguration.fields.forEach(element => {
-                self.addDynamicDropdown(element, self);
-            });
-
-            // Init fields
-            formConfiguration.init.forEach(element => {
-                self.manualUpdate(element, {});
-            });
-
-            accept();
+        // Create fields instance
+        formConfiguration.fields.forEach(element => {
+            let queryResult = self.htmlElement.querySelectorAll(`[name=${element.id}]`);
+            let instance = null;
+            if (queryResult.length == 0) {
+                throw new Error(`Element ${element.id} not found`);
+            } else if (queryResult.length == 1) {
+                switch (queryResult[0].type) {
+                    case 'checkbox':
+                        instance = new DynamicCheckbox(element, self);
+                        break;
+                    case 'radio': // Single radio
+                        instance = new DynamicRadio(element, self);
+                        break;
+                    case 'select-one':
+                    case 'select-multiple': // Multiple select may not be handled yet
+                        instance = new DynamicDropdown(element, self);
+                        break;
+                    default:
+                        instance = new DynamicElement(element, self);
+                }
+                this.entities.set(instance.name, instance);
+            } else {
+                if (Array.from(queryResult).every(current => current.type === 'radio')) { // Multiple radio
+                    instance = new DynamicRadio(element, self);
+                    this.entities.set(instance.name, instance);
+                }
+            }
         });
-    }
 
-    /**
-    * Method to instantiate the form dynamic content and to save it in a collection.
-    * @param {JSON} ddConfig Dynamic Dropdown configuration
-    * @param {JSON} dynamicForm Dynamic Form (container) Configuration
-    */
-    addDynamicDropdown(ddConfig, dynamicForm) {
-        let dd = new DynamicElement(ddConfig, dynamicForm);
-        this.entities.set(dd.name, dd);
+        // Init fields
+        formConfiguration.init.forEach(element => {
+            self.manualUpdate(element, {});
+        });
     }
 
     /**
@@ -94,8 +107,9 @@ class DynamicForm {
     }
 
     /**
-     * Method to retrieve all parameter required for a remote call according to a form update rule
+     * Method to retrieve all parameter required for a remote call according to a form update rule.
      * @param {JSON} rule a specific form update rule
+     * @return an object merging sender data and additional data
      */
     fetchAllParameters(rule) {
         let params = {};

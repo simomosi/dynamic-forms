@@ -49,6 +49,23 @@
             <select id="todo" name='todo'>
                 <option value="" selected></option>
             </select>
+
+            <div class="mt-4">
+                <input type="radio" id="contactChoice1" name="contact" value="email">
+                <label for="contactChoice1">Email</label>
+                <input type="radio" id="contactChoice2" name="contact" value="phone">
+                <label for="contactChoice2">Phone</label>
+                <input type="radio" id="contactChoice3" name="contact" value="mail">
+                <label for="contactChoice3">Mail</label>
+            </div>
+            <div class="mt-4">
+                <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" checked>
+                <label for="vehicle1"> I have a bike</label><br>
+                <input type="checkbox" id="vehicle2" name="vehicle2" value="Car">
+                <label for="vehicle2"> I have a car</label><br>
+                <input type="checkbox" id="vehicle3" name="vehicle3" value="Boat">
+                <label for="vehicle3"> I have a boat</label><br>
+            </div>
         </form>
     </div>
 
@@ -84,7 +101,8 @@
         // Debug info
         let ruleTemplate = {
             'change': 'fieldId',
-            'update': []
+            'update': [],
+            'additionalData': []
         };
 
         // Debug info
@@ -107,7 +125,7 @@
                 'saveData': (self, data) => { }, // Save data in html (es: <option id='id'>'text'</option>)
                 'clearOnParentVoid': true, // True to clear field content when subject is void; false to trigger a remote call
                 'clear': (self) => { }, // Clear field from its content
-                'afterUpdate': () => {} // Executed after the remote call
+                'afterUpdate': () => { } // Executed after the remote call
             }
         };
 
@@ -192,15 +210,28 @@
                             }
                         }
                     },
+                    {
+                        'id': 'contact'
+                    },
+                    {
+                        'id': 'vehicle1'
+                    },
+                    {
+                        'id': 'vehicle2'
+                    },
+                    {
+                        'id': 'vehicle3'
+                    }
                 ],
                 'rules': [
                     {
                         'change': 'user',
-                        'update': ['post', 'album', 'todo']
+                        'update': ['post', 'album', 'todo'],
                     },
                     {
                         'change': 'post',
-                        'update': ['comment']
+                        'update': ['comment'],
+                        'additionalData': ['user', 'contact', 'vehicle1', 'vehicle2', 'vehicle3']
                     },
                     {
                         'change': 'album',

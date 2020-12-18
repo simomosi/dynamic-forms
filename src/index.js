@@ -1,4 +1,4 @@
-import DynamicForm from './form.js';
+import DynamicForm from './DynamicForm.js';
 
 /** Module to easly manage dynamic forms */
 let dynamicForms = (function () {
