@@ -107,7 +107,7 @@
 
         // Debug info
         let fieldsTemplate = {
-            'id': 'fieldId',
+            'name': 'fieldName',
             'io': {  // Customize field input/output
                 'event': 'change',
                 'get': (self) => { },
@@ -122,7 +122,7 @@
             'behavior': {
                 'beforeUpdate': (self, data) => { return true; }, // Executed before the remote call. Return false to block the update
                 'postProcessData': (self, data) => { }, // Process data retrieved by remote call
-                'saveData': (self, data) => { }, // Save data in html (es: <option id='id'>'text'</option>)
+                'saveData': (self, data) => { }, // Save data in html (es: <option value="value">'text'</option>)
                 'clearOnParentVoid': true, // True to clear field content when subject is void; false to trigger a remote call
                 'clear': (self) => { }, // Clear field from its content
                 'afterUpdate': () => { } // Executed after the remote call
@@ -139,7 +139,7 @@
                 },
                 'fields': [
                     {
-                        'id': 'user',
+                        'name': 'user',
                         'fetch': {
                             'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/users`; },
                         },
@@ -150,7 +150,7 @@
                         }
                     },
                     {
-                        'id': 'post',
+                        'name': 'post',
                         'fetch': {
                             'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`; },
                         },
@@ -161,7 +161,7 @@
                         }
                     },
                     {
-                        'id': 'comment',
+                        'name': 'comment',
                         'fetch': {
                             'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`; },
                         },
@@ -172,7 +172,7 @@
                         }
                     },
                     {
-                        'id': 'album',
+                        'name': 'album',
                         'fetch': {
                             'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`; },
                         },
@@ -183,7 +183,7 @@
                         }
                     },
                     {
-                        'id': 'photo',
+                        'name': 'photo',
                         'fetch': {
                             'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`; },
                         },
@@ -200,7 +200,7 @@
                         }
                     },
                     {
-                        'id': 'todo',
+                        'name': 'todo',
                         'fetch': {
                             'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`; },
                         },
@@ -211,16 +211,16 @@
                         }
                     },
                     {
-                        'id': 'contact'
+                        'name': 'contact'
                     },
                     {
-                        'id': 'vehicle1'
+                        'name': 'vehicle1'
                     },
                     {
-                        'id': 'vehicle2'
+                        'name': 'vehicle2'
                     },
                     {
-                        'id': 'vehicle3'
+                        'name': 'vehicle3'
                     }
                 ],
                 'rules': [

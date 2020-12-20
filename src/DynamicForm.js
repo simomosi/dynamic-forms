@@ -36,10 +36,10 @@ class DynamicForm {
 
         // Create fields instance
         formConfiguration.fields.forEach(element => {
-            let queryResult = self.htmlElement.querySelectorAll(`[name=${element.id}]`);
+            let queryResult = self.htmlElement.querySelectorAll(`[name=${element.name}]`);
             let instance = null;
             if (queryResult.length == 0) {
-                throw new Error(`Element ${element.id} not found`);
+                throw new Error(`Element ${element.name} not found`);
             } else if (queryResult.length == 1) {
                 switch (queryResult[0].type) {
                     case 'checkbox':
@@ -52,7 +52,7 @@ class DynamicForm {
                     case 'select-multiple': // Multiple select may not be handled yet
                         instance = new DynamicDropdown(element, self);
                         break;
-                    default:
+                    default: // Generic input, whose behavior is based on element.value property
                         instance = new DynamicElement(element, self);
                 }
                 this.entities.set(instance.name, instance);

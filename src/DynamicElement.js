@@ -1,12 +1,10 @@
 /**
  * This class represents a Dynamic Element in a form.
+ * In particular it is a generic input element, whose behavior is based on element.value property
  */
 class DynamicElement {
     /** @param {JSON} config the element configuration */
     config;
-
-    /** @param {string} id the element id */
-    id;
 
     /** @param {string} method the http request method for the remote call (async update) */
     method;
@@ -38,7 +36,6 @@ class DynamicElement {
     */
     constructor(config, dynamicForm) {
         this.config = config;
-        this.id = config.id;
         // Repairing config file if parameters are missing (to write code easily)
         this.config.io = this.config.io ?? {};
         this.config.fetch = this.config.fetch ?? {};
@@ -47,10 +44,10 @@ class DynamicElement {
         this.method = config.fetch.method ?? DynamicElement.defaultConfig.fetch.method;
         let event = config.io.event ?? DynamicElement.defaultConfig.io.event;
 
-        this.htmlElement = dynamicForm.htmlElement.querySelectorAll('[name='+config.id+']');
+        this.htmlElement = dynamicForm.htmlElement.querySelectorAll('[name=' + config.name+']');
         this.name = this.htmlElement[0].name;
         if (this.htmlElement.length === 0) {
-            throw new Error('Element '+config.id+' not found');
+            throw new Error('Element ' + config.name+' not found');
         } else if (this.htmlElement.length === 1) {
             this.htmlElement = this.htmlElement[0];
             this.htmlElement.addEventListener(event, (e) => { dynamicForm.notify(e.target.name); });
@@ -100,17 +97,19 @@ class DynamicElement {
     }
 
     /**
-    * Method which execute a pipeline of instructions to update this element with dynamic content.
+    * Method which updates the element status aftare a change on the observed subject
     * @param {string} senderName name of the subject who changed
-    * @param {JSON} data data to send with the http request
+    * @param {JSON} data data useful to this element
     *
-    * @returns a Promise in fulfilled state when data has been updated
+    * @returns a Promise in fulfilled state when element status has been updated
     *
     * @async
     */
     async update() {
-        let message = "Operation not yet supported. Use this field in a 'change' or 'additionalData' part of a rule; do NOT use it in a 'update' part.";
-        throw new Error(message);
+        // Custom
+        // if (this.config.behavior.clear) {
+        //     return this.config.behavior.clear();
+        // }
     }
 }
 
