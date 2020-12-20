@@ -130,20 +130,20 @@ class DynamicForm {
      * Method to clear fields on cascade when the subject changes.
      * The fields cleared are the subjects'observers'observers.
      * This implementation uses the DFS algorithm.
-     * @param {string} currentNodeName node name whom observers will be cleared
+     * @param {string} currentSubject node name whom observers will be cleared
      * @param {array} visited array of already cleared (visited) nodes
      */
-    async clearCascade(currentNodeName, visited = []) {
-        visited.push(currentNodeName)
+    async clearCascade(currentSubject, visited = []) {
+        visited.push(currentSubject)
         this.config.rules
-            .filter((e) => { return e.change === currentNodeName })
+            .filter((e) => { return e.change === currentSubject })
             .forEach(rule => {
-                rule.update.forEach(target => {
-                    if (!visited.includes(target)) {
+                rule.update.forEach(observer => {
+                    if (!visited.includes(observer)) {
                         if (this.debug)
-                            console.log(`> > > [${currentNodeName}] ==x==> [${this.entities.get(target).name}]`);
-                        this.entities.get(target).clear(this.entities.get(target));
-                        this.clearCascade(target, visited);
+                            console.log(`> > > [${currentSubject}] ==x==> [${this.entities.get(observer).name}]`);
+                        this.entities.get(observer).clear(this.entities.get(observer));
+                        this.clearCascade(observer, visited);
                     }
                 })
             })
