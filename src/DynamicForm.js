@@ -91,6 +91,9 @@ class DynamicForm {
                 // Update
                 let params = this.fetchAllParameters(rule);
                 rule.update.forEach(element => {
+                    if (element === senderName) { // This prevents loop
+                        return;
+                    }
                     if (this.debug)
                         console.log(`> > [${senderName}] ==update==> [${this.entities.get(element).name}]`);
                     updatePromises.push(this.entities.get(element).update(senderName, params));
