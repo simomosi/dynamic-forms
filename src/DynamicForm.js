@@ -38,30 +38,29 @@ class DynamicForm {
         formConfiguration.fields.forEach(element => {
             let queryResult = self.htmlElement.querySelectorAll(`[name=${element.name}]`);
             let instance = null;
+
+        const elementToClassMapping = {
+            'default': DynamicElement,
+            'checkbox': DynamicCheckbox,
+            'radio': DynamicRadio,
+            'select-one': DynamicDropdown,
+            'select-multiple': DynamicDropdown,
+        };
+            let type = null;
             if (queryResult.length == 0) {
                 throw new Error(`Element ${element.name} not found`);
             } else if (queryResult.length == 1) {
-                switch (queryResult[0].type) {
-                    case 'checkbox':
-                        instance = new DynamicCheckbox(element, self);
-                        break;
-                    case 'radio': // Single radio
-                        instance = new DynamicRadio(element, self);
-                        break;
-                    case 'select-one':
-                    case 'select-multiple': // Multiple select may not be handled yet
-                        instance = new DynamicDropdown(element, self);
-                        break;
-                    default: // Generic input, whose behavior is based on element.value property
-                        instance = new DynamicElement(element, self);
-                }
-                this.entities.set(instance.name, instance);
+                type = queryResult[0].type; // Use the type of field
             } else {
-                if (Array.from(queryResult).every(current => current.type === 'radio')) { // Multiple radio
-                    instance = new DynamicRadio(element, self);
-                    this.entities.set(instance.name, instance);
-                }
+                // if (Array.from(queryResult).every(current => current.type === 'radio')) { // Multiple radio only if all fields have the same name
+                    type = queryResult[0].type;
+                // }
             }
+            if (type == null || !elementToClassMapping[type]) {
+                type = 'default';
+            }
+            instance = new elementToClassMapping[type](element, self);
+            this.entities.set(instance.name, instance);
         });
 
         // Init fields
