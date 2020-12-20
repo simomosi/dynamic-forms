@@ -34,19 +34,19 @@ class DynamicDropdown extends DynamicElement{
     }
 
     /**
-    * Method which execute a pipeline of instructions to update this element with dynamic content.
-    * @param {string} senderName name of the subject who changed
+    * Method which execute a pipeline of instructions to update select content with dynamic options
+    * @param {string} subjectName name of the subject who changed
     * @param {JSON} data data to send with the http request
     *
     * @returns a Promise in fulfilled state when data has been updated
     *
     * @async
     */
-    async update(senderName, data) {
-        if (senderName) {
+    async update(subjectName, data) {
+        if (subjectName) {
             // If clearOnParentVoid is true and parent value is empty, this element must be cleared aswell
             var clear = (this.config.behavior.clearOnParentVoid !== undefined) ? (this.config.behavior.clearOnParentVoid) : (DynamicDropdown.defaultConfig.behavior.clearOnParentVoid);
-            if (clear === true && !data[senderName]) {
+            if (clear === true && !data[subjectName]) {
                 this.clear();
                 return Promise.resolve(data);
             }

@@ -71,39 +71,39 @@ class DynamicForm {
 
     /**
      * Method to notify the change of the subject to all its observers (Observer Design Pattern).
-     * @param {string} senderName the name of the field who changed
+     * @param {string} subjectName the name of the field who changed
      */
-    notify(senderName) {
-        let senderValue = this.entities.get(senderName).get();
+    notify(subjectName) {
+        let subjectValue = this.entities.get(subjectName).get();
         if (this.debug) {
-            console.log(`> [${senderName}] Changed. Notifying observers...`);
+            console.log(`> [${subjectName}] Changed. Notifying observers...`);
         }
-        if (senderValue && this.config.behavior.beforeUpdate) { // Check if notify must be aborted (only if selected value is defined)
-            let beforeUpdateResult = this.config.behavior.beforeUpdate(this, senderName);
+        if (subjectValue && this.config.behavior.beforeUpdate) { // Check if notify must be aborted (only if selected value is defined)
+            let beforeUpdateResult = this.config.behavior.beforeUpdate(this, subjectName);
             if (beforeUpdateResult === false) {
                 return;
             }
         }
         let updatePromises = [];
         this.config.rules // Todo: use data structure for best performance
-            .filter((e) => { return e.change === senderName; })
+            .filter((e) => { return e.change === subjectName; })
             .forEach(rule => {
                 // Update
                 let params = this.fetchAllParameters(rule);
-                rule.update.forEach(element => {
-                    if (element === senderName) { // This prevents loop
+                rule.update.forEach(observerName => {
+                    if (observerName === subjectName) { // This prevents loop
                         return;
                     }
                     if (this.debug)
-                        console.log(`> > [${senderName}] ==update==> [${this.entities.get(element).name}]`);
-                    updatePromises.push(this.entities.get(element).update(senderName, params));
+                        console.log(`> > [${subjectName}] ==update==> [${this.entities.get(observerName).name}]`);
+                    updatePromises.push(this.entities.get(observerName).update(subjectName, params));
                     // Clear
-                    this.clearCascade(element);
+                    this.clearCascade(observerName);
                 });
             });
         if (this.config.behavior.afterUpdate) {
             Promise.allSettled(updatePromises).then((values) => {
-                this.config.behavior.afterUpdate(this, senderName);
+                this.config.behavior.afterUpdate(this, subjectName);
             });
         }
     }
@@ -115,9 +115,9 @@ class DynamicForm {
      */
     fetchAllParameters(rule) {
         let params = {};
-        let senderName = rule.change;
-        let senderValue = this.entities.get(senderName).get();
-        params[senderName] = senderValue;
+        let subjectName = rule.change;
+        let subjectValue = this.entities.get(subjectName).get();
+        params[subjectName] = subjectValue;
         if (rule.additionalData) {
             rule.additionalData.forEach((additional) => {
                 params[additional] = this.entities.get(additional).get();
@@ -130,18 +130,18 @@ class DynamicForm {
      * Method to clear fields on cascade when the subject changes.
      * The fields cleared are the subjects'observers'observers.
      * This implementation uses the DFS algorithm.
-     * @param {string} actualNodeName node name whom observers will be cleared
+     * @param {string} currentNodeName node name whom observers will be cleared
      * @param {array} visited array of already cleared (visited) nodes
      */
-    async clearCascade(actualNodeName, visited = []) {
-        visited.push(actualNodeName)
+    async clearCascade(currentNodeName, visited = []) {
+        visited.push(currentNodeName)
         this.config.rules
-            .filter((e) => { return e.change === actualNodeName })
+            .filter((e) => { return e.change === currentNodeName })
             .forEach(rule => {
                 rule.update.forEach(target => {
                     if (!visited.includes(target)) {
                         if (this.debug)
-                            console.log(`> > > [${actualNodeName}] ==x==> [${this.entities.get(target).name}]`);
+                            console.log(`> > > [${currentNodeName}] ==x==> [${this.entities.get(target).name}]`);
                         this.entities.get(target).clear(this.entities.get(target));
                         this.clearCascade(target, visited);
                     }

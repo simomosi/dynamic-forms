@@ -97,15 +97,15 @@ class DynamicElement {
     }
 
     /**
-    * Method which updates the element status aftare a change on the observed subject
-    * @param {string} senderName name of the subject who changed
+    * Method which updates the element status after a change on the observed subject
+    * @param {string} subjectName name of the subject who changed
     * @param {JSON} data data useful to this element
     *
     * @returns a Promise in fulfilled state when element status has been updated
     *
     * @async
     */
-    async update() {
+    async update(subjectName, data) {
         // Custom
         // if (this.config.behavior.clear) {
         //     return this.config.behavior.clear();
