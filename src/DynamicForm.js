@@ -74,7 +74,7 @@ class DynamicForm {
      * @param {string} subjectName the name of the field who changed
      */
     notify(subjectName) {
-        let subjectValue = this.entities.get(subjectName).get();
+        let subjectValue = this.getField(subjectName).get();
         if (this.debug) {
             console.log(`> [${subjectName}] Changed. Notifying observers...`);
         }
@@ -95,8 +95,8 @@ class DynamicForm {
                         return;
                     }
                     if (this.debug)
-                        console.log(`> > [${subjectName}] ==update==> [${this.entities.get(observerName).name}]`);
-                    updatePromises.push(this.entities.get(observerName).update(subjectName, params));
+                        console.log(`> > [${subjectName}] ==update==> [${this.getField(observerName).name}]`);
+                    updatePromises.push(this.getField(observerName).update(subjectName, params));
                     // Clear
                     this.clearCascade(observerName);
                 });
@@ -116,11 +116,11 @@ class DynamicForm {
     fetchAllParameters(rule) {
         let params = {};
         let subjectName = rule.change;
-        let subjectValue = this.entities.get(subjectName).get();
+        let subjectValue = this.getField(subjectName).get();
         params[subjectName] = subjectValue;
         if (rule.additionalData) {
             rule.additionalData.forEach((additional) => {
-                params[additional] = this.entities.get(additional).get();
+                params[additional] = this.getField(additional).get();
             });
         }
         return params;
@@ -141,8 +141,8 @@ class DynamicForm {
                 rule.update.forEach(observer => {
                     if (!visited.includes(observer)) {
                         if (this.debug)
-                            console.log(`> > > [${currentSubject}] ==x==> [${this.entities.get(observer).name}]`);
-                        this.entities.get(observer).clear(this.entities.get(observer));
+                            console.log(`> > > [${currentSubject}] ==x==> [${this.getField(observer).name}]`);
+                        this.getField(observer).clear(this.getField(observer));
                         this.clearCascade(observer, visited);
                     }
                 })
@@ -155,7 +155,15 @@ class DynamicForm {
      * @param {JSON} data data to pass to the update function
      */
     async manualUpdate(name, data) {
-        return this.entities.get(name).update(null, data);
+        return this.getField(name).update(null, data);
+    }
+
+    /**
+     * Method to fetch a single dynamic field instance
+     * @param {string} name name of dynamic field instance to retrieve
+     */
+    getField(name) {
+        return this.entities.get(name);
     }
 
     /**
