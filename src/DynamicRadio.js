@@ -20,7 +20,7 @@ class DynamicRadio extends DynamicElement {
                 return element.value;
             }
         }
-        return null;
+        return null; // No value selected
     }
 
     /** @inheritdoc */
