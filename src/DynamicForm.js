@@ -10,12 +10,24 @@ class DynamicForm {
 
     /** @param {JSON} config the form configuration */
     config;
+
     /** @param {HTMLElement} htmlElement the actual html element returned by getElementById */
     htmlElement;
-    /** @param {Map<String, DynamicDropdown>} entities a collection of form's DynamicFields */
+
+    /** @param {Map<String, DynamicElement>} entities a collection of form's DynamicElements */
     entities;
+
     /** @param {boolean} debug a flag to enable debug mode */
     debug;
+
+    /** @param {JSON} elementToClassMapping Object which maps a field's type attribute with the class to instantiate */
+    elementToClassMapping = {
+        'default': DynamicElement,
+        'checkbox': DynamicCheckbox,
+        'radio': DynamicRadio,
+        'select-one': DynamicDropdown,
+        'select-multiple': DynamicDropdown,
+    };
 
     /**
     * Class constructor.
@@ -34,20 +46,12 @@ class DynamicForm {
         self.config.rules = self.config.rules ?? {};
         self.config.init = self.config.init ?? {};
 
+
         // Create fields instance
         formConfiguration.fields.forEach(element => {
             let queryResult = self.htmlElement.querySelectorAll(`[name=${element.name}]`);
-            let instance = null;
+            let type = null, instance = null;
 
-            const elementToClassMapping = {
-                'default': DynamicElement,
-                'checkbox': DynamicCheckbox,
-                'radio': DynamicRadio,
-                'select-one': DynamicDropdown,
-                'select-multiple': DynamicDropdown,
-            };
-
-            let type = null;
             if (queryResult.length == 0) {
                 throw new Error(`Element ${element.name} not found`);
             } else if (queryResult.length == 1) {
@@ -57,10 +61,10 @@ class DynamicForm {
                 type = queryResult[0].type;
                 // }
             }
-            if (type == null || !elementToClassMapping[type]) {
+            if (type == null || !this.elementToClassMapping[type]) {
                 type = 'default';
             }
-            instance = new elementToClassMapping[type](element, self);
+            instance = new this.elementToClassMapping[type](element, self);
             this.entities.set(instance.name, instance);
         });
 
