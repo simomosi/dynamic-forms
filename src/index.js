@@ -60,7 +60,9 @@ let dynamicForms = (function () {
     return {
         makeForm: _makeForm,
         makeMultipleForms: _makeMultipleForms,
-        author: _author
+        getForm: _getForm,
+        getField: _getField,
+        author: _author,
     }
 })();
 
