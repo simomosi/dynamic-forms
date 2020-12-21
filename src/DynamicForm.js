@@ -65,8 +65,10 @@ class DynamicForm {
         });
 
         // Init fields
-        formConfiguration.init.forEach(element => {
-            self.manualUpdate(element, {});
+        formConfiguration.init.forEach(initRule => {
+            let field = initRule.name;
+            let data = initRule.data;
+            self.manualUpdate(field, data);
         });
     }
 

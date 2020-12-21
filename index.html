@@ -98,6 +98,11 @@
             'init': [] // Collection of field ids
         };
 
+        let initTemplate = {
+            'name': 'fieldName',
+            'data': 'usefulData'
+        };
+
         // Debug info
         let ruleTemplate = {
             'change': 'fieldId',
@@ -238,7 +243,9 @@
                         'update': ['photo']
                     },
                 ],
-                'init': ['user'] // TODO: makes an object like {name: 'name', data: {}} ?
+                'init': [
+                    { 'name': 'user', 'data': {} }
+                ]
             }]
         };
 
