@@ -39,13 +39,14 @@ class DynamicForm {
             let queryResult = self.htmlElement.querySelectorAll(`[name=${element.name}]`);
             let instance = null;
 
-        const elementToClassMapping = {
-            'default': DynamicElement,
-            'checkbox': DynamicCheckbox,
-            'radio': DynamicRadio,
-            'select-one': DynamicDropdown,
-            'select-multiple': DynamicDropdown,
-        };
+            const elementToClassMapping = {
+                'default': DynamicElement,
+                'checkbox': DynamicCheckbox,
+                'radio': DynamicRadio,
+                'select-one': DynamicDropdown,
+                'select-multiple': DynamicDropdown,
+            };
+
             let type = null;
             if (queryResult.length == 0) {
                 throw new Error(`Element ${element.name} not found`);
@@ -53,7 +54,7 @@ class DynamicForm {
                 type = queryResult[0].type; // Use the type of field
             } else {
                 // if (Array.from(queryResult).every(current => current.type === 'radio')) { // Multiple radio only if all fields have the same name
-                    type = queryResult[0].type;
+                type = queryResult[0].type;
                 // }
             }
             if (type == null || !elementToClassMapping[type]) {
