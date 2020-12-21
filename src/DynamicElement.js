@@ -110,6 +110,7 @@ class DynamicElement {
         // if (this.config.behavior.clear) {
         //     return this.config.behavior.clear();
         // }
+        return Promise.resolve(data); // No custom update method
     }
 }
 
