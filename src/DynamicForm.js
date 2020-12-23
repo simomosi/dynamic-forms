@@ -72,7 +72,7 @@ class DynamicForm {
         formConfiguration.init.forEach(initRule => {
             let field = initRule.name;
             let data = initRule.data;
-            self.manualUpdate(field, data);
+            self.manualUpdate(data, field);
         });
     }
 
@@ -81,7 +81,8 @@ class DynamicForm {
      * @param {string} subjectName the name of the field who changed
      */
     notify(subjectName) {
-        let subjectValue = this.getField(subjectName).get();
+        let subject = this.getField(subjectName);
+        let subjectValue = subject.get();
         if (this.debug) {
             console.log(`> [${subjectName}] Changed. Notifying observers...`);
         }
@@ -103,7 +104,9 @@ class DynamicForm {
                     }
                     if (this.debug)
                         console.log(`> > [${subjectName}] ==update==> [${this.getField(observerName).name}]`);
-                    updatePromises.push(this.getField(observerName).update(subjectName, params));
+                    let observer = this.getField(observerName);
+                    let observerPromise = observer.update(params, subjectName);
+                    updatePromises.push(observerPromise);
                     // Clear
                     this.clearCascade(observerName);
                 });
@@ -158,16 +161,18 @@ class DynamicForm {
 
     /**
      * Method to manual trigger the update function of a subject.
-     * @param {string} name name of the subject who changed
-     * @param {JSON} data data to pass to the update function
+     * @param {JSON} data data useful to the element's status change
+     * @param {string} subjectName name of the changed subject
+     * @returns a Promise in fulfilled state when element status has been updated
      */
-    async manualUpdate(name, data) {
-        return this.getField(name).update(null, data);
+    async manualUpdate(data, subjectName) {
+        return this.getField(subjectName).update(data, null);
     }
 
     /**
      * Method to fetch a single dynamic field instance
      * @param {string} name name of dynamic field instance to retrieve
+     * @returns the DynamicElement instance
      */
     getField(name) {
         return this.entities.get(name);

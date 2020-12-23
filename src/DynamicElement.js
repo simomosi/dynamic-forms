@@ -6,9 +6,6 @@ class DynamicElement {
     /** @param {JSON} config the element configuration */
     config;
 
-    /** @param {string} method the http request method for the remote call (async update) */
-    method;
-
     /** @param {HTMLElement} htmlElement the HTML Element returned by querySelector */
     htmlElement;
 
@@ -19,13 +16,7 @@ class DynamicElement {
     static defaultConfig = {
         'io': {
             'event': 'change',
-        },
-        'fetch': {
-            'method': 'GET',
-        },
-        'behavior': {
-            'clearOnParentVoid': true
-        },
+        }
     }
 
     /**
@@ -41,13 +32,12 @@ class DynamicElement {
         this.config.fetch = this.config.fetch ?? {};
         this.config.behavior = this.config.behavior ?? {};
 
-        this.method = config.fetch.method ?? DynamicElement.defaultConfig.fetch.method;
         let event = config.io.event ?? DynamicElement.defaultConfig.io.event;
 
-        this.htmlElement = dynamicForm.htmlElement.querySelectorAll('[name=' + config.name+']');
+        this.htmlElement = dynamicForm.htmlElement.querySelectorAll('[name=' + config.name + ']');
         this.name = this.htmlElement[0].name;
         if (this.htmlElement.length === 0) {
-            throw new Error('Element ' + config.name+' not found');
+            throw new Error('Element ' + config.name + ' not found');
         } else if (this.htmlElement.length === 1) {
             this.htmlElement = this.htmlElement[0];
             this.htmlElement.addEventListener(event, (e) => { dynamicForm.notify(e.target.name); });
@@ -97,20 +87,59 @@ class DynamicElement {
     }
 
     /**
-    * Method which updates the element status after a change on the observed subject
-    * @param {string} subjectName name of the subject who changed
-    * @param {JSON} data data useful to this element
+    * Method which updates the element (observer) status after a change on the observed subject
+    * @param {JSON} data data useful to the element's status change
+    * @param {string} subjectName name of the changed subject
     *
     * @returns a Promise in fulfilled state when element status has been updated
     *
     * @async
     */
-    async update(subjectName, data) {
+    async update(data, subjectName) {
+        let beforeUpdateResult = this.beforeUpdate(data, subjectName);
+        if (beforeUpdateResult !== false) {
+            this.updateStatus(data, subjectName);
+        }
+        let afterUpdateResult = this.afterUpdate(data, subjectName);
+    }
+
+    /**
+     * Method executed before the status update. If it returns false, the update is aborted.
+     * @param {JSON} data data useful to the element's status change
+     * @param {string} subjectName name of the changed subject
+     * @returns false to abort the update, true otherwise
+     */
+    beforeUpdate(data, subjectName) {
         // Custom
-        // if (this.config.behavior.clear) {
-        //     return this.config.behavior.clear();
-        // }
-        return Promise.resolve(data); // No custom update method
+        if (this.config.behavior.beforeUpdate) {
+            return this.config.behavior.beforeUpdate(this, data, subjectName);
+        }
+        // Standard
+        return true;
+    }
+
+    /**
+     * Method to update the DynamicElement status.
+     * @param {JSON} data data useful to the element's status change
+     * @param {string} subjectName name of the changed subject
+     */
+    updateStatus(data, subjectName) {
+        // Custom
+        if (this.config.behavior.updateStatus) {
+            return this.config.behavior.updateStatus(this, data, subjectName);
+        }
+    }
+
+    /**
+     * Method executed after the status update. It is executed also if the update is aborted.
+     * @param {JSON} data data useful to the element's status change
+     * @param {string} subjectName name of the changed subject
+     */
+    afterUpdate(data, subjectName) {
+        // Custom
+        if (this.config.behavior.afterUpdate) {
+            return this.config.behavior.afterUpdate(this, data, subjectName);
+        }
     }
 }
 
