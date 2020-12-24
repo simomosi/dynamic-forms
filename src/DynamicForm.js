@@ -128,10 +128,16 @@ class DynamicForm {
         let subjectName = rule.change;
         let subjectValue = this.getField(subjectName).get();
         params[subjectName] = subjectValue;
+        // Fetch additional data from the form
         if (rule.additionalData) {
             rule.additionalData.forEach((additional) => {
                 params[additional] = this.getField(additional).get();
             });
+        }
+        // Fetch external data from a user specified function (outside the form)
+        if (rule.externalData) {
+            let externalData = rule.externalData();
+            Object.assign(params, externalData); // params <- params U externalData
         }
         return params;
     }

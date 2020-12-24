@@ -83,8 +83,8 @@ class DynamicDropdown extends DynamicElement {
     */
     updateStatus(data, subjectName) {
         // Custom
-        if (this.config.behavior.beforeUpdate) {
-            return this.config.behavior.beforeUpdate(this, data, subjectName);
+        if (this.config.behavior.updateStatus) {
+            return this.config.behavior.updateStatus(this, data, subjectName);
         }
         // Standard
         let requestUrl = this.config.fetch.makeUrl(data);
