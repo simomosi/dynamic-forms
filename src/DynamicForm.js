@@ -136,7 +136,7 @@ class DynamicForm {
         }
         // Fetch external data from a user specified function (outside the form)
         if (rule.externalData) {
-            let externalData = rule.externalData();
+            let externalData = rule.externalData(params, subjectName);
             Object.assign(params, externalData); // params <- params U externalData
         }
         return params;

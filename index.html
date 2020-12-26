@@ -107,7 +107,8 @@
         let ruleTemplate = {
             'change': 'fieldName',
             'update': [],
-            'additionalData': []
+            'additionalData': [], // Array of field names
+            'externalData': (data, subjectName) => {} // Function which returns a json of data
         };
 
         // Debug info
@@ -240,7 +241,7 @@
                         'change': 'post',
                         'update': ['comment'],
                         'additionalData': ['user', 'contact', 'vehicle1', 'vehicle2', 'vehicle3'],
-                        'externalData': () => { return {'timestamp': new Date()}}
+                        'externalData': (data, subjectName) => { return {'timestamp': new Date()}}
                     },
                     {
                         'change': 'album',
