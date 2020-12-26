@@ -87,7 +87,7 @@ class DynamicForm {
             console.log(`> [${subjectName}] Changed. Notifying observers...`);
         }
         if (subjectValue && this.config.behavior.beforeUpdate) { // Check if notify must be aborted (only if selected value is defined)
-            let beforeUpdateResult = this.config.behavior.beforeUpdate(this, subjectName);
+            let beforeUpdateResult = this.config.behavior.beforeUpdate(subjectName);
             if (beforeUpdateResult === false) {
                 return;
             }
@@ -113,7 +113,7 @@ class DynamicForm {
             });
         if (this.config.behavior.afterUpdate) {
             Promise.allSettled(updatePromises).then((values) => {
-                this.config.behavior.afterUpdate(this, subjectName);
+                this.config.behavior.afterUpdate(subjectName);
             });
         }
     }
