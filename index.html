@@ -134,8 +134,8 @@
                 'afterUpdate': (self, data, subjectName) => { } // Executed after the remote call
             },
             'ext': {
-                'postProcessData': (self, data) => { }, // Process data retrieved by remote call
-                'saveData': (self, data) => { }, // Save data in html (es: <option value="value">'text'</option>)
+                'postProcessData': (htmlElement, data) => { }, // Process data retrieved by remote call
+                'saveData': (htmlElement, data) => { }, // Save data in html (es: <option value="value">'text'</option>)
                 'clearOnParentVoid': true, // True to clear field content when subject is void; false to trigger a remote call
             }
         };
@@ -155,7 +155,7 @@
                             'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/users`; },
                         },
                         'behavior': {
-                            'postProcessData': (self, data) => {
+                            'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.username }; }).sort((a, b) => { return a.text > b.text });
                             }
                         }
@@ -166,7 +166,7 @@
                             'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`; },
                         },
                         'behavior': {
-                            'postProcessData': (self, data) => {
+                            'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.title }; });
                             }
                         }
@@ -177,7 +177,7 @@
                             'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`; },
                         },
                         'behavior': {
-                            'postProcessData': (self, data) => {
+                            'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.name }; });
                             }
                         }
@@ -188,7 +188,7 @@
                             'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`; },
                         },
                         'behavior': {
-                            'postProcessData': (self, data) => {
+                            'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.title }; });
                             }
                         }
@@ -199,7 +199,7 @@
                             'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`; },
                         },
                         'behavior': {
-                            'postProcessData': (self, data) => {
+                            'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.url }; });
                             },
                             'beforeUpdate': (self, data) => {
@@ -216,7 +216,7 @@
                             'makeUrl': (data) => { return `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`; },
                         },
                         'behavior': {
-                            'postProcessData': (self, data) => {
+                            'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.title }; });
                             }
                         }

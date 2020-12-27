@@ -105,13 +105,14 @@ class DynamicDropdown extends DynamicElement {
             .then(response => { // Json
                 if (response.ok)
                     return response.json();
+                throw response;
             }).then(data => { // Postprocess data
                 if (self.config.behavior.postProcessData)
-                    return self.config.behavior.postProcessData(self, data);
+                    return self.config.behavior.postProcessData(self.htmlElement, data);
                 return data;
             }).then(data => { // Save options
                 if (self.config.behavior.saveData)
-                    return self.config.behavior.saveData(self, data);
+                    return self.config.behavior.saveData(self.htmlElement, data);
                 // Standard
                 self.clear();
                 // Add empty option
