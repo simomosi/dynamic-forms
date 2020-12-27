@@ -43,7 +43,7 @@ module.exports = {
   },
 
   output: {
-    filename: 'dynamic-forms.js',
+    filename: 'dynamicforms.js',
     path: path.resolve(__dirname, 'dist'),
   },
 
