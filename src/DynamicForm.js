@@ -36,7 +36,7 @@ class DynamicForm {
     constructor(formConfiguration) {
         let self = this;
         self.config = formConfiguration;
-        self.htmlElement = document.getElementById(formConfiguration.id);
+        self.htmlElement = document.forms[formConfiguration.id];
         self.entities = new Map();
         self.debug = formConfiguration.debug === true;
 
