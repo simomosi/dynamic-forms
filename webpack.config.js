@@ -36,7 +36,7 @@ module.exports = {
   plugins: [
     new webpack.ProgressPlugin(),
     new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin()
+    //new HtmlWebpackPlugin()
   ],
   devtool: 'source-map',
   module: {
