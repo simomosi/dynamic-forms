@@ -12,7 +12,7 @@ DynamicForms is a js library that handles all the interaction with forms with dy
 Feature incoming, stay tuned!
 
 ### Local
-Include *dist/dynamicforms.min.js* (or *dist/dynamicforms.js*) in your project.
+Include *dist/dynamicforms.js* in your project.
 
 ## Example of use
 Examples are on their way. Stay tuned!
