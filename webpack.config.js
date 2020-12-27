@@ -26,14 +26,19 @@ const webpack = require('webpack');
  */
 
 const TerserPlugin = require('terser-webpack-plugin');
-
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 
 
 module.exports = {
-  mode: 'development',
-  plugins: [new webpack.ProgressPlugin()],
-
+  mode: 'production',
+  plugins: [
+    new webpack.ProgressPlugin(),
+    new CleanWebpackPlugin(),
+    new HtmlWebpackPlugin()
+  ],
+  devtool: 'source-map',
   module: {
     rules: [{
       test: /\.(js|jsx)$/,
@@ -49,7 +54,7 @@ module.exports = {
 
   optimization: {
     minimizer: [new TerserPlugin()],
-
+    minimize: true,
     splitChunks: {
       cacheGroups: {
         vendors: {
