@@ -55,7 +55,7 @@ class DynamicElement {
     get() {
         // Custom
         if (this.config.io.get) {
-            return this.config.io.get(this);
+            return this.config.io.get(this.htmlElement);
         }
         // Standard
         return this.htmlElement.value;
@@ -68,7 +68,7 @@ class DynamicElement {
     set(value) {
         // Custom
         if (this.config.io.set) {
-            return this.config.io.set(this, value);
+            return this.config.io.set(this.htmlElement, value);
         }
         // Standard
         return this.htmlElement.value = value;
@@ -80,7 +80,7 @@ class DynamicElement {
     clear() {
         // Custom
         if (this.config.behavior.clear) {
-            return this.config.behavior.clear();
+            return this.config.behavior.clear(this.htmlElement);
         }
         // Standard
         this.htmlElement.value = "";

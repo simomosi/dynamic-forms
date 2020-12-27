@@ -11,7 +11,7 @@ class DynamicRadio extends DynamicElement {
     get() {
         // Custom
         if (this.config.io.get) {
-            return this.config.io.get(this);
+            return this.config.io.get(this.htmlElement);
         }
         // Standard
         for (let i = 0; i < this.htmlElement.length; i++) {
@@ -27,7 +27,7 @@ class DynamicRadio extends DynamicElement {
     set(value) {
         // Custom
         if (this.config.io.set) {
-            return this.config.io.set(this, value);
+            return this.config.io.set(this.htmlElement, value);
         }
         // Standard
         for (let i = 0; i < this.htmlElement.length; i++) {
@@ -42,6 +42,11 @@ class DynamicRadio extends DynamicElement {
 
     /** @inheritdoc */
     clear() {
+        // Custom
+        if (this.config.behavior.clear) {
+            return this.config.behavior.clear(this.htmlElement);
+        }
+        // Standard
         for (let i = 0; i < this.htmlElement.length; i++) {
             this.htmlElement[i].checked = false;
         }
