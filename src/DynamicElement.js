@@ -112,10 +112,10 @@ class DynamicElement {
     beforeUpdate(data, subjectName) {
         // Custom
         if (this.config.behavior.beforeUpdate) {
-            return this.config.behavior.beforeUpdate(this, data, subjectName);
+            return this.config.behavior.beforeUpdate(this.htmlElement, data, subjectName);
         }
         // Standard
-        return true;
+        return true; // Does not block field update
     }
 
     /**
@@ -126,7 +126,7 @@ class DynamicElement {
     updateStatus(data, subjectName) {
         // Custom
         if (this.config.behavior.updateStatus) {
-            return this.config.behavior.updateStatus(this, data, subjectName);
+            return this.config.behavior.updateStatus(this.htmlElement, data, subjectName);
         }
     }
 
@@ -138,7 +138,7 @@ class DynamicElement {
     afterUpdate(data, subjectName) {
         // Custom
         if (this.config.behavior.afterUpdate) {
-            return this.config.behavior.afterUpdate(this, data, subjectName);
+            return this.config.behavior.afterUpdate(this.htmlElement, data, subjectName);
         }
     }
 }

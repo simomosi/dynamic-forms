@@ -129,9 +129,9 @@
             },
             'behavior': {
                 'clear': (htmlElement) => { }, // Clear field from its content
-                'beforeUpdate': (self, data, subjectName) => { return true; }, // Executed before the remote call. Return false to block the update
-                'updateStatus': (self, data, subjectName) => { },
-                'afterUpdate': (self, data, subjectName) => { } // Executed after the remote call
+                'beforeUpdate': (htmlElement, data, subjectName) => { return true; }, // Executed before the remote call. Return false to block the update
+                'updateStatus': (htmlElement, data, subjectName) => { },
+                'afterUpdate': (htmlElement, data, subjectName) => { } // Executed after the remote call
             },
             'ext': {
                 'postProcessData': (htmlElement, data) => { }, // Process data retrieved by remote call
@@ -201,12 +201,6 @@
                         'behavior': {
                             'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.url }; });
-                            },
-                            'beforeUpdate': (self, data) => {
-                                let value = self.get();
-                                if (value != '') {
-                                    document.getElementById('imgContainer').innerHTML = `<img src=${value}/>`;
-                                }
                             }
                         }
                     },
