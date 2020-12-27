@@ -48,12 +48,12 @@ class DynamicForm {
 
 
         // Create fields instance
-        formConfiguration.fields.forEach(element => {
-            let queryResult = self.htmlElement.querySelectorAll(`[name=${element.name}]`);
+        formConfiguration.fields.forEach(fieldConfig => {
+            let queryResult = self.htmlElement.querySelectorAll(`[name=${fieldConfig.name}]`);
             let type = null, instance = null;
 
             if (queryResult.length == 0) {
-                throw new Error(`Element ${element.name} not found`);
+                throw new Error(`Element ${fieldConfig.name} not found`);
             } else if (queryResult.length == 1) {
                 type = queryResult[0].type; // Use the type of field
             } else {
@@ -64,7 +64,7 @@ class DynamicForm {
             if (type == null || !this.elementToClassMapping[type]) {
                 type = 'default';
             }
-            instance = new this.elementToClassMapping[type](element, self);
+            instance = new this.elementToClassMapping[type](fieldConfig, self);
             this.entities.set(instance.name, instance);
         });
 
