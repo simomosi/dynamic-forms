@@ -71,7 +71,7 @@ class DynamicForm {
         // Init fields
         formConfiguration.init.forEach(initRule => {
             let field = initRule.name;
-            let data = initRule.data;
+            let data = this.fetchAllParameters(initRule);
             self.manualUpdate(data, field);
         });
     }
@@ -124,9 +124,9 @@ class DynamicForm {
      * @return an object merging sender data and additional data
      */
     fetchAllParameters(rule) {
-        let params = {};
         let subjectName = rule.name;
         let subjectValue = this.getField(subjectName).get();
+        let params = {};
         params[subjectName] = subjectValue;
         // Fetch additional data from the form
         if (rule.additionalData) {

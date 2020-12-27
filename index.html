@@ -103,15 +103,15 @@
             'name': 'fieldName',
             'update': [],
             'additionalData': [], // Array of field names
-            'externalData': (data, subjectName) => {} // Function which returns a json of data
+            'externalData': (data, subjectName) => { } // Function which returns a json of data
         };
 
         // Debug info
         let initTemplate = {
             'name': 'fieldName',
-            'data': {}
+            'additionalData': [], // Array of field names
+            'externalData': (data, subjectName) => { } // Function which returns a json of data
         };
-
 
         // Debug info
         let fieldsTemplate = {
@@ -130,7 +130,7 @@
             'behavior': {
                 'clear': (self) => { }, // Clear field from its content
                 'beforeUpdate': (self, data, subjectName) => { return true; }, // Executed before the remote call. Return false to block the update
-                'updateStatus': (self, data, subjectName) => {},
+                'updateStatus': (self, data, subjectName) => { },
                 'afterUpdate': (self, data, subjectName) => { } // Executed after the remote call
             },
             'ext': {
@@ -243,7 +243,7 @@
                         'name': 'post',
                         'update': ['comment'],
                         'additionalData': ['user', 'contact', 'vehicle1', 'vehicle2', 'vehicle3'],
-                        'externalData': (data, subjectName) => { return {'timestamp': new Date()}}
+                        'externalData': (data, subjectName) => { return { 'timestamp': new Date() } }
                     },
                     {
                         'name': 'album',
@@ -251,7 +251,11 @@
                     },
                 ],
                 'init': [
-                    { 'name': 'user', 'data': {} }
+                    {
+                        'name': 'user',
+                        'additionalData': ['contact'],
+                        'externalData': (data, subjectName) => { return { 'timestamp': new Date() }; }
+                    }
                 ]
             }]
         };
