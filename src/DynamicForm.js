@@ -46,7 +46,6 @@ class DynamicForm {
         self.config.rules = self.config.rules ?? {};
         self.config.init = self.config.init ?? {};
 
-
         // Create fields instance
         formConfiguration.fields.forEach(fieldConfig => {
             let queryResult = self.htmlElement.querySelectorAll(`[name=${fieldConfig.name}]`);
