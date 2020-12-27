@@ -84,7 +84,7 @@ class DynamicForm {
         let subject = this.getField(subjectName);
         let subjectValue = subject.get();
         if (this.debug) {
-            console.log(`> [${subjectName}] Changed. Notifying observers...`);
+            console.log(`\n${new Date()}> [${subjectName}] Changed. Notifying observers...`);
         }
         if (subjectValue && this.config.behavior.beforeUpdate) { // Check if notify must be aborted (only if selected value is defined)
             let beforeUpdateResult = this.config.behavior.beforeUpdate(subjectName);
@@ -94,7 +94,7 @@ class DynamicForm {
         }
         let updatePromises = [];
         this.config.rules // Todo: use data structure for best performance
-            .filter((e) => { return e.change === subjectName; })
+            .filter((e) => { return e.name === subjectName; })
             .forEach(rule => {
                 // Update
                 let params = this.fetchAllParameters(rule);
@@ -125,7 +125,7 @@ class DynamicForm {
      */
     fetchAllParameters(rule) {
         let params = {};
-        let subjectName = rule.change;
+        let subjectName = rule.name;
         let subjectValue = this.getField(subjectName).get();
         params[subjectName] = subjectValue;
         // Fetch additional data from the form
@@ -152,7 +152,7 @@ class DynamicForm {
     async clearCascade(currentSubject, visited = []) {
         visited.push(currentSubject)
         this.config.rules
-            .filter((e) => { return e.change === currentSubject })
+            .filter((e) => { return e.name === currentSubject })
             .forEach(rule => {
                 rule.update.forEach(observer => {
                     if (!visited.includes(observer)) {

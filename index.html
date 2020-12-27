@@ -98,18 +98,20 @@
             'init': [] // Collection of field ids
         };
 
+        // Debug info
+        let ruleTemplate = {
+            'name': 'fieldName',
+            'update': [],
+            'additionalData': [], // Array of field names
+            'externalData': (data, subjectName) => {} // Function which returns a json of data
+        };
+
+        // Debug info
         let initTemplate = {
             'name': 'fieldName',
             'data': {}
         };
 
-        // Debug info
-        let ruleTemplate = {
-            'change': 'fieldName',
-            'update': [],
-            'additionalData': [], // Array of field names
-            'externalData': (data, subjectName) => {} // Function which returns a json of data
-        };
 
         // Debug info
         let fieldsTemplate = {
@@ -234,17 +236,17 @@
                 ],
                 'rules': [
                     {
-                        'change': 'user',
+                        'name': 'user',
                         'update': ['post', 'album', 'todo'],
                     },
                     {
-                        'change': 'post',
+                        'name': 'post',
                         'update': ['comment'],
                         'additionalData': ['user', 'contact', 'vehicle1', 'vehicle2', 'vehicle3'],
                         'externalData': (data, subjectName) => { return {'timestamp': new Date()}}
                     },
                     {
-                        'change': 'album',
+                        'name': 'album',
                         'update': ['photo']
                     },
                 ],
