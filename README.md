@@ -4,7 +4,7 @@
 - [Installation](#installation)
   - [NPM/Yarn](#npmyarn)
   - [Local](#local)
-- [Examples of use and Documentation](#examples-of-use-and-documentation)
+- [Documentation and examples of use](#documentation-and-examples-of-use)
 - [Cool computer science stuff](#cool-computer-science-stuff)
 - [Contribute](#contribute)
 
@@ -24,7 +24,7 @@ Feature incoming, stay tuned!
 ## Local
 Include *dist/dynamicforms.js* in your project.
 
-# Examples of use and Documentation
+# Documentation and examples of use
 - [Minimal and serverless working example](docs/minimal-example.md)
 - Full documentation incoming. Stay tuned!
 
