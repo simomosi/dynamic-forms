@@ -26,7 +26,7 @@ Include *dist/dynamicforms.js* in your project.
 
 # Documentation and examples of use
 - [Minimal and serverless working example](docs/minimal-example.md)
-- Full documentation incoming. Stay tuned!
+- [dynamicForms module (to instantiate dynamic forms)](docs/dynamicForms.md)
 
 <!-- ## Documentation
 The approach followed is Documentation through Examples. -->
