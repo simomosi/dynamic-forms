@@ -4,9 +4,7 @@
 - [Installation](#installation)
   - [NPM/Yarn](#npmyarn)
   - [Local](#local)
-- [Examples of use](#examples-of-use)
-  - [Minimal working example (serverless)](#minimal-working-example-serverless)
-  - [Documentation](#documentation)
+- [Examples of use and Documentation](#examples-of-use-and-documentation)
 - [Cool computer science stuff](#cool-computer-science-stuff)
 - [Contribute](#contribute)
 
@@ -26,97 +24,12 @@ Feature incoming, stay tuned!
 ## Local
 Include *dist/dynamicforms.js* in your project.
 
-# Examples of use
-## Minimal working example (serverless)
-This example shows how to create a Dynamic Form with 2 dropdowns (select-option). 
+# Examples of use and Documentation
+- [Minimal and serverless working example](docs/minimal-example.md)
+- Full documentation incoming. Stay tuned!
 
-According to the *Init Rule*, the first dropdown loads its content from a remote call during the form initialization.
-
-According to the *Update Rule*, selecting a value in the first dropdown triggers the loading of the second dropdown filtered content.
-
-Here follows the code. It's ready to use!
-
-Create the form:
-```html
-<form id='jsonPlaceholder'>
-  <label for="user">Users</label>
-  <select id="user" name='user'>
-      <option value="" selected> </option>
-  </select>
-  <br />
-  <label for="post">Posts</label>
-  <select id="post" name='post'>
-      <option value="" selected></option>
-  </select>
-</form>
-```
-Note: both fields have no data.
-
-Import the sources (use the correct path according to your project's structure):
-```html
-<script src = './dist/dynamicforms.js'></script>
-```
-
-Write the form configuration:
-```javascript
-let formConfig = {
-  'id': 'jsonPlaceholder', // form id
-  'debug': true, // prints some info
-  'fields': [ // list of involved fields
-    {
-      'name': 'user', // field name
-      'fetch': {
-        // function to generate an url for remote calls
-        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/users`,
-      },
-      'behavior': {
-        // function to postprocess data and adapt it according to our needs
-        'postProcessData': (htmlElement, data) => {
-          return data
-          .map(x => { return { 'value': x.id, 'text': x.username }; })
-          .sort((a, b) => { return a.text > b.text });
-        }
-      }
-    },
-    {
-      'name': 'post',
-      'fetch': {
-        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`,
-      },
-      'behavior': {
-        'postProcessData': (htmlElement, data) => {
-          return data
-          .map(x => { return { 'value': x.id, 'text': x.title }; });
-        }
-      }
-    }
-  ],
-  'rules': [ // list of Update Rules 
-    // a change on 'user' updates the 'post' field content
-    {
-      'name': 'user',
-      'update': ['post'],
-    }
-  ],
-  'init': [ // list of Init Rules
-    // the 'user' field loads its content remotely during the form initialization
-    {
-      'name': 'user',
-    }
-  ]
-};
-```
-
-Initialize the DynamicForm:
-```javascript
-let form = dynamicForms.makeMultipleForms(formConfig);
-```
-
-**Done**. Easy.
-Now the *user* field initializes itself with a remote call (according to the *Init Rule*); on every changes it updates the *post* field data (according to the *Update Rule*).
-
-## Documentation
-The approach followed is Documentation through Examples.
+<!-- ## Documentation
+The approach followed is Documentation through Examples. -->
 
 # Cool computer science stuff
 - DynamicForms is a particular instance of the **Observer Design Pattern** in which Observers and Subjects are all of the same type: html elements
