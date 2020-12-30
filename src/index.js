@@ -9,7 +9,7 @@ let dynamicForms = (function () {
 
     /**
      * Method to instantiate a single Dynamic Form
-     * @param {JSON} formConfiguration the form configuration in JSON format
+     * @param {object} formConfiguration the form configuration
      * @returns Instance of a Dynamic Form
      */
     function _makeForm(formConfiguration) {
@@ -20,7 +20,7 @@ let dynamicForms = (function () {
 
     /**
      * Method to instantiate multiple Dynamic Forms
-     * @param {JSON} formsConfigCollection a JSON containing an array of forms configurations
+     * @param {object[]} formsConfigCollection an array of objects representing forms configurations
      * @returns A collection of instances of Dynamic Forms
      */
     function _makeMultipleForms(formsConfigCollection) {
@@ -45,7 +45,10 @@ let dynamicForms = (function () {
      */
     function _getField(formId, fieldName) {
         let form = _getField(formId);
-        return form.getField(fieldName);
+        if (form) {
+            return form.getField(fieldName);
+        }
+        return null;
     }
 
     /**
