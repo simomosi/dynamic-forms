@@ -85,33 +85,31 @@ class DynamicForm {
         if (this.debug) {
             console.log(`*\n${new Date()}\n> [${subjectName}] Changed. Notifying observers...`);
         }
-        let beforeUpdateResult = null;
-        if (this.config.behavior.beforeUpdate) { // Check if notify must be aborted (only if selected value is defined)
-            beforeUpdateResult = this.config.behavior.beforeUpdate(subjectName);
+        if (subjectValue && this.config.behavior.beforeUpdate) { // Check if notify must be aborted (only if selected value is defined)
+            let beforeUpdateResult = this.config.behavior.beforeUpdate(subjectName);
+            if (beforeUpdateResult === false) {
+                return;
+            }
         }
-
         let updatePromises = [];
-        if (beforeUpdateResult !== false) {
-            this.config.rules
-                .filter((e) => { return e.name === subjectName; })
-                .forEach(rule => {
-                    // Update
-                    let params = this.fetchAllParameters(rule);
-                    rule.update.forEach(observerName => {
-                        if (observerName === subjectName) { // This prevents loop
-                            return;
-                        }
-                        if (this.debug)
-                            console.log(`> > [${subjectName}] ==update==> [${this.getField(observerName).name}]`);
-                        let observer = this.getField(observerName);
-                        let observerPromise = observer.update(params, subjectName);
-                        updatePromises.push(observerPromise);
-                        // Clear
-                        this.clearCascade(observerName);
-                    });
+        this.config.rules // Todo: use data structure for best performance
+            .filter((e) => { return e.name === subjectName; })
+            .forEach(rule => {
+                // Update
+                let params = this.fetchAllParameters(rule);
+                rule.update.forEach(observerName => {
+                    if (observerName === subjectName) { // This prevents loop
+                        return;
+                    }
+                    if (this.debug)
+                        console.log(`> > [${subjectName}] ==update==> [${this.getField(observerName).name}]`);
+                    let observer = this.getField(observerName);
+                    let observerPromise = observer.update(params, subjectName);
+                    updatePromises.push(observerPromise);
+                    // Clear
+                    this.clearCascade(observerName);
                 });
-        }
-
+            });
         if (this.config.behavior.afterUpdate) {
             Promise.allSettled(updatePromises).then((values) => {
                 this.config.behavior.afterUpdate(subjectName);
