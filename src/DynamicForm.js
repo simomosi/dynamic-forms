@@ -8,7 +8,7 @@ import DynamicRadio from './DynamicRadio.js';
 */
 class DynamicForm {
 
-    /** @param {object} config the form configuration */
+    /** @param {JSON} config the form configuration */
     config;
 
     /** @param {HTMLElement} htmlElement the actual html element returned by getElementById */
