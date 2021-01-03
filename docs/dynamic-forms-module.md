@@ -20,7 +20,7 @@ Module import example:
 
 Module use example:
 ```javascript
-let form = dynamicForms.makeMultipleForms(formConfig);
+let form = dynamicForms.makeForm(formConfig);
 ```
 ## makeForm (formConfiguration)
 Istantiates a DynamicForm.
