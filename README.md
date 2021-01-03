@@ -26,7 +26,8 @@ Include *dist/dynamicforms.js* in your project.
 
 # Documentation and examples of use
 - [Minimal and serverless working example](docs/minimal-example.md)
-- [dynamicForms module (to instantiate dynamic forms)](docs/dynamicForms.md)
+- [Module dynamicForms (to instantiate dynamic forms)](docs/dynamicForms.md)
+- [Form configuration](docs/configuration.md)
 
 # Cool computer science stuff
 - DynamicForms is a particular instance of the **Observer Design Pattern** in which Observers and Subjects are all of the same type: html elements
