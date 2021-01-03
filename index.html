@@ -99,7 +99,7 @@
                         'fetch': {
                             'makeUrl': (data) => `https://jsonplaceholder.typicode.com/users`,
                         },
-                        'behavior': {
+                        'ext': {
                             'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.username }; }).sort((a, b) => { return a.text > b.text });
                             }
@@ -110,7 +110,7 @@
                         'fetch': {
                             'makeUrl': (data) => `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`,
                         },
-                        'behavior': {
+                        'ext': {
                             'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.title }; });
                             }
@@ -121,7 +121,7 @@
                         'fetch': {
                             'makeUrl': (data) => `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`,
                         },
-                        'behavior': {
+                        'ext': {
                             'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.name }; });
                             }
@@ -132,7 +132,7 @@
                         'fetch': {
                             'makeUrl': (data) => `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`,
                         },
-                        'behavior': {
+                        'ext': {
                             'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.title }; });
                             }
@@ -143,7 +143,7 @@
                         'fetch': {
                             'makeUrl': (data) => `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`,
                         },
-                        'behavior': {
+                        'ext': {
                             'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.url }; });
                             }
@@ -154,7 +154,7 @@
                         'fetch': {
                             'makeUrl': (data) => `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`,
                         },
-                        'behavior': {
+                        'ext': {
                             'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.title }; });
                             }
