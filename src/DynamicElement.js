@@ -6,7 +6,7 @@ class DynamicElement {
     /** @param {JSON} config the element configuration */
     config;
 
-    /** @param {HTMLElement} htmlElement the HTML Element returned by querySelector */
+    /** @param {node | NodeList} htmlElement the HTML Element returned by querySelectorAll. If more than one exists, the element is a NodeList */
     htmlElement;
 
     /** @param {string} name the element name */
