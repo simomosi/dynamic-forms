@@ -11,7 +11,7 @@ class DynamicForm {
     /** @param {JSON} config the form configuration */
     config;
 
-    /** @param {HTMLElement} htmlElement the actual html element returned by getElementById */
+    /** @param {node} htmlElement the actual html element returned by getElementById */
     htmlElement;
 
     /** @param {Map<String, DynamicElement>} entities a collection of form's DynamicElements */
