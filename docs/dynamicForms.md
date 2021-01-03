@@ -1,5 +1,17 @@
+# Table of Contents <!-- omit in toc -->
+
+- [DynamicForms module](#dynamicforms-module)
+  - [makeForm (formConfiguration)](#makeform-formconfiguration)
+  - [makeMultipleForms (formsConfigCollection)](#makemultipleforms-formsconfigcollection)
+  - [getForm (id)](#getform-id)
+  - [getField (formId, fieldName)](#getfield-formid-fieldname)
+
 # DynamicForms module
 This document describes the **dynamicForms** module properties.
+
+This module let you instantiate and work easily with the whole DynamicForms library.
+
+You only need to use properties declared in this module and nothing else.
 
 Module import example:
 ```html
@@ -10,7 +22,7 @@ Module use example:
 ```javascript
 let form = dynamicForms.makeMultipleForms(formConfig);
 ```
-## makeForm(formConfiguration)
+## makeForm (formConfiguration)
 Istantiates a DynamicForm.
 
 Parameters
@@ -19,7 +31,7 @@ Parameters
 Returns
 - {`DynamicForm`} a DynamicForm instance
 
-## makeMultipleForms(formsConfigCollection)
+## makeMultipleForms (formsConfigCollection)
 Istantiates multiple DynamicForm.
 
 Parameters
@@ -28,7 +40,7 @@ Parameters
 Returns
 - {`DynamicForm[]`} a collection of DynamicForm instances
 
-## getForm(id)
+## getForm (id)
 Returns a DynamicForm instance corresponding to the form id, if it exists.
 
 Parameters
@@ -37,7 +49,7 @@ Parameters
 Returns
 - {`DynamicForm | null`} the DynamicForm instance or null if it does not exists
 
-## getField(formId, fieldName)
+## getField (formId, fieldName)
 Returns a DynamicElement instance inside the specified DynamicForm, if it exists.
 
 Parameters
