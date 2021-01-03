@@ -19,11 +19,15 @@
   - [externalData (data, subjectName) [optional]](#externaldata-data-subjectname-optional-1)
 
 # Form configuration
-This document describes the whole form configuration with focus on each property.
+This document describes the complete form configuration with focus on each property.
 
 The configuration is written *client side* and passed to the correct method of *dynamicForms module* ([link to doc](./dynamicForms.md)) for the form instantiation.
 
-Here's the whole form configuration:
+Legend:
+- **Subject**: the subject is the entity who changed;
+- **Observer**: the observer is an entity who is notified by the subject change.
+
+Here's the complete form configuration:
 
 ```javascript
 let formConfiguration = {
