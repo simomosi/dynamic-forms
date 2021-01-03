@@ -107,32 +107,55 @@ class DynamicDropdown extends DynamicElement {
                     return response.json();
                 throw response;
             }).then(data => { // Postprocess data
-                if (self.config.behavior.postProcessData)
-                    return self.config.behavior.postProcessData(self.htmlElement, data);
-                return data;
+                return this.postProcessData(data);
             }).then(data => { // Save options
-                if (self.config.behavior.saveData)
-                    return self.config.behavior.saveData(self.htmlElement, data);
-                // Standard
-                self.clear();
-                // Add empty option
-                if (!self.htmlElement.querySelector('option:not([value]), option[value=""]')) {
-                    let emptyOption = document.createElement("option");
-                    emptyOption.text = '';
-                    emptyOption.value = '';
-                    self.htmlElement.add(emptyOption);
-                }
-                // Add other options
-                data.forEach(item => {
-                    let option = document.createElement("option");
-                    option.text = item.text;
-                    option.value = item.value;
-                    self.htmlElement.add(option);
-                });
-                return data;
+                return this.saveData(data);
             }).catch(error => {
                 console.error(error); // tmp
             });
+    }
+
+    /**
+     * Method to filter data returned by the remote call
+     * @param {JSON} data data to send with the http request
+     */
+    postProcessData(data) {
+        // Custom
+        if (this.config.ext.postProcessData) {
+            return this.config.ext.postProcessData(this.htmlElement, data);
+        }
+        // Standard (no operation)
+        return data;
+    }
+
+    /**
+    * Method to save data returned by the remote call and filtered with postProcessData method
+    * @param {JSON} data data to send with the http request
+    *
+    * @see postProcessData
+    */
+    saveData(data) {
+        // Custom
+        if (this.config.ext.saveData) {
+            return this.config.ext.saveData(this.htmlElement, data);
+        }
+        // Standard
+        this.clear();
+        // Add empty option
+        if (!this.htmlElement.querySelector('option:not([value]), option[value=""]')) {
+            let emptyOption = document.createElement("option");
+            emptyOption.text = '';
+            emptyOption.value = '';
+            this.htmlElement.add(emptyOption);
+        }
+        // Add other options
+        data.forEach(item => {
+            let option = document.createElement("option");
+            option.text = item.text;
+            option.value = item.value;
+            this.htmlElement.add(option);
+        });
+        return data;
     }
 
 }
