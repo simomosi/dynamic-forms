@@ -1,11 +1,11 @@
 # Table of Contents <!-- omit in toc -->
 - [Field configuration](#field-configuration)
-  - [name](#name)
-  - [io [optional]](#io-optional)
-  - [io.event [optional]](#ioevent-optional)
-  - [io.get (htmlElement) [optional]](#ioget-htmlelement-optional)
-  - [io.set (htmlElement) [optional]](#ioset-htmlelement-optional)
-  - [fetch [optional]](#fetch-optional)
+  - [name [required]](#name-required)
+  - [io](#io)
+  - [io.event](#ioevent)
+  - [io.get (htmlElement)](#ioget-htmlelement)
+  - [io.set (htmlElement)](#ioset-htmlelement)
+  - [fetch [required*]](#fetch-required)
 
 # Field configuration
 This document describes a single field configuration.
@@ -42,26 +42,26 @@ let fieldConfiguration = {
 };
 ```
 
-## name
+## name [required]
 The html element name.
 
-## io [optional]
+## io
 Object which groups properties related to field input and output.
 
 Default value: `change`.
 
-## io.event [optional]
+## io.event
 The html event which symbolize the Subject's status change (e.g. *change* for a dropdown, *click* for a checkbox...).
 
 It is used to put an event listener which will notify Subject's Observers.
 
-## io.get (htmlElement) [optional]
+## io.get (htmlElement)
 Function to fetch the html element's value. Useful for custom html elements.
 
-## io.set (htmlElement) [optional]
+## io.set (htmlElement)
 Function to set the html element's value. Useful for custom html elements.
 
-## fetch [optional]
+## fetch [required*]
 Work in progress
 
 <!-- ## behavior [optional] -->
