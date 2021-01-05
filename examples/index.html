@@ -9,12 +9,13 @@
 
 <body>
     <div class="container">
-        <div class="h1">Test
+        <div class="h1">DynamicForms sandbox
             <div id="spinner" class="spinner-border" role="status" style="display: none;">
                 <span class="sr-only">Loading...</span>
             </div>
         </div>
-        <p>DynamicForms test file</p>
+        <p>DynamicForms sandbox: test fields interactions!</p>
+        <p>Tip: open developer tools and keep an aye on console/network tabs.</p>
         <form id='jsonPlaceholder'>
             <label for="user">Users</label>
             <select id="user" name='user'>
@@ -50,21 +51,40 @@
                 <option value="" selected></option>
             </select>
 
-            <div class="mt-4">
-                <input type="radio" id="contactChoice1" name="contact" value="email">
-                <label for="contactChoice1">Email</label>
-                <input type="radio" id="contactChoice2" name="contact" value="phone">
-                <label for="contactChoice2">Phone</label>
-                <input type="radio" id="contactChoice3" name="contact" value="mail">
-                <label for="contactChoice3">Mail</label>
-            </div>
-            <div class="mt-4">
-                <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" checked>
-                <label for="vehicle1"> I have a bike</label><br>
-                <input type="checkbox" id="vehicle2" name="vehicle2" value="Car">
-                <label for="vehicle2"> I have a car</label><br>
-                <input type="checkbox" id="vehicle3" name="vehicle3" value="Boat">
-                <label for="vehicle3"> I have a boat</label><br>
+            <p class="mt-4">Works with radio buttons and checkboxes too!</p>
+            <p>Watch the 'rules' js object to know where their value is used.</p>
+            <div class="row mt-4">
+                <div class="col-2">
+                    Radio button:
+                    <div class="form-check">
+                        <input type="radio" id="contactChoice1" name="contact" value="email" class="form-check-input">
+                        <label for="contactChoice1" class="form-check-label">Email</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" id="contactChoice2" name="contact" value="phone" class="form-check-input">
+                        <label for="contactChoice2" class="form-check-label">Phone</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="radio" id="contactChoice3" name="contact" value="mail" class="form-check-input">
+                        <label for="contactChoice3" class="form-check-label">Mail</label>
+                    </div>
+                </div>
+                <div class="col-4">
+                    Checkboxes:
+                    <div class="form-check">
+                        <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" class="form-check-input"
+                            checked>
+                        <label for="vehicle1" class="form-check-label"> I have a bike</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="vehicle2" name="vehicle2" value="Car" class="form-check-input">
+                        <label for="vehicle2" class="form-check-label"> I have a car</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="vehicle3" name="vehicle3" value="Boat" class="form-check-input">
+                        <label for="vehicle3" class="form-check-label"> I have a boat</label>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
@@ -80,10 +100,10 @@
         crossorigin="anonymous"></script>
 
     <!-- Single file build (prod mode) -->
-    <!-- <script src = './dist/dynamicforms.js'></script> -->
+    <!-- <script src = '../dist/dynamicforms.js'></script> -->
 
     <script type="module" defer>
-        import './src/index.js'; // Original src (dev mode)
+        import '../src/index.js'; // Original src (dev mode)
 
         let config = {
             'forms': [{
