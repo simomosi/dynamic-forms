@@ -6,6 +6,11 @@
   - [io.get (htmlElement)](#ioget-htmlelement)
   - [io.set (htmlElement)](#ioset-htmlelement)
   - [fetch [required*]](#fetch-required)
+  - [fetch.method](#fetchmethod)
+  - [fetch.makeUrl (data) [required*]](#fetchmakeurl-data-required)
+  - [fetch.makeBody (data)](#fetchmakebody-data)
+  - [fetch.fullFetchConfig (data)](#fetchfullfetchconfig-data)
+  - [behavior](#behavior)
 
 # Field configuration
 This document describes a single field configuration.
@@ -62,7 +67,48 @@ Function to fetch the html element's value. Useful for custom html elements.
 Function to set the html element's value. Useful for custom html elements.
 
 ## fetch [required*]
-Work in progress
+Object which groups properties related to remote calls.
 
-<!-- ## behavior [optional] -->
+**Available only for *DynamicDropdown* instances** (select-option like fields).
+
+**Required only if the dropdown element is an observer** (it will be updated for every observed subject change), unless you specify a new *updateStatus* function.
+
+## fetch.method
+It's the *http request method* (or verb).
+
+Default value: *GET*
+
+## fetch.makeUrl (data) [required*]
+A function to generate the url to make the remote call to.
+
+Parameters
+- {`object`} `data`: data obtained from additionaData and externalData functions in Update Rule Config
+
+Returns
+- {`string`} The remote call url
+-
+## fetch.makeBody (data)
+A function to generate the remote call body in the desired method (e.g. JSON.stringify, FormData...).
+
+It's not necessary if the remote call uses the GET request method (parameters need to be placed in the url).
+
+Parameters
+- {`object`} `data`: data obtained from additionaData and externalData functions in Update Rule Config
+
+Returns
+- {`object`} The remote call body
+
+## fetch.fullFetchConfig (data)
+A function to generate the complete Fetch configuration for remote calls.
+
+If this function is defined, the updateStatus default function will ignore *fetch.method* property and *fetch.makeBody* function.
+
+Parameters
+- {`object`} `data`: data obtained from additionaData and externalData functions in Update Rule Config
+
+Returns
+- {`object`} The complete Fetch configuration
+
+## behavior
+Work in progress...
 <!-- ## ext [optional] -->
