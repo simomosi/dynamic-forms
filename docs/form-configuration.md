@@ -1,22 +1,22 @@
 # Table of Contents <!-- omit in toc -->
 
 - [Form configuration](#form-configuration)
-  - [id](#id)
-  - [debug [optional]](#debug-optional)
-  - [behavior [optional]](#behavior-optional)
-  - [behavior.beforeUpdate (subjectName) [optional]](#behaviorbeforeupdate-subjectname-optional)
-  - [behavior.afterUpdate (subjectName) [optional]](#behaviorafterupdate-subjectname-optional)
-  - [fields](#fields)
-  - [rules](#rules)
-  - [init [optional]](#init-optional)
+  - [id [required]](#id-required)
+  - [debug](#debug)
+  - [behavior](#behavior)
+  - [behavior.beforeUpdate (subjectName)](#behaviorbeforeupdate-subjectname)
+  - [behavior.afterUpdate (subjectName)](#behaviorafterupdate-subjectname)
+  - [fields [required]](#fields-required)
+  - [rules [required]](#rules-required)
+  - [init](#init)
 - [Update Rule configuration](#update-rule-configuration)
-  - [name](#name)
-  - [additionalData [optional]](#additionaldata-optional)
-  - [externalData (data, subjectName) [optional]](#externaldata-data-subjectname-optional)
+  - [name [required]](#name-required)
+  - [additionalData](#additionaldata)
+  - [externalData (data, subjectName)](#externaldata-data-subjectname)
 - [Init Rule configuration](#init-rule-configuration)
-  - [name](#name-1)
-  - [additionalData [optional]](#additionaldata-optional-1)
-  - [externalData (data, subjectName) [optional]](#externaldata-data-subjectname-optional-1)
+  - [name [required]](#name-required-1)
+  - [additionalData](#additionaldata-1)
+  - [externalData (data, subjectName)](#externaldata-data-subjectname-1)
 
 # Form configuration
 This document describes the complete form configuration with focus on each property.
@@ -43,16 +43,16 @@ let formConfiguration = {
 };
 ```
 
-## id
+## id [required]
 The form id. Just the plain text, no '#'.
 
-## debug [optional]
+## debug
 A flag to activate the debug mode.
 
-## behavior [optional]
+## behavior
 Object which groups properties related to form behavior (e.g. what to do before or after an update event).
 
-## behavior.beforeUpdate (subjectName) [optional]
+## behavior.beforeUpdate (subjectName)
 Method called after a subject registers an update, but before triggering the update on the whole form.
 
 Useful to show a loader during the fields update.
@@ -63,7 +63,7 @@ Parameters
 Returns
 - {`bool`} *false* to abort the update, *true* otherwise
 
-## behavior.afterUpdate (subjectName) [optional]
+## behavior.afterUpdate (subjectName)
 Method called after the form update, and in particular after all involved form's fields have completed their update.
 
 Useful to hide a loader after the fields update.
@@ -74,21 +74,21 @@ Parameters
 Returns
 - {`void`}
 
-## fields
+## fields [required]
 A collection of Fields configurations.
 
 Include here all fields involved in the DynamicForm behavior (get/set/update operations). Fields with no dynamic behavior may not be included.
 
 See [Field configuration](#Field-configuration).
 
-## rules
+## rules [required]
 A collection of Update Rules configurations.
 
 Include here all rules like "if field A changes, trigger the update of fields B and C".
 
 See [Update Rule configuration](#Update-Rule-configuration).
 
-## init [optional]
+## init
 A collection of Init Rules configurations.
 
 Include here all fields which will be updated during the DynamicForm instantiation.
@@ -105,13 +105,13 @@ let updateRuleConfiguration = {
 };
 ```
 
-## name
+## name [required]
 The field name inside the form.
 
-## additionalData [optional]
+## additionalData
 A collection of other fields name whose value will be automatically fetched and used in the field's update function.
 
-## externalData (data, subjectName) [optional]
+## externalData (data, subjectName)
 A function to collect other data used in the update function but external to the form (e.g. a timestamp).
 
 Parameters
@@ -130,11 +130,11 @@ let initRuleConfiguration = {
 };
 ```
 
-## name
+## name [required]
 The field name inside the form. It's the same as the analogous property in [Update Rule configuration](#Update-Rule-configuration).
 
-## additionalData [optional]
+## additionalData
 It's the same as the analogous property in [Update Rule configuration](#Update-Rule-configuration).
 
-## externalData (data, subjectName) [optional]
+## externalData (data, subjectName)
 It's the same as the analogous property in [Update Rule configuration](#Update-Rule-configuration).
