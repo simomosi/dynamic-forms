@@ -15,75 +15,113 @@
             </div>
         </div>
         <p>DynamicForms sandbox: test fields interactions!</p>
-        <p>Tip: open developer tools and keep an aye on console/network tabs.</p>
+        <p>Tip: open developer tools and keep an eye on console/network tabs.</p>
+
         <form id='jsonPlaceholder'>
-            <label for="user">Users</label>
-            <select id="user" name='user'>
-                <option value="" selected> </option>
-            </select>
-            <br />
-            <label for="post">Posts</label>
-            <select id="post" name='post'>
-                <option value="" selected></option>
-            </select>
-            <br />
+            <p class="mt-4">Dynamic Dropdown</p>
+            <div class="row">
+                <div class="col-1">
+                    <label for="user">Users</label>
+                </div>
+                <div class="col-5">
+                    <select id="user" name='user'>
+                        <option value="" selected> </option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-1">
+                    <label for="post">Posts</label>
+                </div>
+                <div class="col-5">
+                    <select id="post" name='post'>
+                        <option value="" selected></option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-1">
+                    <label for="comment">Comments</label>
+                </div>
+                <div class="col-5">
+                    <select id="comment" name='comment'>
+                        <option value="" selected></option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-1">
+                    <label for="album">Albums</label>
+                </div>
+                <div class="col-5">
+                    <select id="album" name='album'>
+                        <option value="" selected></option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-1">
+                    <label for="photo">Photo</label>
+                </div>
+                <div class="col-5">
+                    <select id="photo" name='photo'>
+                        <option value="" selected></option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-1">
+                <div class="col-1">
+                    <label for="todo">Todo</label>
+                </div>
+                <div class="col-5">
+                    <select id="todo" name='todo'>
+                        <option value="" selected></option>
+                    </select>
+                </div>
+            </div>
 
-            <label for="comment">Comments</label>
-            <select id="comment" name='comment'>
-                <option value="" selected></option>
-            </select>
-            <br />
-
-            <label for="album">Albums</label>
-            <select id="album" name='album'>
-                <option value="" selected></option>
-            </select>
-            <br />
-
-            <label for="photo">Photo</label>
-            <select id="photo" name='photo'>
-                <option value="" selected></option>
-            </select>
-            <br />
-
-            <label for="todo">Todo</label>
-            <select id="todo" name='todo'>
-                <option value="" selected></option>
-            </select>
-
-            <p class="mt-4">Works with radio buttons and checkboxes too!</p>
-            <p>Watch the 'rules' js object to know where their value is used.</p>
             <div class="row mt-4">
                 <div class="col-2">
-                    Radio button:
+                    <p class="mt-4">Dynamic Checkbox</p>
                     <div class="form-check">
-                        <input type="radio" id="contactChoice1" name="contact" value="email" class="form-check-input">
-                        <label for="contactChoice1" class="form-check-label">Email</label>
+                        <input type="checkbox" id="visibility-checkbox" name="visibility-checkbox"
+                            class="form-check-input" checked>
+                        <label for="visibility-checkbox" class="form-check-label"> Field Visible </label>
                     </div>
                     <div class="form-check">
-                        <input type="radio" id="contactChoice2" name="contact" value="phone" class="form-check-input">
-                        <label for="contactChoice2" class="form-check-label">Phone</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="radio" id="contactChoice3" name="contact" value="mail" class="form-check-input">
-                        <label for="contactChoice3" class="form-check-label">Mail</label>
+                        <input type="checkbox" id="readonly-checkbox" name="readonly-checkbox" class="form-check-input">
+                        <label for="readonly-checkbox" class="form-check-label"> Field Readonly </label>
                     </div>
                 </div>
                 <div class="col-4">
-                    Checkboxes:
+                    <p class="mt-4">Dynamic Input</p>
+                    <input type="text" class="form-control" name="checkbox-target-field"
+                        placeholder="Visible? Readonly?" />
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-2">
+                    <p class="mt-4">Dynamic Radio Button</p>
+                    Rows number:
                     <div class="form-check">
-                        <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" class="form-check-input"
+                        <input type="radio" id="rows-radio-1" name="rows-radio" value="1" class="form-check-input"
                             checked>
-                        <label for="vehicle1" class="form-check-label"> I have a bike</label>
+                        <label for="rows-radio-1" class="form-check-label">1 Row</label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" id="vehicle2" name="vehicle2" value="Car" class="form-check-input">
-                        <label for="vehicle2" class="form-check-label"> I have a car</label>
+                        <input type="radio" id="rows-radio-2" name="rows-radio" value="2" class="form-check-input">
+                        <label for="rows-radio-2" class="form-check-label">2 Rows</label>
                     </div>
                     <div class="form-check">
-                        <input type="checkbox" id="vehicle3" name="vehicle3" value="Boat" class="form-check-input">
-                        <label for="vehicle3" class="form-check-label"> I have a boat</label>
+                        <input type="radio" id="rows-radio-3" name="rows-radio" value="3" class="form-check-input">
+                        <label for="rows-radio-3" class="form-check-label">3 Rows</label>
                     </div>
+                </div>
+                <div class="col-4">
+                    <p class="mt-4">Dynamic Textarea</p>
+                    <textarea class="form-control" name="radio-target-textarea" rows="1"
+                        placeholder="How many rows?"></textarea>
                 </div>
             </div>
         </form>
@@ -121,7 +159,7 @@
                         },
                         'ext': {
                             'postProcessData': (htmlElement, data) => {
-                                return data.map(x => { return { 'value': x.id, 'text': x.username }; }).sort((a, b) => { return a.text > b.text });
+                                return data.map(x => { return { 'value': x.id, 'text': x.username }; }).sort((a, b) => a.text > b.text);
                             }
                         }
                     },
@@ -132,7 +170,7 @@
                         },
                         'ext': {
                             'postProcessData': (htmlElement, data) => {
-                                return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                                return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                             }
                         }
                     },
@@ -143,7 +181,7 @@
                         },
                         'ext': {
                             'postProcessData': (htmlElement, data) => {
-                                return data.map(x => { return { 'value': x.id, 'text': x.name }; });
+                                return data.map(x => { return { 'value': x.id, 'text': x.name }; }).sort((a, b) => a.text > b.text);
                             }
                         }
                     },
@@ -154,7 +192,7 @@
                         },
                         'ext': {
                             'postProcessData': (htmlElement, data) => {
-                                return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                                return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                             }
                         }
                     },
@@ -165,7 +203,7 @@
                         },
                         'ext': {
                             'postProcessData': (htmlElement, data) => {
-                                return data.map(x => { return { 'value': x.id, 'text': x.url }; });
+                                return data.map(x => { return { 'value': x.id, 'text': x.url }; }).sort((a, b) => a.text > b.text);
                             }
                         }
                     },
@@ -176,21 +214,47 @@
                         },
                         'ext': {
                             'postProcessData': (htmlElement, data) => {
-                                return data.map(x => { return { 'value': x.id, 'text': x.title }; });
+                                return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                             }
                         }
                     },
                     {
-                        'name': 'contact'
+                        'name': 'visibility-checkbox'
                     },
                     {
-                        'name': 'vehicle1'
+                        'name': 'readonly-checkbox'
                     },
                     {
-                        'name': 'vehicle2'
+                        'name': 'checkbox-target-field',
+                        'behavior': {
+                            'updateStatus': (htmlElement, data, subjectName) => {
+                                let value = data[subjectName];
+                                switch (subjectName) {
+                                    case 'visibility-checkbox':
+                                        if (value === true) {
+                                            htmlElement.style.display = "block";
+                                        } else {
+                                            htmlElement.style.display = "none";
+                                        }
+                                        break;
+                                    case 'readonly-checkbox':
+                                        htmlElement.readOnly = value;
+                                        break;
+                                }
+                            },
+                        },
                     },
                     {
-                        'name': 'vehicle3'
+                        'name': 'rows-radio'
+                    },
+                    {
+                        'name': 'radio-target-textarea',
+                        'behavior': {
+                            'updateStatus': (htmlElement, data, subjectName) => {
+                                let value = parseInt(data[subjectName]);
+                                htmlElement.rows = value;
+                            },
+                        },
                     }
                 ],
                 'rules': [
@@ -201,18 +265,29 @@
                     {
                         'name': 'post',
                         'update': ['comment'],
-                        'additionalData': ['user', 'contact', 'vehicle1', 'vehicle2', 'vehicle3'],
+                        'additionalData': ['user'],
                         'externalData': (data, subjectName) => { return { 'timestamp': new Date() } }
                     },
                     {
                         'name': 'album',
                         'update': ['photo']
                     },
+                    {
+                        'name': 'visibility-checkbox',
+                        'update': ['checkbox-target-field']
+                    },
+                    {
+                        'name': 'readonly-checkbox',
+                        'update': ['checkbox-target-field']
+                    },
+                    {
+                        'name': 'rows-radio',
+                        'update': ['radio-target-textarea']
+                    }
                 ],
                 'init': [
                     {
                         'name': 'user',
-                        'additionalData': ['contact'],
                         'externalData': (data, subjectName) => { return { 'timestamp': new Date() }; }
                     }
                 ]
