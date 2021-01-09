@@ -1,5 +1,8 @@
 # Table of Contents <!-- omit in toc -->
 - [Dynamic Forms](#dynamic-forms)
+    - [Select with variable options](#select-with-variable-options)
+    - [Visibility changes depending on fields' state](#visibility-changes-depending-on-fields-state)
+    - [Updating rules](#updating-rules)
   - [Main features](#main-features)
 - [Installation](#installation)
   - [NPM/Yarn](#npmyarn)
@@ -9,7 +12,19 @@
 - [Contribute](#contribute)
 
 # Dynamic Forms
-DynamicForms is a js library that handles all the interaction with forms with dynamic content (e.g. select with variable options, visibility changes depending on fields' state, updating rules...).
+DynamicForms is a javascript library that handles all the interaction with forms with dynamic content in an easy and fast way.
+
+### Select with variable options
+
+![Dynamic Dropdown example gif](./docs/imgs/dynamic-dropdown.gif)
+
+### Visibility changes depending on fields' state
+
+![Dynamic Checkbox example gif](./docs/imgs/dynamic-checkbox.gif)
+
+### Updating rules
+
+![Dynamic Radio example gif](./docs/imgs/dynamic-radio.gif)
 
 ## Main features
 - **Easy to use**: DynamicForms works in a declarative way; no code, just a simple configuration!
