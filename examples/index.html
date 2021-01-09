@@ -157,7 +157,7 @@
                         'fetch': {
                             'makeUrl': (data) => `https://jsonplaceholder.typicode.com/users`,
                         },
-                        'ext': {
+                        'dropdown': {
                             'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.username }; }).sort((a, b) => a.text > b.text);
                             }
@@ -168,7 +168,7 @@
                         'fetch': {
                             'makeUrl': (data) => `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`,
                         },
-                        'ext': {
+                        'dropdown': {
                             'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                             }
@@ -179,7 +179,7 @@
                         'fetch': {
                             'makeUrl': (data) => `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`,
                         },
-                        'ext': {
+                        'dropdown': {
                             'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.name }; }).sort((a, b) => a.text > b.text);
                             }
@@ -190,7 +190,7 @@
                         'fetch': {
                             'makeUrl': (data) => `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`,
                         },
-                        'ext': {
+                        'dropdown': {
                             'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                             }
@@ -201,7 +201,7 @@
                         'fetch': {
                             'makeUrl': (data) => `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`,
                         },
-                        'ext': {
+                        'dropdown': {
                             'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.url }; }).sort((a, b) => a.text > b.text);
                             }
@@ -212,7 +212,7 @@
                         'fetch': {
                             'makeUrl': (data) => `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`,
                         },
-                        'ext': {
+                        'dropdown': {
                             'postProcessData': (htmlElement, data) => {
                                 return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                             }

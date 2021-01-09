@@ -121,8 +121,8 @@ class DynamicDropdown extends DynamicElement {
      */
     postProcessData(data) {
         // Custom
-        if (this.config.ext.postProcessData) {
-            return this.config.ext.postProcessData(this.htmlElement, data);
+        if (this.config.dropdown.postProcessData) {
+            return this.config.dropdown.postProcessData(this.htmlElement, data);
         }
         // Standard (no operation)
         return data;
@@ -136,8 +136,8 @@ class DynamicDropdown extends DynamicElement {
     */
     saveData(data) {
         // Custom
-        if (this.config.ext.saveData) {
-            return this.config.ext.saveData(this.htmlElement, data);
+        if (this.config.dropdown.saveData) {
+            return this.config.dropdown.saveData(this.htmlElement, data);
         }
         // Standard
         this.clear();
