@@ -12,7 +12,7 @@
 - [Contribute](#contribute)
 
 # Dynamic Forms
-DynamicForms is a javascript library that handles all the interaction with forms with dynamic content in an easy and fast way.
+DynamicForms is a javascript library that handles all the interaction in forms with dynamic content in an easy and fast way.
 
 ### Select with variable options
 
