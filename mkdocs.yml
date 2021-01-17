@@ -1,0 +1,47 @@
+site_name: DynamicForms
+#site_url: xxx
+repo_url: https://github.com/simomosi/dynamic-forms
+repo_name: dynamic-forms
+#edit_uri:
+site_description: DynamicForms is a javascript library that handles all the interaction in forms with dynamic content in an easy and fast way.
+site_author: simomosi
+nav:
+  - Home: README.md
+  - How to use it: dynamic-forms-module.md
+  - Configuration:
+    - Form configuration: configurations/form-configuration.md
+    - Rules: configurations/rules.md
+    - Fields configuration: configurations/field-configuration.md
+  - Example: examples/minimal-example.md
+markdown_extensions:
+    - toc:
+        permalink: '#'
+    - pymdownx.highlight:
+        linenums: true
+        linenums_style: pymdownx.inline
+    - pymdownx.superfences
+theme:
+  name: material
+  palette:
+    scheme: default
+  font: false
+  language: en
+  icon:
+    logo: fontawesome/solid/project-diagram
+    #favicon: imgs/project-diagram-solid.svg
+  features:
+    - navigation.instant
+    - navigation.expand
+    - navigation.tabs
+  shortcuts:
+    help: 191    # ?
+    next: 78     # n
+    previous: 80 # p
+    search: 83   # s
+extra:
+  social:
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/in/simonemosi/
+    - icon: fontawesome/brands/github
+      link: https://github.com/simomosi
+copyright: Copyright &copy; 2020 - 2021 Simone Mosi
