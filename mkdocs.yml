@@ -32,7 +32,7 @@ theme:
   features:
     - navigation.instant
     - navigation.expand
-    - navigation.tabs
+    #- navigation.tabs
   shortcuts:
     help: 191    # ?
     next: 78     # n
