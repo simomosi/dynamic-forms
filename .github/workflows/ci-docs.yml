@@ -1,9 +1,8 @@
 name: ci-docs
 on:
   push:
-    branches:
-      - master
-      - main
+    paths:
+      - '**.md'
 jobs:
   deploy:
     runs-on: ubuntu-latest
