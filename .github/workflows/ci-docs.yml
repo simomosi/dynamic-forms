@@ -15,6 +15,6 @@ jobs:
       - run: pip install mkdocs-material
       - uses: neenjaw/compile-mermaid-markdown-action@0.2.3
         with:
-          files: 'docs/classdiagram.mmd'
+          files: 'docs/classdiagram.md'
           output: 'docs/imgs/'
       - run: mkdocs gh-deploy --force
