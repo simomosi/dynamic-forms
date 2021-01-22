@@ -41,6 +41,7 @@ classDiagram
         -string method
         +postProcessData(data) object[]
         +saveData(data) object[]
+        +testMethod()
     }
 
     DynamicForm <.. dynamicForms
