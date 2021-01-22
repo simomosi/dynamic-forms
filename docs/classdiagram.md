@@ -1,3 +1,4 @@
+```mermaid
 classDiagram
 
     class DynamicForm {
@@ -41,8 +42,6 @@ classDiagram
         -string method
         +postProcessData(data) object[]
         +saveData(data) object[]
-        +testMethod1()
-        +testMethod2()
     }
 
     DynamicForm <.. dynamicForms
@@ -50,3 +49,4 @@ classDiagram
     DynamicElement <|-- DynamicDropdown
     DynamicElement <|-- DynamicCheckbox
     DynamicElement <|-- DynamicRadio
+```
