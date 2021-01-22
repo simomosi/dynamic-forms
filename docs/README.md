@@ -39,3 +39,7 @@ Include *dist/dynamicforms.js* in your project.
 
 ## Contribute
 Import *src/index.js* module in your project. Work on project sources. Build it with *yarn build*.
+
+Here is the UML Class Diagram to help you understand the project structure.
+
+![Class Diagram](./imgs/classdiagram.svg)
