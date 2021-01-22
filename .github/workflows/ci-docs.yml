@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - '**.md'
+      - '**.mmd'
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -12,4 +13,8 @@ jobs:
         with:
           python-version: 3.x
       - run: pip install mkdocs-material
+      - uses: neenjaw/compile-mermaid-markdown-action@0.2.3
+        with:
+          files: 'docs/classdiagram.mmd'
+          output: 'docs/imgs/'
       - run: mkdocs gh-deploy --force
