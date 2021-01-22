@@ -2,6 +2,7 @@ name: ci-docs
 on:
   push:
     paths:
+      - 'mkdocs.yml'
       - '**.md'
       - '**.mmd'
 jobs:
