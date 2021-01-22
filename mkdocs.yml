@@ -2,7 +2,7 @@ site_name: DynamicForms
 #site_url: xxx
 repo_url: https://github.com/simomosi/dynamic-forms
 repo_name: dynamic-forms
-#edit_uri:
+edit_uri: docs
 site_description: DynamicForms is a javascript library that handles all the interaction in forms with dynamic content in an easy and fast way.
 site_author: simomosi
 nav:
