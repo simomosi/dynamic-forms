@@ -25,10 +25,13 @@ let fieldConfiguration = {
         'updateStatus': (htmlElement, data, subjectName) => { },
         'afterUpdate': (htmlElement, data, subjectName) => { } // Executed after the remote call
     },
-    'dropdown': {
+    'dropdown': { // Only for dropdown elements
         'postProcessData': (htmlElement, data) => { }, // Process data retrieved by remote call
         'saveData': (htmlElement, data) => { }, // Save data in html (es: <option value="value">'text'</option>)
-        'clearOnParentVoid': true, // True to clear field content when subject is void; false to trigger a remote call
+        'clearOnParentVoid': true, // True (default) to clear field content when subject is void; false to trigger a remote call
+    },
+    'checkbox': { // Only for checkbox elements
+        'booleanValue': true // True (default) to get element's value as boolean, based on the checked property; false to get the value property
     }
 };
 ```

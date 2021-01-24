@@ -73,9 +73,12 @@ let fieldTemplate = {
         'updateStatus': (htmlElement, data, subjectName) => { },
         'afterUpdate': (htmlElement, data, subjectName) => { } // Executed after the remote call
     },
-    'ext': {
+    'dropdown': {
         'postProcessData': (htmlElement, data) => { }, // Process data retrieved by remote call
         'saveData': (htmlElement, data) => { }, // Save data in html (es: <option value="value">'text'</option>)
         'clearOnParentVoid': true, // True to clear field content when subject is void; false to trigger a remote call
+    },
+    'checkbox': {
+        'valueAsBool': true
     }
 };
