@@ -29,15 +29,15 @@ class DynamicElement {
         this.config = config;
         // Repairing config file if parameters are missing (to write code easily)
         this.config.io = this.config.io ?? {};
-        this.config.fetch = this.config.fetch ?? {};
+        this.config.fetch = this.config.fetch ?? {}; // todo remove
         this.config.behavior = this.config.behavior ?? {};
 
         let event = config.io.event ?? DynamicElement.defaultConfig.io.event;
 
-        this.htmlElement = dynamicForm.htmlElement.querySelectorAll('[name=' + config.name + ']');
+        this.htmlElement = dynamicForm.htmlElement.querySelectorAll(`[name=${config.name}]`);
         this.name = this.htmlElement[0].name;
         if (this.htmlElement.length === 0) {
-            throw new Error('Element ' + config.name + ' not found');
+            throw new Error(`Element ${config.name} not found`);
         } else if (this.htmlElement.length === 1) {
             this.htmlElement = this.htmlElement[0];
             this.htmlElement.addEventListener(event, (e) => { dynamicForm.notify(e.target.name); });
