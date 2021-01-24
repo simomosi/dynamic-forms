@@ -98,11 +98,13 @@ class DynamicForm {
                     // Update
                     let params = this.fetchAllParameters(rule);
                     rule.update.forEach(observerName => {
-                        if (observerName === subjectName) { // This prevents loop
+                        if (observerName === subjectName) { // This prevents loops
                             return;
                         }
-                        if (this.debug)
+                        if (this.debug) {
                             console.log(`> > [${subjectName}] ==update==> [${this.getField(observerName).name}]`);
+                            console.log(`Parameters:`, params);
+                        }
                         let observer = this.getField(observerName);
                         let observerPromise = observer.update(params, subjectName);
                         updatePromises.push(observerPromise);
