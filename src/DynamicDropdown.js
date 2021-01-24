@@ -16,7 +16,7 @@ class DynamicDropdown extends DynamicElement {
         'fetch': {
             'method': 'GET',
         },
-        'behavior': {
+        'dropdown': {
             'clearOnParentVoid': true
         },
     }
@@ -30,6 +30,7 @@ class DynamicDropdown extends DynamicElement {
     constructor(config, dynamicForm) {
         super(config, dynamicForm);
         this.method = config.fetch.method ?? DynamicDropdown.defaultConfig.fetch.method;
+        this.config.dropdown = this.config.dropdown ?? {};
     }
 
     /**
@@ -52,7 +53,7 @@ class DynamicDropdown extends DynamicElement {
 
     /**
      * Method executed before the status update. If it returns false, the update is aborted.
-     * If the behavior.clearOnParentVoid is true and the subject value is empty, this method calls the clear function and aborts the update.
+     * If dropdown.clearOnParentVoid is true and the subject value is empty, this method calls the clear function and aborts the update.
      *
      * @param {JSON} data data useful to the element's status change
      * @param {string} subjectName name of the changed subject
@@ -65,7 +66,7 @@ class DynamicDropdown extends DynamicElement {
         }
         // Standard
         if (subjectName && !data[subjectName]) { // Clear field on empty subject
-            let clearFieldFlag = (this.config.behavior.clearOnParentVoid !== undefined) ? (this.config.behavior.clearOnParentVoid) : (DynamicDropdown.defaultConfig.behavior.clearOnParentVoid);
+            let clearFieldFlag = (this.config.dropdown.clearOnParentVoid !== undefined) ? (this.config.dropdown.clearOnParentVoid) : (DynamicDropdown.defaultConfig.dropdown.clearOnParentVoid);
             if (clearFieldFlag === true) {
                 this.clear();
                 return false;
