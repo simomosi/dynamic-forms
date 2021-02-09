@@ -3,7 +3,7 @@ This document describes the complete form configuration with focus on each prope
 
 The configuration is written *client side* and passed to the correct method of [*dynamicForms module*](../dynamic-forms-module.md) for the form instantiation.
 
-Legend:
+Glossary:
 
 - **Subject**: the subject is the entity who changed
 - **Observer**: the observer is an entity who is notified by the subject change
@@ -27,10 +27,14 @@ let formConfiguration = {
 ## id*
 The form id. Just the plain text, no '#'.
 
+Type: `string`.
+
 *required*
 
 ## debug
 A flag to activate the debug mode.
+
+Type: `boolean`.
 
 ## behavior
 Object which groups properties related to form behavior (e.g. what to do before or after an update event).
@@ -62,12 +66,16 @@ A collection of Fields configurations.
 
 Include here all fields involved in the DynamicForm behavior (get/set/update operations). Fields with no dynamic behavior may not be included.
 
+*required*
+
 See [Field configuration](#Field-configuration).
 
 ## rules*
 A collection of Update Rules configurations.
 
 Include here all rules like "if field A changes, trigger the update of fields B and C".
+
+*required*
 
 See [Update Rule configuration](#Update-Rule-configuration).
 

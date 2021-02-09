@@ -39,21 +39,41 @@ let fieldConfiguration = {
 ## name*
 The html element name.
 
+Type: `string`.
+
+*required*
+
 ## io
 Object which groups properties related to field input and output.
 
-Default value: `change`.
 
 ### event
 The html event which symbolize the Subject's status change (e.g. *change* for a dropdown, *click* for a checkbox...).
 
 It is used to put an event listener which will notify Subject's Observers.
 
+Type: `string`.
+
+Default value: `change`.
+
 ### get (htmlElement)
 Function to fetch the html element's value. Useful for custom html elements.
 
+Parameters
+- {`node | NodeList`} `htmlElement`: the html node
+
+Returns
+- {`string`} the field content
+
 ### set (htmlElement)
 Function to set the html element's value. Useful for custom html elements.
+
+Parameters
+- {`node | NodeList`} `htmlElement`: the html node
+- {`mixed`} `value`: the field's new value
+
+Returns
+- {`void`}
 
 ## fetch*
 Object which groups properties related to remote calls.
@@ -65,24 +85,29 @@ Object which groups properties related to remote calls.
 ### method
 It's the *http request method* (or verb).
 
-Default value: *GET*
+Type: `string`.
+
+Default value: `GET`
+
 
 ### makeUrl (data)*
 A function to generate the url to make the remote call to.
 
+*required*
+
 Parameters
-- {`object`} `data`: data obtained from additionaData and externalData functions in Update Rule Config
+- {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 
 Returns
 - {`string`} The remote call url
--
+
 ### makeBody (data)
 A function to generate the remote call body in the desired method (e.g. JSON.stringify, FormData...).
 
 It's not necessary if the remote call uses the GET request method (parameters need to be placed in the url).
 
 Parameters
-- {`object`} `data`: data obtained from additionaData and externalData functions in Update Rule Config
+- {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 
 Returns
 - {`object`} The remote call body
@@ -93,11 +118,69 @@ A function to generate the complete Fetch configuration for remote calls.
 If this function is defined, the updateStatus default function will ignore *fetch.method* property and *fetch.makeBody* function.
 
 Parameters
-- {`object`} `data`: data obtained from additionaData and externalData functions in Update Rule Config
+- {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 
 Returns
 - {`object`} The complete Fetch configuration
 
 ## behavior
-Work in progress...
-<!-- ## ext [optional] -->
+Object which groups properties related to field behavior.
+
+### clear (htmlElement)
+Function to unset the field's current value. Sometimes it is used to clear the field from its content (for input and dropdown types).
+
+Parameters
+- {`node | NodeList`} `htmlElement`: the html node
+
+Returns
+- {`void`}
+
+
+### beforeUpdate (htmlElement, data, subjectName)
+Method called before triggering the field's status update. If return value is *false*, the update is aborted.
+
+Parameters
+- {`node | NodeList`} `htmlElement`: the html node
+- {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
+- {`string`}: `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
+
+Returns
+- {`boolean`} *false* to abort the update, *true* otherwise
+
+### updateStatus (htmlElement, data, subjectName)
+Method to update the field status. It is useful to update the field's attributes (*display*, *disabled*...) and content.
+
+Parameters
+- {`node | NodeList`} `htmlElement`: the html node
+- {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
+- {`string`}: `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
+
+Returns
+- {`void`}
+
+### afterUpdate (htmlElement, data, subjectName)
+Method called after triggering the field's status update.
+
+Parameters
+- {`node | NodeList`} `htmlElement`: the html node
+- {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
+- {`string`}: `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
+
+Returns
+- {`boolean`} (currently) unused
+
+## Dropdown
+Object which groups properties related to select-option elements.
+
+### Work in progress...
+
+## Checkbox
+Object which groups properties related to select-option elements.
+
+### booleanValue
+Property which tells if the field's value is *boolean*.
+When *true* the field considers its value as *boolean*, based on the  html `checked` attribute; when *false* it considers its value as *string*, based on the `value` attribute.
+
+Type: `boolean`.
+
+Default value: `true`.
