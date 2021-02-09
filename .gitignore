@@ -1,2 +1,8 @@
 node_modules
+
+# Doc site deploy
 site/
+
+# Different IDE files
+.idea
+nbproject
