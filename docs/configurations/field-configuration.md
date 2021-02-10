@@ -173,7 +173,7 @@ Parameters
 Returns
 - {`boolean`} (currently) unused
 
-## Dropdown
+## dropdown
 Object which groups properties related to select-option elements.
 
 ### postProcessData (htmlElement, data)
@@ -205,7 +205,7 @@ Type: `boolean`.
 
 Default value: `true`.
 
-## Checkbox
+## checkbox
 Object which groups properties related to select-option elements.
 
 ### booleanValue
