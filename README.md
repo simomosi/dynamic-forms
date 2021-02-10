@@ -10,6 +10,7 @@
   - [Documentation and examples of use](#documentation-and-examples-of-use)
   - [Cool computer science stuff](#cool-computer-science-stuff)
   - [Disclaimer](#disclaimer)
+  - [ToDo List](#todo-list)
 
 # Dynamic Forms
 DynamicForms is a javascript library that handles all the interaction in forms with dynamic content in an easy and fast way.
@@ -53,3 +54,7 @@ DynamicForms is build considered some use-cases I have faced in my career.
 At the moment I have no *real* use case to test it on. If you have trouble using it please let me know and open an issue, I'll be glad to help you. Suggestions are also welcome!
 
 It will be useful if you pass me some code to try: you can use tools like CodePen, PasteBin etc.
+
+## ToDo List
+
+- Implement 'forms configurations': instantiate the DynamicForm *one time*, and specify different sets of rules to switch on. Example: `if (A is Europe) then B updates C; if (A is America) then B updates D.`
