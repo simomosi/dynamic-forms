@@ -1,4 +1,5 @@
 # DynamicForms module
+## How to use it
 This document describes the **dynamicForms** module properties.
 
 This module let you instantiate and work easily with the whole DynamicForms library.
