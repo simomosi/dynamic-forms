@@ -40,7 +40,7 @@ let initRuleConfiguration = {
 The field name inside the form. It's the same as the analogous property in [Update Rule configuration](#Update-Rule-configuration).
 
 ### additionalData
-It's the same as the analogous property in [Update Rule configuration](#Update-Rule-configuration).
+It's the same as the analogous property in [Update Rule configuration](#additionalData).
 
 ### externalData (data, subjectName)
-It's the same as the analogous property in [Update Rule configuration](#Update-Rule-configuration).
+It's the same as the analogous property in [Update Rule configuration](#externalData-data-subjectName).
