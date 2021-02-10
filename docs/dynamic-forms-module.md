@@ -14,7 +14,9 @@ Module use example:
 ```javascript
 let form = dynamicForms.makeForm(formConfig);
 ```
-## makeForm (formConfiguration)
+## Properties
+
+### makeForm (formConfiguration)
 Istantiates a DynamicForm.
 
 Parameters
@@ -23,7 +25,7 @@ Parameters
 Returns
 - {`DynamicForm`} a DynamicForm instance
 
-## makeMultipleForms (formsConfigCollection)
+### makeMultipleForms (formsConfigCollection)
 Istantiates multiple DynamicForm.
 
 Parameters
@@ -32,7 +34,7 @@ Parameters
 Returns
 - {`DynamicForm[]`} a collection of DynamicForm instances
 
-## getForm (id)
+### getForm (id)
 Returns a DynamicForm instance corresponding to the form id, if it exists.
 
 Parameters
@@ -41,7 +43,7 @@ Parameters
 Returns
 - {`DynamicForm | null`} the DynamicForm instance or null if it does not exists
 
-## getField (formId, fieldName)
+### getField (formId, fieldName)
 Returns a DynamicElement instance inside the specified DynamicForm, if it exists.
 
 Parameters
