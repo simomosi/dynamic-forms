@@ -9,7 +9,7 @@
     - [Local](#local)
   - [Documentation and examples of use](#documentation-and-examples-of-use)
   - [Cool computer science stuff](#cool-computer-science-stuff)
-  - [Contribute](#contribute)
+  - [Disclaimer](#disclaimer)
 
 # Dynamic Forms
 DynamicForms is a javascript library that handles all the interaction in forms with dynamic content in an easy and fast way.
@@ -47,5 +47,9 @@ See [DynamicForms page](https://simomosi.github.io/dynamic-forms/)
 - The function used to clear fields *on cascade* is the **Depth-first search (DFS)** used in Graph theory
 - The library entry point (*src/index.js*) implements the **Facade Design Pattern** to improve software usability: it masks more complex underlying code e.g. explicit objects instantiation
 
-## Contribute
-Import *src/index.js* module in your project. Work on project sources. Build it with *yarn build*.
+## Disclaimer
+DynamicForms is build considered some use-cases I have faced in my career.
+
+At the moment I have no *real* use case to test it on. If you have trouble using it please let me know and open an issue, I'll be glad to help you. Suggestions are also welcome!
+
+It will be useful if you pass me some code to try: you can use tools like CodePen, PasteBin etc.

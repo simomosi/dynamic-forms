@@ -38,8 +38,14 @@ Include *dist/dynamicforms.js* in your project.
 - The library entry point (*src/index.js*) implements the **Facade Design Pattern** to improve software usability: it masks more complex underlying code e.g. explicit objects instantiation
 
 ## Contribute
+Help me develop DynamicForms!
+
 Import *src/index.js* module in your project. Work on project sources. Build it with *yarn build*.
+
+Please, update also the documentation if you can.
 
 Here is the UML Class Diagram to help you understand the project structure.
 
 ![Class Diagram](./imgs/classdiagram.svg)
+
+**Thank you very much for your support ❤**
