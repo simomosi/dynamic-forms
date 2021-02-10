@@ -189,7 +189,7 @@ Returns
 ### saveData (htmlElement, data)
 Function to phisically save (post-processed) data retrieved by a remote call as html.
 
-Default behavior: save date as *option* html elements using *value* and *test* properties.
+Default behavior: saves data as *option* html elements using *value* and *test* properties.
 
 Parameters
 - {`node | NodeList`} `htmlElement`: the html node where data will be saved
@@ -210,6 +210,7 @@ Object which groups properties related to select-option elements.
 
 ### booleanValue
 Property which tells if the field's value is *boolean*.
+
 When *true* the field considers its value as *boolean*, based on the  html `checked` attribute; when *false* it considers its value as *string*, based on the `value` attribute.
 
 Type: `boolean`.
