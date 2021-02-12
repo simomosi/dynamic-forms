@@ -1,5 +1,9 @@
 # Dynamic Forms
-DynamicForms is a javascript library that handles all the interaction with forms with dynamic content in an easy and fast way.
+
+## What is it and what can I do with it
+DynamicForms is a javascript library that handles all the interaction in forms with dynamic content in an easy and fast way.
+
+Here's some examples.
 
 ### Select with variable options
 
@@ -12,6 +16,11 @@ DynamicForms is a javascript library that handles all the interaction with forms
 ### Updating rules
 
 ![Dynamic Radio example gif](./imgs/dynamic-radio.gif)
+
+### Much much more
+Got your attention? Try it!
+
+Dynamic Forms is released as a **single file**. You can also find an already functioning example!
 
 ## Main features
 - **Easy to use**: DynamicForms works in a declarative way; no code, just a simple configuration!
