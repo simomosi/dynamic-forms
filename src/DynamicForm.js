@@ -20,6 +20,9 @@ class DynamicForm {
     /** @param {boolean} debug a flag to enable debug mode */
     debug;
 
+    /** @param {boolean} enabled a flag to enable/disable the Dynamic Form*/
+    enabled;
+
     /** @param {JSON} elementToClassMapping Object which maps a field's type attribute with the class to instantiate */
     elementToClassMapping = {
         'default': DynamicElement,
@@ -39,6 +42,7 @@ class DynamicForm {
         self.htmlElement = document.forms[formConfiguration.id];
         self.entities = new Map();
         self.debug = formConfiguration.debug === true;
+        self.enabled = true;
 
         // Repairing config file if parameters are missing (to write code easily)
         self.config.behavior = self.config.behavior ?? {};
@@ -193,6 +197,22 @@ class DynamicForm {
      */
     getId() {
         return this.htmlElement.id;
+    }
+
+    /**
+     * Method to enable/disable the form update
+     * @param {boolean} enable true to enable the form update, false otherwise
+     */
+    setEnabled(enable) {
+        this.enabled = !!enable;
+    }
+
+    /**
+     * Method to know if the form update is currently enabled-
+     * @return {boolean} true if the form is currently enabled, false otherwise
+     */
+    isEnabled() {
+        return !!this.enabled;
     }
 
 }
