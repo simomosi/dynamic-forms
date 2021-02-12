@@ -1,11 +1,11 @@
-```mermaid
 classDiagram
 
     class DynamicForm {
         JSON config
         node htmlElement
         Map~String, DynamicElement~ entities
-        bool debug
+        boolean debug
+        boolean enabled
         json elementToClassMapping
 
         notify(subjectName)
@@ -14,14 +14,14 @@ classDiagram
         manualUpdate(data, subjectName)
         getField(name) DynamicElement
         getId() string
+        setEnabled() void
+        isEnabled() boolean
     }
 
     class dynamicForms {
         -Map~String, DynamicForm~ formCollection
         +makeForm(formConfiguration) DynamicForm
-        +makeMultipleForms(formsConfigCollection) DynamicForm[]
         +getForm(id) DynamicForm
-        +getField(formId, fieldName) DynamicElement
     }
 
     class DynamicElement {
@@ -33,7 +33,7 @@ classDiagram
         +set(value) string
         +clear()
         +update(data, subjectName)
-        +beforeUpdate(data, subjectName) bool
+        +beforeUpdate(data, subjectName) boolean
         +updateStatus(data, subjectName)
         +afterUpdate(data, subjectName)
     }
@@ -49,4 +49,3 @@ classDiagram
     DynamicElement <|-- DynamicDropdown
     DynamicElement <|-- DynamicCheckbox
     DynamicElement <|-- DynamicRadio
-```
