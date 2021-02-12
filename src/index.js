@@ -19,36 +19,11 @@ let dynamicForms = (function () {
     }
 
     /**
-     * Method to instantiate multiple Dynamic Forms
-     * @param {object[]} formsConfigCollection an array of objects representing forms configurations
-     * @returns A collection of instances of Dynamic Forms
-     */
-    function _makeMultipleForms(formsConfigCollection) {
-        formsConfigCollection.forEach(config => {
-            _makeForm(config);
-        });
-        return formCollection;
-    }
-
-    /**
      * Method to retrieve a Dynamic Form instance.
      * @param {int} id the form id
      */
     function _getForm(id) {
         return formCollection.get(id);
-    }
-
-    /**
-     * Method to retrieve a Dynamic Element instance in a Dynamic Form
-     * @param {int} formId the form id
-     * @param {string} fieldName the field name
-     */
-    function _getField(formId, fieldName) {
-        let form = _getField(formId);
-        if (form) {
-            return form.getField(fieldName);
-        }
-        return null;
     }
 
     /**
@@ -62,9 +37,7 @@ let dynamicForms = (function () {
 
     return {
         makeForm: _makeForm,
-        makeMultipleForms: _makeMultipleForms,
         getForm: _getForm,
-        getField: _getField,
         author: _author,
     }
 })();
