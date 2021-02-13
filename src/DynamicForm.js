@@ -84,6 +84,9 @@ class DynamicForm {
      * @param {string} subjectName the name of the field who changed
      */
     notify(subjectName) {
+        if (this.isEnabled() === false) {
+            return;
+        }
         let subject = this.getField(subjectName);
         let subjectValue = subject.get();
         if (this.debug) {
@@ -205,6 +208,9 @@ class DynamicForm {
      */
     setEnabled(enable) {
         this.enabled = !!enable;
+        if (this.debug) {
+            console.log(`Form enabled: ${this.enabled}`);
+        }
     }
 
     /**
