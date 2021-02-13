@@ -124,6 +124,19 @@
                         placeholder="How many rows?"></textarea>
                 </div>
             </div>
+
+            <div class="row mt-4">
+                <div class="col">
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="formEnabledOn" name="formEnabled" value="ON" class="custom-control-input" checked>
+                        <label class="custom-control-label" for="formEnabledOn">ON</label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="formEnabledOff" name="formEnabled" value="OFF" class="custom-control-input">
+                        <label class="custom-control-label" for="formEnabledOff">OFF</label>
+                    </div>
+                </div>
+            </div>
         </form>
     </div>
 
@@ -138,169 +151,180 @@
         crossorigin="anonymous"></script>
 
     <!-- Single file build (prod mode) -->
-    <script src = '../dist/dynamicforms.js'></script>
+    <!-- <script src='../dist/dynamicforms.js'></script> -->
 
     <script type="module" defer>
-        // import '../src/index.js'; // Original src (dev mode)
+        import '../src/index.js'; // Original src (dev mode)
 
-        let config = {
-            'forms': [{
-                'id': 'jsonPlaceholder',
-                'debug': true,
-                'behavior': {
-                    'beforeUpdate': (subjectName) => document.getElementById('spinner').style.display = 'inline-block',
-                    'afterUpdate': (subjectName) => document.getElementById('spinner').style.display = 'none'
+        let formConfig = {
+            'id': 'jsonPlaceholder',
+            'debug': true,
+            'behavior': {
+                'beforeUpdate': (subjectName) => document.getElementById('spinner').style.display = 'inline-block',
+                'afterUpdate': (subjectName) => document.getElementById('spinner').style.display = 'none'
+            },
+            'fields': [
+                {
+                    'name': 'user',
+                    'fetch': {
+                        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/users`,
+                    },
+                    'dropdown': {
+                        'postProcessData': (htmlElement, data) => {
+                            return data.map(x => { return { 'value': x.id, 'text': x.username }; }).sort((a, b) => a.text > b.text);
+                        }
+                    }
                 },
-                'fields': [
-                    {
-                        'name': 'user',
-                        'fetch': {
-                            'makeUrl': (data) => `https://jsonplaceholder.typicode.com/users`,
-                        },
-                        'dropdown': {
-                            'postProcessData': (htmlElement, data) => {
-                                return data.map(x => { return { 'value': x.id, 'text': x.username }; }).sort((a, b) => a.text > b.text);
-                            }
+                {
+                    'name': 'post',
+                    'fetch': {
+                        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`,
+                    },
+                    'dropdown': {
+                        'postProcessData': (htmlElement, data) => {
+                            return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                         }
-                    },
-                    {
-                        'name': 'post',
-                        'fetch': {
-                            'makeUrl': (data) => `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`,
-                        },
-                        'dropdown': {
-                            'postProcessData': (htmlElement, data) => {
-                                return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
-                            }
-                        }
-                    },
-                    {
-                        'name': 'comment',
-                        'fetch': {
-                            'makeUrl': (data) => `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`,
-                        },
-                        'dropdown': {
-                            'postProcessData': (htmlElement, data) => {
-                                return data.map(x => { return { 'value': x.id, 'text': x.name }; }).sort((a, b) => a.text > b.text);
-                            }
-                        }
-                    },
-                    {
-                        'name': 'album',
-                        'fetch': {
-                            'makeUrl': (data) => `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`,
-                        },
-                        'dropdown': {
-                            'postProcessData': (htmlElement, data) => {
-                                return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
-                            }
-                        }
-                    },
-                    {
-                        'name': 'photo',
-                        'fetch': {
-                            'makeUrl': (data) => `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`,
-                        },
-                        'dropdown': {
-                            'postProcessData': (htmlElement, data) => {
-                                return data.map(x => { return { 'value': x.id, 'text': x.url }; }).sort((a, b) => a.text > b.text);
-                            }
-                        }
-                    },
-                    {
-                        'name': 'todo',
-                        'fetch': {
-                            'makeUrl': (data) => `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`,
-                        },
-                        'dropdown': {
-                            'postProcessData': (htmlElement, data) => {
-                                return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
-                            }
-                        }
-                    },
-                    {
-                        'name': 'visibility-checkbox'
-                    },
-                    {
-                        'name': 'readonly-checkbox'
-                    },
-                    {
-                        'name': 'checkbox-target-field',
-                        'behavior': {
-                            'updateStatus': (htmlElement, data, subjectName) => {
-                                let value = data[subjectName];
-                                switch (subjectName) {
-                                    case 'visibility-checkbox':
-                                        if (value === true) {
-                                            htmlElement.style.display = "block";
-                                        } else {
-                                            htmlElement.style.display = "none";
-                                        }
-                                        break;
-                                    case 'readonly-checkbox':
-                                        htmlElement.readOnly = value;
-                                        break;
-                                }
-                            },
-                        },
-                    },
-                    {
-                        'name': 'rows-radio'
-                    },
-                    {
-                        'name': 'radio-target-textarea',
-                        'behavior': {
-                            'updateStatus': (htmlElement, data, subjectName) => {
-                                let value = parseInt(data[subjectName]);
-                                htmlElement.rows = value;
-                            },
-                        },
                     }
-                ],
-                'rules': [
-                    {
-                        'name': 'user',
-                        'update': ['post', 'album', 'todo'],
+                },
+                {
+                    'name': 'comment',
+                    'fetch': {
+                        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`,
                     },
-                    {
-                        'name': 'post',
-                        'update': ['comment'],
-                        'additionalData': ['user'],
-                        'externalData': (data, subjectName) => { return { 'timestamp': new Date() } }
-                    },
-                    {
-                        'name': 'album',
-                        'update': ['photo']
-                    },
-                    {
-                        'name': 'visibility-checkbox',
-                        'update': ['checkbox-target-field'],
-                        'additionalData': ['readonly-checkbox'],
-                    },
-                    {
-                        'name': 'readonly-checkbox',
-                        'update': ['checkbox-target-field'],
-                        'additionalData': ['visibility-checkbox'],
-                    },
-                    {
-                        'name': 'rows-radio',
-                        'update': ['radio-target-textarea']
+                    'dropdown': {
+                        'postProcessData': (htmlElement, data) => {
+                            return data.map(x => { return { 'value': x.id, 'text': x.name }; }).sort((a, b) => a.text > b.text);
+                        }
                     }
-                ],
-                'init': [
-                    {
-                        'name': 'user',
-                        'externalData': (data, subjectName) => { return { 'timestamp': new Date() }; }
+                },
+                {
+                    'name': 'album',
+                    'fetch': {
+                        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`,
+                    },
+                    'dropdown': {
+                        'postProcessData': (htmlElement, data) => {
+                            return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
+                        }
                     }
-                ]
-            }]
+                },
+                {
+                    'name': 'photo',
+                    'fetch': {
+                        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`,
+                    },
+                    'dropdown': {
+                        'postProcessData': (htmlElement, data) => {
+                            return data.map(x => { return { 'value': x.id, 'text': x.url }; }).sort((a, b) => a.text > b.text);
+                        }
+                    }
+                },
+                {
+                    'name': 'todo',
+                    'fetch': {
+                        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`,
+                    },
+                    'dropdown': {
+                        'postProcessData': (htmlElement, data) => {
+                            return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
+                        }
+                    }
+                },
+                {
+                    'name': 'visibility-checkbox'
+                },
+                {
+                    'name': 'readonly-checkbox'
+                },
+                {
+                    'name': 'checkbox-target-field',
+                    'behavior': {
+                        'updateStatus': (htmlElement, data, subjectName) => {
+                            let value = data[subjectName];
+                            switch (subjectName) {
+                                case 'visibility-checkbox':
+                                    if (value === true) {
+                                        htmlElement.style.display = "block";
+                                    } else {
+                                        htmlElement.style.display = "none";
+                                    }
+                                    break;
+                                case 'readonly-checkbox':
+                                    htmlElement.readOnly = value;
+                                    break;
+                            }
+                        },
+                    },
+                },
+                {
+                    'name': 'rows-radio'
+                },
+                {
+                    'name': 'radio-target-textarea',
+                    'behavior': {
+                        'updateStatus': (htmlElement, data, subjectName) => {
+                            let value = parseInt(data[subjectName]);
+                            htmlElement.rows = value;
+                        },
+                    },
+                }
+            ],
+            'rules': [
+                {
+                    'name': 'user',
+                    'update': ['post', 'album', 'todo'],
+                },
+                {
+                    'name': 'post',
+                    'update': ['comment'],
+                    'additionalData': ['user'],
+                    'externalData': (data, subjectName) => { return { 'timestamp': new Date() } }
+                },
+                {
+                    'name': 'album',
+                    'update': ['photo']
+                },
+                {
+                    'name': 'visibility-checkbox',
+                    'update': ['checkbox-target-field'],
+                    'additionalData': ['readonly-checkbox'],
+                },
+                {
+                    'name': 'readonly-checkbox',
+                    'update': ['checkbox-target-field'],
+                    'additionalData': ['visibility-checkbox'],
+                },
+                {
+                    'name': 'rows-radio',
+                    'update': ['radio-target-textarea']
+                }
+            ],
+            'init': [
+                {
+                    'name': 'user',
+                    'externalData': (data, subjectName) => { return { 'timestamp': new Date() }; }
+                }
+            ]
         };
 
         // Init
         let start = new Date();
-        let forms = dynamicForms.makeMultipleForms(config.forms);
+        let form = dynamicForms.makeForm(formConfig);
         let end = new Date();
         console.log('Benchmark init time: ', end.getMilliseconds() - start.getMilliseconds());
+
+        // Enable/Disable form
+        function enableDisableForm() {
+            let value = document.querySelectorAll('input[name=formEnabled]:checked')[0].value;
+            if (value === 'ON') {
+                form.setEnabled("AAA");
+            } else {
+                form.setEnabled(false);
+            }
+        }
+
+        document.getElementsByName('formEnabled').forEach((item) => item.addEventListener('click', enableDisableForm));
+        enableDisableForm();
     </script>
 </body>
 
