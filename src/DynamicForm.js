@@ -4,26 +4,37 @@ import DynamicCheckbox from './DynamicCheckbox.js';
 import DynamicRadio from './DynamicRadio.js';
 
 /**
-* This class represents a form with dynamic content, e.g. select with variable options, updating rules and visibility depending on fields' state...
-*/
+ * This class represents a form with dynamic content, e.g. select with variable options, updating rules and visibility depending on fields' state...
+ */
 class DynamicForm {
+    /** @param {int} id - the form id */
+    id;
 
-    /** @param {JSON} config the form configuration */
-    config;
-
-    /** @param {node} htmlElement the actual html element returned by getElementById */
-    htmlElement;
-
-    /** @param {Map<String, DynamicElement>} entities a collection of form's DynamicElements */
-    entities;
-
-    /** @param {boolean} debug a flag to enable debug mode */
+    /** @param {boolean} debug - a flag to enable debug mode */
     debug;
 
-    /** @param {boolean} enabled a flag to enable/disable the Dynamic Form*/
+    /** @param {object} behavior - object which groups some properties related to form behavior */
+    behavior;
+
+    /** @param {Map<String, DynamicElement>} fields - a collection of form's DynamicElements instances */
+    fields;
+
+    /** @param {Object[]} rules - a collection of form's rule objects */
+    rules;
+
+    /** @param {Object[]} init - a collection of form's init objects */
+    init;
+
+    /** @param {JSON} config - the original form configuration */
+    config;
+
+    /** @param {node} htmlElement - the actual html element returned by getElementById */
+    htmlElement;
+
+    /** @param {boolean} enabled - a flag to enable/disable the Dynamic Form */
     enabled;
 
-    /** @param {JSON} elementToClassMapping Object which maps a field's type attribute with the class to instantiate */
+    /** @param {JSON} elementToClassMapping - Object which maps a field's type attribute with the class to instantiate */
     elementToClassMapping = {
         'default': DynamicElement,
         'checkbox': DynamicCheckbox,
@@ -33,31 +44,29 @@ class DynamicForm {
     };
 
     /**
-    * Class constructor.
-    * @param {JSON} formConfiguration the form configuration in JSON format
-    */
+     * Class constructor.
+     * @param {JSON} formConfiguration the form configuration in JSON format
+     */
     constructor(formConfiguration) {
         let self = this;
+        self.id = formConfiguration.id;
         self.config = formConfiguration;
         self.htmlElement = document.forms[formConfiguration.id];
-        self.entities = new Map();
+        self.fields = new Map();
+        self.rules = formConfiguration.rules ?? [];
+        self.init = formConfiguration.int ?? [];
         self.debug = formConfiguration.debug === true;
         self.enabled = true;
-
-        // Repairing config file if parameters are missing (to write code easily)
-        self.config.behavior = self.config.behavior ?? {};
-        self.config.fields = self.config.fields ?? {};
-        self.config.rules = self.config.rules ?? {};
-        self.config.init = self.config.init ?? {};
+        self.behavior = formConfiguration.behavior ?? {};
 
         // Create fields instance
         formConfiguration.fields.forEach(fieldConfig => {
             let queryResult = self.htmlElement.querySelectorAll(`[name=${fieldConfig.name}]`);
             let type = null, instance = null;
 
-            if (queryResult.length == 0) {
+            if (queryResult.length === 0) {
                 throw new Error(`Element ${fieldConfig.name} not found`);
-            } else if (queryResult.length == 1) {
+            } else if (queryResult.length === 1) {
                 type = queryResult[0].type; // Use the type of field
             } else {
                 // if (Array.from(queryResult).every(current => current.type === 'radio')) { // Multiple radio only if all fields have the same name
@@ -68,7 +77,7 @@ class DynamicForm {
                 type = 'default';
             }
             instance = new this.elementToClassMapping[type](fieldConfig, self);
-            this.entities.set(instance.name, instance);
+            this.fields.set(instance.name, instance);
         });
 
         // Init fields
@@ -93,14 +102,16 @@ class DynamicForm {
             console.log(`-\n${new Date()}\n> [${subjectName}] Changed. Notifying observers...\n-`);
         }
         let beforeUpdateResult = null;
-        if (this.config.behavior.beforeUpdate) { // Check if notify must be aborted (only if selected value is defined)
-            beforeUpdateResult = this.config.behavior.beforeUpdate(subjectName);
+        if (this.behavior.beforeUpdate) { // Check if notify must be aborted (only if selected value is defined)
+            beforeUpdateResult = this.behavior.beforeUpdate(subjectName);
         }
 
         let updatePromises = [];
         if (beforeUpdateResult !== false) {
-            this.config.rules
-                .filter((e) => { return e.name === subjectName; })
+            this.rules
+                .filter((e) => {
+                    return e.name === subjectName;
+                })
                 .forEach(rule => {
                     // Update
                     let params = this.fetchAllParameters(rule);
@@ -121,9 +132,9 @@ class DynamicForm {
                 });
         }
 
-        if (this.config.behavior.afterUpdate) {
+        if (this.behavior.afterUpdate) {
             Promise.allSettled(updatePromises).then((values) => {
-                this.config.behavior.afterUpdate(subjectName);
+                this.behavior.afterUpdate(subjectName);
             });
         }
     }
@@ -161,18 +172,18 @@ class DynamicForm {
      */
     async clearCascade(currentSubject, visited = []) {
         visited.push(currentSubject)
-        this.config.rules
-            .filter((e) => { return e.name === currentSubject })
-            .forEach(rule => {
-                rule.update.forEach(observer => {
-                    if (!visited.includes(observer)) {
-                        if (this.debug)
-                            console.log(`> > > [${currentSubject}] ==x==> [${this.getField(observer).name}]`);
-                        this.getField(observer).clear(this.getField(observer));
-                        this.clearCascade(observer, visited);
-                    }
-                })
+        this.rules.filter((e) => {
+            return e.name === currentSubject
+        }).forEach(rule => {
+            rule.update.forEach(observer => {
+                if (!visited.includes(observer)) {
+                    if (this.debug)
+                        console.log(`> > > [${currentSubject}] ==x==> [${this.getField(observer).name}]`);
+                    this.getField(observer).clear(this.getField(observer));
+                    this.clearCascade(observer, visited);
+                }
             })
+        })
     }
 
     /**
@@ -191,7 +202,7 @@ class DynamicForm {
      * @returns the DynamicElement instance
      */
     getField(name) {
-        return this.entities.get(name);
+        return this.fields.get(name);
     }
 
     /**
@@ -199,7 +210,7 @@ class DynamicForm {
      * @return {string} the form id
      */
     getId() {
-        return this.htmlElement.id;
+        return this.id;
     }
 
     /**
@@ -222,4 +233,5 @@ class DynamicForm {
     }
 
 }
+
 export default DynamicForm;
