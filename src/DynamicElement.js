@@ -3,16 +3,25 @@
  * In particular it is a generic input element, whose behavior is based on element.value property
  */
 class DynamicElement {
-    /** @param {JSON} config the element configuration */
+    /** @param {object} config - the element configuration */
     config;
 
-    /** @param {node | NodeList} htmlElement the HTML Element returned by querySelectorAll. If more than one exists, the element is a NodeList */
+    /** @param {node | NodeList} htmlElement - the HTML Element returned by querySelectorAll. If more than one exists, the element is a NodeList */
     htmlElement;
 
-    /** @param {string} name the element name */
+    /** @param {string} name - the element name */
     name;
 
-    /** @param {JSON} defaultConfig property with default configuration values */
+    /** @param {object} io - object which groups some properties related to field input/output */
+    io;
+
+    /** @param {object} fetch - object which groups some properties related to remote calls */
+    fetch; // todo maybe we can move this property to DynamicDropdown ?
+
+    /** @param {object} behavior - object which groups some properties related to field behavior */
+    behavior;
+
+    /** @param {JSON} defaultConfig - property with default configuration values */
     static defaultConfig = {
         'io': {
             'event': 'change',
@@ -21,18 +30,18 @@ class DynamicElement {
 
     /**
     * Class constructor
-    * @param {JSON} config the element configuration
-    * @param {JSON} dynamicForm the DynamicForm instance
+    * @param {object} config the element configuration
+    * @param {object} dynamicForm the DynamicForm instance
     * @async
     */
     constructor(config, dynamicForm) {
         this.config = config;
         // Repairing config file if parameters are missing (to write code easily)
-        this.config.io = this.config.io ?? {};
-        this.config.fetch = this.config.fetch ?? {}; // todo remove
-        this.config.behavior = this.config.behavior ?? {};
+        this.io = this.config.io ?? {};
+        this.fetch = this.config.fetch ?? {}; // todo remove
+        this.behavior = this.config.behavior ?? {};
 
-        let event = config.io.event ?? DynamicElement.defaultConfig.io.event;
+        let event = this.io.event ?? DynamicElement.defaultConfig.io.event;
 
         this.htmlElement = dynamicForm.htmlElement.querySelectorAll(`[name=${config.name}]`);
         this.name = this.htmlElement[0].name;
@@ -54,8 +63,8 @@ class DynamicElement {
     */
     get() {
         // Custom
-        if (this.config.io.get) {
-            return this.config.io.get(this.htmlElement);
+        if (this.io.get) {
+            return this.io.get(this.htmlElement);
         }
         // Standard
         return this.htmlElement.value;
@@ -67,8 +76,8 @@ class DynamicElement {
     */
     set(value) {
         // Custom
-        if (this.config.io.set) {
-            return this.config.io.set(this.htmlElement, value);
+        if (this.io.set) {
+            return this.io.set(this.htmlElement, value);
         }
         // Standard
         return this.htmlElement.value = value;
@@ -79,8 +88,8 @@ class DynamicElement {
     */
     clear() {
         // Custom
-        if (this.config.behavior.clear) {
-            return this.config.behavior.clear(this.htmlElement);
+        if (this.behavior.clear) {
+            return this.behavior.clear(this.htmlElement);
         }
         // Standard
         this.htmlElement.value = "";
@@ -111,8 +120,8 @@ class DynamicElement {
      */
     beforeUpdate(data, subjectName) {
         // Custom
-        if (this.config.behavior.beforeUpdate) {
-            return this.config.behavior.beforeUpdate(this.htmlElement, data, subjectName);
+        if (this.behavior.beforeUpdate) {
+            return this.behavior.beforeUpdate(this.htmlElement, data, subjectName);
         }
         // Standard
         return true; // Does not block field update
@@ -125,8 +134,8 @@ class DynamicElement {
      */
     updateStatus(data, subjectName) {
         // Custom
-        if (this.config.behavior.updateStatus) {
-            return this.config.behavior.updateStatus(this.htmlElement, data, subjectName);
+        if (this.behavior.updateStatus) {
+            return this.behavior.updateStatus(this.htmlElement, data, subjectName);
         }
     }
 
@@ -137,8 +146,8 @@ class DynamicElement {
      */
     afterUpdate(data, subjectName) {
         // Custom
-        if (this.config.behavior.afterUpdate) {
-            return this.config.behavior.afterUpdate(this.htmlElement, data, subjectName);
+        if (this.behavior.afterUpdate) {
+            return this.behavior.afterUpdate(this.htmlElement, data, subjectName);
         }
     }
 }

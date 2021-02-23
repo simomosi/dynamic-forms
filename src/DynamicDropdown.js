@@ -8,6 +8,9 @@ class DynamicDropdown extends DynamicElement {
     /** @param {string} method the http request method for the remote call (async update) */
     method;
 
+    /** @param {object} checkbox - property with checkbox related properties */
+    dropdown;
+
     /** @param {JSON} defaultConfig property with default configuration values */
     static defaultConfig = { // Todo: inherit superclass' defaultConfig
         'io': {
@@ -23,14 +26,14 @@ class DynamicDropdown extends DynamicElement {
 
     /**
     * Class constructor
-    * @param {JSON} config the dropdown configuration
-    * @param {JSON} dynamicForm the DynamicForm instance
+    * @param {object} config the dropdown configuration
+    * @param {object} dynamicForm the DynamicForm instance
     * @async
     */
     constructor(config, dynamicForm) {
         super(config, dynamicForm);
-        this.method = config.fetch.method ?? DynamicDropdown.defaultConfig.fetch.method;
-        this.config.dropdown = this.config.dropdown ?? {};
+        this.method = this.fetch.method ?? DynamicDropdown.defaultConfig.fetch.method;
+        this.dropdown = this.config.dropdown ?? {};
     }
 
     /**
@@ -38,8 +41,8 @@ class DynamicDropdown extends DynamicElement {
     */
     clear() {
         // Custom
-        if (this.config.behavior.clear) {
-            return this.config.behavior.clear(this.htmlElement);
+        if (this.behavior.clear) {
+            return this.behavior.clear(this.htmlElement);
         }
         // Standard
         let options = this.htmlElement.getElementsByTagName('option');
@@ -61,12 +64,12 @@ class DynamicDropdown extends DynamicElement {
      */
     beforeUpdate(data, subjectName) {
         // Custom
-        if (this.config.behavior.beforeUpdate) {
-            return this.config.behavior.beforeUpdate(this.htmlElement, data, subjectName);
+        if (this.behavior.beforeUpdate) {
+            return this.behavior.beforeUpdate(this.htmlElement, data, subjectName);
         }
         // Standard
         if (subjectName && !data[subjectName]) { // Clear field on empty subject
-            let clearFieldFlag = (this.config.dropdown.clearOnParentVoid !== undefined) ? (this.config.dropdown.clearOnParentVoid) : (DynamicDropdown.defaultConfig.dropdown.clearOnParentVoid);
+            let clearFieldFlag = (this.dropdown.clearOnParentVoid !== undefined) ? (this.dropdown.clearOnParentVoid) : (DynamicDropdown.defaultConfig.dropdown.clearOnParentVoid);
             if (clearFieldFlag === true) {
                 this.clear();
                 return false;
@@ -84,18 +87,18 @@ class DynamicDropdown extends DynamicElement {
     */
     updateStatus(data, subjectName) {
         // Custom
-        if (this.config.behavior.updateStatus) {
-            return this.config.behavior.updateStatus(this.htmlElement, data, subjectName);
+        if (this.behavior.updateStatus) {
+            return this.behavior.updateStatus(this.htmlElement, data, subjectName);
         }
         // Standard
-        let requestUrl = this.config.fetch.makeUrl(data);
+        let requestUrl = this.fetch.makeUrl(data);
         let fetchConfig = null;
-        if (this.config.fetch.fullFetchConfig) {
-            fetchConfig = this.config.fetch.fullFetchConfig;
+        if (this.fetch.fullFetchConfig) {
+            fetchConfig = this.fetch.fullFetchConfig;
         } else {
             fetchConfig = {};
             fetchConfig.method = this.method;
-            let body = this.config.fetch.makeBody ? this.config.fetch.makeBody(data) : null;
+            let body = this.fetch.makeBody ? this.fetch.makeBody(data) : null;
             if (body) {
                 fetchConfig.body = body;
             }
@@ -122,8 +125,8 @@ class DynamicDropdown extends DynamicElement {
      */
     postProcessData(data) {
         // Custom
-        if (this.config.dropdown.postProcessData) {
-            return this.config.dropdown.postProcessData(this.htmlElement, data);
+        if (this.dropdown.postProcessData) {
+            return this.dropdown.postProcessData(this.htmlElement, data);
         }
         // Standard (no operation)
         return data;
@@ -137,8 +140,8 @@ class DynamicDropdown extends DynamicElement {
     */
     saveData(data) {
         // Custom
-        if (this.config.dropdown.saveData) {
-            return this.config.dropdown.saveData(this.htmlElement, data);
+        if (this.dropdown.saveData) {
+            return this.dropdown.saveData(this.htmlElement, data);
         }
         // Standard
         this.clear();

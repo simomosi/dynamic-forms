@@ -10,8 +10,8 @@ class DynamicRadio extends DynamicElement {
     /** @inheritdoc */
     get() {
         // Custom
-        if (this.config.io.get) {
-            return this.config.io.get(this.htmlElement);
+        if (this.io.get) {
+            return this.io.get(this.htmlElement);
         }
         // Standard
         for (let i = 0; i < this.htmlElement.length; i++) {
@@ -26,8 +26,8 @@ class DynamicRadio extends DynamicElement {
     /** @inheritdoc */
     set(value) {
         // Custom
-        if (this.config.io.set) {
-            return this.config.io.set(this.htmlElement, value);
+        if (this.io.set) {
+            return this.io.set(this.htmlElement, value);
         }
         // Standard
         for (let i = 0; i < this.htmlElement.length; i++) {
@@ -43,8 +43,8 @@ class DynamicRadio extends DynamicElement {
     /** @inheritdoc */
     clear() {
         // Custom
-        if (this.config.behavior.clear) {
-            return this.config.behavior.clear(this.htmlElement);
+        if (this.behavior.clear) {
+            return this.behavior.clear(this.htmlElement);
         }
         // Standard
         for (let i = 0; i < this.htmlElement.length; i++) {
