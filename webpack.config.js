@@ -37,23 +37,26 @@ let commonConfig = {
         }]
     },
     output: {
-        filename: 'dynamicforms.js',
         path: path.resolve(__dirname, 'dist'),
     },
     plugins: [
         new webpack.ProgressPlugin(),
-        new CleanWebpackPlugin(),
-        //new HtmlWebpackPlugin()
     ]
 }
 
 let developmentConfig = {
     mode: 'development',
+    output: {
+        filename: 'dynamicforms.js',
+    },
     devtool: 'eval-source-map',
 }
 
 let productionConfig = {
     mode: 'production',
+    output: {
+        filename: 'dynamicforms.min.js',
+    },
     optimization: {
         minimizer: [new TerserPlugin()],
         minimize: true,
