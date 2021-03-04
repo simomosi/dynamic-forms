@@ -151,11 +151,9 @@
         crossorigin="anonymous"></script>
 
     <!-- Single file build (prod mode) -->
-    <!-- <script src='../dist/dynamicforms.js'></script> -->
+    <script src='../dist/dynamicforms.js'></script>
 
-    <script type="module" defer>
-        import '../src/index.js'; // Original src (dev mode)
-
+    <script defer>
         let formConfig = {
             'id': 'jsonPlaceholder',
             'debug': true,
@@ -317,7 +315,7 @@
         function enableDisableForm() {
             let value = document.querySelectorAll('input[name=formEnabled]:checked')[0].value;
             if (value === 'ON') {
-                form.setEnabled("AAA");
+                form.setEnabled(true);
             } else {
                 form.setEnabled(false);
             }
