@@ -33,7 +33,7 @@ Dynamic Forms is released as a **single file**. You can also find an already fun
 Feature incoming, stay tuned!
 
 ### Local
-Include *dist/dynamicforms.js* in your project.
+Include *dist/dynamicforms.min.js* (production environment) OR *dist/dynamicforms.js* (development environment) in your project.
 
 ## Documentation and examples of use
 - [Minimal and serverless working example](./examples/minimal-example.md) (you can copy and paste it!)
@@ -49,11 +49,12 @@ Include *dist/dynamicforms.js* in your project.
 ## Contribute
 Help me develop DynamicForms!
 
+Remember to work on `dist/dynamicforms.js` file to access source code (or import the `src/index.js` file as a module if you prefer).
+
 Useful commands:
 - `yarn build-dev` - Build the project in development mode: this enables dev tools and keeps references to original source code;
-- `yarn build-prod` - Build the project in production mode: this improves performance and security (hide all source code references).
-
-First of all, build the library with my `yarn build-dev` script. Now you can work on project sources.
+- `yarn build-prod` - Build the project in production mode: this improves performance and security (hide all source code references);
+- `yarn build` - Build both dev file and prod file.
 
 Please, update also the documentation if you can.
 

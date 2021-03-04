@@ -48,7 +48,7 @@ Dynamic Forms is released as a **single file**. You can also find an already fun
 Feature incoming, stay tuned!
 
 ### Local
-Include *dist/dynamicforms.js* in your project.
+Include `dist/dynamicforms.min.js` (in a production environment) OR `dist/dynamicforms.js` (in a development environment) in your project.
 
 ## Documentation and examples of use
 See [DynamicForms page](https://simomosi.github.io/dynamic-forms/)
