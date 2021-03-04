@@ -51,10 +51,10 @@ Help me develop DynamicForms!
 
 Remember to work on `dist/dynamicforms.js` file to access source code (or import the `src/index.js` file as a module if you prefer).
 
-Useful commands:
-- `yarn build-dev` - Build the project in development mode: this enables dev tools and keeps references to original source code;
-- `yarn build-prod` - Build the project in production mode: this improves performance and security (hide all source code references);
-- `yarn build` - Build both dev file and prod file.
+Useful command(s):
+- `yarn build` - Build both dev file and prod file:
+    - **dev mode** - this enables dev tools and keeps references to original source code;
+    - **prod mode** - this improves performance and security (hide all source code references);
 
 Please, update also the documentation if you can.
 

@@ -30,8 +30,6 @@
     "terser-webpack-plugin": "^5.0.3"
   },
   "scripts": {
-    "build": "yarn build-prod && yarn build-dev",
-    "build-dev": "webpack --env this_env=development",
-    "build-prod": "webpack --env this_env=production"
+    "build": "webpack"
   }
 }

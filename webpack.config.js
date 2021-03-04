@@ -28,7 +28,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-let commonConfig = {
+let commonConfiguration = {
     module: {
         rules: [{
             test: /\.(js|jsx)$/,
@@ -44,7 +44,7 @@ let commonConfig = {
     ]
 }
 
-let developmentConfig = {
+let developmentConfiguration = {
     mode: 'development',
     name: 'dev-config',
     output: {
@@ -56,7 +56,7 @@ let developmentConfig = {
     }
 }
 
-let productionConfig = {
+let productionConfiguration = {
     mode: 'production',
     name: 'prod-config',
     output: {
@@ -84,12 +84,7 @@ let productionConfig = {
 }
 
 module.exports = (env, argv) => {
-    switch(env.this_env) { // env.this_env set by me in package.json
-        case 'development':
-            return merge(commonConfig, developmentConfig);
-        case 'production':
-            return merge(commonConfig, productionConfig);
-        default:
-            throw new Error('No matching configuration was found!');
-    }
+    let devConfig = merge(commonConfiguration, developmentConfiguration);
+    let prodConfig = merge(commonConfiguration, productionConfiguration);
+    return [devConfig, prodConfig];
 }
