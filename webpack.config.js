@@ -1,7 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
-
-
+const { merge } = require('webpack-merge');
 
 
 /*
@@ -26,47 +25,60 @@ const webpack = require('webpack');
  */
 
 const TerserPlugin = require('terser-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+let commonConfig = {
+    module: {
+        rules: [{
+            test: /\.(js|jsx)$/,
+            include: [path.resolve(__dirname, 'src')],
+            loader: 'babel-loader'
+        }]
+    },
+    output: {
+        filename: 'dynamicforms.js',
+        path: path.resolve(__dirname, 'dist'),
+    },
+    plugins: [
+        new webpack.ProgressPlugin(),
+        new CleanWebpackPlugin(),
+        //new HtmlWebpackPlugin()
+    ]
+}
 
+let developmentConfig = {
+    mode: 'development',
+    devtool: 'eval-source-map',
+}
 
-module.exports = {
-  mode: 'production',
-  plugins: [
-    new webpack.ProgressPlugin(),
-    new CleanWebpackPlugin(),
-    //new HtmlWebpackPlugin()
-  ],
-  devtool: 'source-map',
-  module: {
-    rules: [{
-      test: /\.(js|jsx)$/,
-      include: [path.resolve(__dirname, 'src')],
-      loader: 'babel-loader'
-    }]
-  },
-
-  output: {
-    filename: 'dynamicforms.js',
-    path: path.resolve(__dirname, 'dist'),
-  },
-
-  optimization: {
-    minimizer: [new TerserPlugin()],
-    minimize: true,
-    splitChunks: {
-      cacheGroups: {
-        vendors: {
-          priority: -10,
-          test: /[\\/]node_modules[\\/]/
+let productionConfig = {
+    mode: 'production',
+    optimization: {
+        minimizer: [new TerserPlugin()],
+        minimize: true,
+        splitChunks: {
+            cacheGroups: {
+                vendors: {
+                    priority: -10,
+                    test: /[\\/]node_modules[\\/]/
+                }
+            },
+            chunks: 'async',
+            minChunks: 1,
+            minSize: 30000,
+            name: false
         }
-      },
-
-      chunks: 'async',
-      minChunks: 1,
-      minSize: 30000,
-      name: false
     }
-  }
+}
+
+module.exports = (env, argv) => {
+    switch(env.this_env) { // env.this_env set by me in package.json
+        case 'development':
+            return merge(commonConfig, developmentConfig);
+        case 'production':
+            return merge(commonConfig, productionConfig);
+        default:
+            throw new Error('No matching configuration was found!');
+    }
 }
