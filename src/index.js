@@ -1,6 +1,6 @@
 import DynamicForm from './DynamicForm.js';
 
-/** Module to easly manage dynamic forms */
+/** Module to easily manage dynamic forms */
 let dynamicForms = (function () {
     'use strict';
 

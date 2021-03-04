@@ -40,12 +40,12 @@ class DynamicForm {
         'checkbox': DynamicCheckbox,
         'radio': DynamicRadio,
         'select-one': DynamicDropdown,
-        'select-multiple': DynamicDropdown,
+        'select-multiple': DynamicDropdown
     };
 
     /**
      * Class constructor.
-     * @param {JSON} formConfiguration the form configuration in JSON format
+     * @param {object} formConfiguration the form configuration in JSON format
      */
     constructor(formConfiguration) {
         let self = this;
@@ -54,7 +54,7 @@ class DynamicForm {
         self.htmlElement = document.forms[formConfiguration.id];
         self.fields = new Map();
         self.rules = formConfiguration.rules ?? [];
-        self.init = formConfiguration.int ?? [];
+        self.init = formConfiguration.init ?? [];
         self.debug = formConfiguration.debug === true;
         self.enabled = true;
         self.behavior = formConfiguration.behavior ?? {};
