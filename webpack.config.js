@@ -46,14 +46,19 @@ let commonConfig = {
 
 let developmentConfig = {
     mode: 'development',
+    name: 'dev-config',
     output: {
         filename: 'dynamicforms.js',
     },
     devtool: 'eval-source-map',
+    performance: {
+        hints: 'warning',
+    }
 }
 
 let productionConfig = {
     mode: 'production',
+    name: 'prod-config',
     output: {
         filename: 'dynamicforms.min.js',
     },
@@ -72,6 +77,9 @@ let productionConfig = {
             minSize: 30000,
             name: false
         }
+    },
+    performance: {
+        hints: 'error',
     }
 }
 
