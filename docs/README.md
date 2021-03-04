@@ -49,7 +49,11 @@ Include *dist/dynamicforms.js* in your project.
 ## Contribute
 Help me develop DynamicForms!
 
-Import *src/index.js* module in your project. Work on project sources. Build it with *yarn build*.
+Useful commands:
+- `yarn build-dev` - Build the project in development mode: this enables dev tools and keeps references to original source code;
+- `yarn build-prod` - Build the project in production mode: this improves performance and security (hide all source code references).
+
+First of all, build the library with my `yarn build-dev` script. Now you can work on project sources.
 
 Please, update also the documentation if you can.
 
