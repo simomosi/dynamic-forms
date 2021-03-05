@@ -53,8 +53,8 @@ Remember to work on `dist/dynamicforms.js` file to access source code (or import
 
 Useful commands:
 
-- `yarn build-dev` - Build the project in *development mode*: this enables dev tools and keeps references to original source code; you can use it with `--watch` flag
-- `yarn build-prod` - Build the project in *production mode*: this improves performance and security (hide all source code references); you can use it with `--watch` flag
+- `yarn build:dev` - Build the project in *development mode*: this enables dev tools and keeps references to original source code; you can use it with `--watch` flag
+- `yarn build:prod` - Build the project in *production mode*: this improves performance and security (hide all source code references); you can use it with `--watch` flag
 - `yarn build` - Build both dev file and prod file
 
 Please, update also the documentation if you can.
