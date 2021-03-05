@@ -25,6 +25,7 @@ const { merge } = require('webpack-merge');
  */
 
 const TerserPlugin = require('terser-webpack-plugin');
+const myBanner = "Author: simomosi\nRepository: https://github.com/simomosi/dynamic-forms\nDocumentation: https://simomosi.github.io/dynamic-forms/";
 
 let commonConfiguration = {
     module: {
@@ -39,6 +40,9 @@ let commonConfiguration = {
     },
     plugins: [
         new webpack.ProgressPlugin(),
+        new webpack.BannerPlugin({
+            banner: myBanner,
+        })
     ]
 }
 
@@ -61,7 +65,7 @@ let productionConfiguration = {
         filename: 'dynamicforms.min.js',
     },
     optimization: {
-        minimizer: [new TerserPlugin()],
+        minimizer: [new TerserPlugin({extractComments: false})],
         minimize: true,
         splitChunks: {
             cacheGroups: {
@@ -82,6 +86,9 @@ let productionConfiguration = {
 }
 
 module.exports = (env, argv) => {
+
+
+
     console.log("\n", env);
     switch(env.this_env) { // env.this_env set by me in package.json
         case 'development':
