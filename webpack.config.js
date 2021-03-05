@@ -25,8 +25,6 @@ const { merge } = require('webpack-merge');
  */
 
 const TerserPlugin = require('terser-webpack-plugin');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 let commonConfiguration = {
     module: {
@@ -84,7 +82,13 @@ let productionConfiguration = {
 }
 
 module.exports = (env, argv) => {
-    let devConfig = merge(commonConfiguration, developmentConfiguration);
-    let prodConfig = merge(commonConfiguration, productionConfiguration);
-    return [devConfig, prodConfig];
+    console.log("\n", env);
+    switch(env.this_env) { // env.this_env set by me in package.json
+        case 'development':
+            return merge(commonConfiguration, developmentConfiguration);
+        case 'production':
+            return merge(commonConfiguration, productionConfiguration);
+        default:
+            throw new Error('No matching configuration was found!');
+    }
 }
