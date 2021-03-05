@@ -11,6 +11,7 @@
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/runtime": "^7.12.5",
+    "@mermaid-js/mermaid-cli": "^8.9.1",
     "babel-core": "^6.26.3",
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
@@ -32,6 +33,7 @@
   "scripts": {
     "build": "yarn build:dev && yarn build:prod",
     "build:dev": "webpack --env this_env=development",
-    "build:prod": "webpack --env this_env=production"
+    "build:prod": "webpack --env this_env=production",
+    "build:diagrams": "mmdc -i docs/classdiagram.mmd -o docs/imgs/classdiagram.svg"
   }
 }
