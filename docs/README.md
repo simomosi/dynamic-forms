@@ -33,7 +33,23 @@ Dynamic Forms is released as a **single file**. You can also find an already fun
 Feature incoming, stay tuned!
 
 ### Local
-Include *dist/dynamicforms.min.js* (production environment) OR *dist/dynamicforms.js* (development environment) in your project.
+
+#### Import as script tag
+```html
+<script src = './dist/dynamicforms.min.js'></script>
+```
+
+#### Import as module (ES6 syntax)
+```html
+<script type="module">
+    import * from './dist/dynamicforms.min.js';
+</script>
+```
+
+#### Import with CommonJs syntax
+```javascript
+const dynamicForms = require('dynamicForms');
+```
 
 ## Documentation and examples of use
 - [Minimal and serverless working example](./examples/minimal-example.md) (you can copy and paste it!)
@@ -46,6 +62,15 @@ Include *dist/dynamicforms.min.js* (production environment) OR *dist/dynamicform
 - The function used to clear fields *on cascade* is the **Depth-first search (DFS)** used in Graph theory
 - The library entry point (*src/index.js*) implements the **Facade Design Pattern** to improve software usability: it masks more complex underlying code e.g. explicit objects instantiation
 
+## Disclaimer
+DynamicForms is build considered some use-cases I faced in my career.
+
+If you can offer me other *real* use cases to test it on please let me know.
+
+If you have trouble using it open an issue, I'll be glad to help you. Suggestions are also welcome!
+
+It will be useful if you pass me some code to try: you can use tools like CodePen, PasteBin etc.
+
 ## Contribute
 Help me develop DynamicForms!
 
@@ -56,7 +81,7 @@ Useful commands:
 - `yarn build:dev` - Build the project in *development mode*: this enables dev tools and keeps references to original source code; you can use it with `--watch` flag
 - `yarn build:prod` - Build the project in *production mode*: this improves performance and security (hide all source code references); you can use it with `--watch` flag
 - `yarn build` - Build both dev file and prod file
-- `yarn build:diagrams` - Updates *classdiagram.svg*
+- `yarn build:diagrams` - Updates *classdiagram.svg* from *classdiagram.mmd*
 
 Please, update also the documentation if you can.
 
@@ -65,3 +90,7 @@ Here is the UML Class Diagram to help you understand the project structure.
 ![Class Diagram](./imgs/classdiagram.svg)
 
 **Thank you very much for your support ❤**
+
+## ToDo List
+
+- Implement 'forms configurations': instantiate the DynamicForm *one time*, and specify different sets of rules to switch on. Example: `if (A is Europe) then B updates C; if (A is America) then B updates D.`
