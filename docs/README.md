@@ -51,8 +51,13 @@ Feature incoming, stay tuned!
 const dynamicForms = require('dynamicForms');
 ```
 
-## Documentation and examples of use
+## Documentation
+### Examples of use
+
 - [Minimal and serverless working example](./examples/minimal-example.md) (you can copy and paste it!)
+
+### Configuration
+
 - [DynamicForms module](./dynamic-forms-module.md) (how to use the library)
 - [Form configuration](./configurations/form-configuration.md) (identify the form and define its behavior)
 - [Field configuration](./configurations/field-configuration.md) (identify form fields and define their behavior)
