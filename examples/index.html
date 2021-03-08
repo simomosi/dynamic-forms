@@ -150,13 +150,15 @@
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
 
-    <!-- Single file build -->
-    <!-- Dev mode -->
+    <!-- Dev mode (import as script tag) -->
     <script src='../dist/dynamicforms.js'></script>
-    <!-- Prod mode -->
+    <!-- Prod mode (import as script tag) -->
 <!--    <script src='../dist/dynamicforms.min.js'></script>-->
 
     <script defer>
+        // import '../dist/dynamicforms.js'; // Dev mode (import as module)
+        // import '../dist/dynamicforms.min.js'; // Prod mode (import as module)
+
         let formConfig = {
             'id': 'jsonPlaceholder',
             'debug': true,
@@ -312,7 +314,7 @@
         let start = new Date();
         let form = dynamicForms.makeForm(formConfig);
         let end = new Date();
-        console.log('Benchmark init time: ', end.getMilliseconds() - start.getMilliseconds());
+        console.log('Benchmark init time:', end.getMilliseconds() - start.getMilliseconds(), 'ms');
 
         // Enable/Disable form
         function enableDisableForm() {
