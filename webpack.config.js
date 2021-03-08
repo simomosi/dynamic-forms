@@ -64,6 +64,7 @@ let productionConfiguration = {
     output: {
         filename: 'dynamicforms.min.js',
     },
+    devtool: 'source-map', // Recommended by webpack
     optimization: {
         minimizer: [new TerserPlugin({extractComments: false})],
         minimize: true,
