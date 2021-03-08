@@ -99,3 +99,4 @@ Here is the UML Class Diagram to help you understand the project structure.
 ## ToDo List
 
 - Implement 'forms configurations': instantiate the DynamicForm *one time*, and specify different sets of rules to switch on. Example: `if (A is Europe) then B updates C; if (A is America) then B updates D.`
+- Apply listener to fields container to use dynamicForms on dynamic collections of checkbox/radio fields
