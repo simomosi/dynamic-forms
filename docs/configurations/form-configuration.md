@@ -24,22 +24,22 @@ let formConfiguration = {
 };
 ```
 
-## id*
+## `id`*
 The form id. Just the plain text, no '#'.
 
 Type: `string`.
 
 *required*
 
-## debug
+## `debug`
 A flag to activate the debug mode.
 
 Type: `boolean`.
 
-## behavior
+## `behavior`
 Object which groups properties related to form behavior (e.g. what to do before or after an update event).
 
-### beforeUpdate (subjectName)
+### `beforeUpdate (subjectName)`
 Method called after a subject registers an update, but before triggering the update on the whole form.
 
 Useful to show a loader during the fields update.
@@ -50,7 +50,7 @@ Parameters
 Returns
 - {`bool`} *false* to abort the update, *true* otherwise
 
-### afterUpdate (subjectName)
+### `afterUpdate (subjectName)`
 Method called after the form update, and in particular after all involved form's fields have completed their update.
 
 Useful to hide a loader after the fields update.
@@ -61,7 +61,7 @@ Parameters
 Returns
 - {`void`}
 
-## fields*
+## `fields`*
 A collection of Fields configurations.
 
 Include here all fields involved in the DynamicForm behavior (get/set/update operations). Fields with no dynamic behavior may not be included.
@@ -70,7 +70,7 @@ Include here all fields involved in the DynamicForm behavior (get/set/update ope
 
 See [Field configuration](#Field-configuration).
 
-## rules*
+## `rules`*
 A collection of Update Rules configurations.
 
 Include here all rules like "if field A changes, trigger the update of fields B and C".
@@ -79,7 +79,7 @@ Include here all rules like "if field A changes, trigger the update of fields B 
 
 See [Update Rule configuration](#Update-Rule-configuration).
 
-## init
+## `init`
 A collection of Init Rules configurations.
 
 Include here all fields which will be updated during the DynamicForm instantiation.

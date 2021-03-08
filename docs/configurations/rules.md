@@ -11,13 +11,13 @@ let updateRuleConfiguration = {
 };
 ```
 
-### name*
+### `name`*
 The field name inside the form.
 
-### additionalData
+### `additionalData`
 A collection of other fields name whose value will be automatically fetched and used in the field's update function.
 
-### externalData (data, subjectName)
+### `externalData (data, subjectName)`
 A function to collect other data used in the update function but external to the form (e.g. a timestamp).
 
 Parameters
@@ -36,11 +36,11 @@ let initRuleConfiguration = {
 };
 ```
 
-### name*
+### `name`*
 The field name inside the form. It's the same as the analogous property in [Update Rule configuration](#Update-Rule-configuration).
 
-### additionalData
+### `additionalData`
 It's the same as the analogous property in [Update Rule configuration](#additionalData).
 
-### externalData (data, subjectName)
+### `externalData (data, subjectName)`
 It's the same as the analogous property in [Update Rule configuration](#externalData-data-subjectName).
