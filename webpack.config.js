@@ -37,6 +37,8 @@ let commonConfiguration = {
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
+        libraryTarget: 'umd',
+        library: 'dynamicForms'
     },
     plugins: [
         new webpack.ProgressPlugin(),
@@ -50,7 +52,7 @@ let developmentConfiguration = {
     mode: 'development',
     name: 'dev-config',
     output: {
-        filename: 'dynamicforms.js',
+        filename: 'dynamicforms.js'
     },
     devtool: 'eval-source-map',
     performance: {
@@ -62,7 +64,7 @@ let productionConfiguration = {
     mode: 'production',
     name: 'prod-config',
     output: {
-        filename: 'dynamicforms.min.js',
+        filename: 'dynamicforms.min.js'
     },
     devtool: 'source-map', // Recommended by webpack
     optimization: {
