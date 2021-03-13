@@ -35,7 +35,7 @@ Dynamic Forms is released as a **single file**. You can also find an already fun
 ## Installation
 ### npm
 ```shell
-npm install @simomosi/dynamic-forms
+npm i @simomosi/dynamic-forms
 ```
 This will put the library under `*node_modules/@simomosi/dynamic-forms/dist/dynamicforms.min.js*`
 
@@ -46,6 +46,14 @@ yarn add @simomosi/dynamic-forms
 This will put the library under `*node_modules/@simomosi/dynamic-forms/dist/dynamicforms.min.js*`
 
 ### Local
+Download the last release from [GitHub release section](https://github.com/simomosi/dynamic-forms/releases). Extracts files in your assets folder and load them in your project (see section below).
+
+This is not the recommended method because you can't get updates automatically.
+
+If you still want to proceed this way, it is recommended to use the minified file (*dynamicforms.min.js*) for better performance.
+
+### Load the library
+Choose your favorite import method
 
 #### Import as script tag
 ```html
