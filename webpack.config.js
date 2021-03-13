@@ -89,11 +89,8 @@ let productionConfiguration = {
 }
 
 module.exports = (env, argv) => {
-
-
-
     console.log("\n", env);
-    switch(env.this_env) { // env.this_env set by me in package.json
+    switch(env.this_env) { // env.this_env set by me in package.json scripts
         case 'development':
             return merge(commonConfiguration, developmentConfiguration);
         case 'production':
