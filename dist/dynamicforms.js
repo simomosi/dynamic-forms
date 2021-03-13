@@ -1,7 +1,10 @@
 /*!
- * Author: simomosi
- * Repository: https://github.com/simomosi/dynamic-forms
+ * 
+ * Author: simomosi (https://github.com/simomosi)
+ * Version: 1.0.0
+ * Repository: https://github.com/simomosi/dynamic-forms.git
  * Documentation: https://simomosi.github.io/dynamic-forms/
+ *
  */
 /*
  * ATTENTION: An "eval-source-map" devtool has been used.
