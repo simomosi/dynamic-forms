@@ -29,26 +29,35 @@ Dynamic Forms is released as a **single file**. You can also find an already fun
 - **Highly customizable**: are you using an external library with custom html elements? Don't worry: you can specify your own functions to read/write data
 
 ## Installation
-### NPM/Yarn
-Feature incoming, stay tuned!
+### npm
+```shell
+npm install @simomosi/dynamic-forms
+```
+This will put the library under `*node_modules/@simomosi/dynamic-forms/dist/dynamicforms.min.js*`
+
+### Yarn
+```shell
+yarn add @simomosi/dynamic-forms
+```
+This will put the library under `*node_modules/@simomosi/dynamic-forms/dist/dynamicforms.min.js*`
 
 ### Local
 
 #### Import as script tag
 ```html
-<script src = './dist/dynamicforms.min.js'></script>
+<script src = 'your-assets-path/@simomosi/dynamic-forms/dist/dynamicforms.min.js'></script>
 ```
 
 #### Import as module (ES6 syntax)
 ```html
 <script type="module">
-    import * from './dist/dynamicforms.min.js';
+    import * from 'your-assets-path/@simomosi/dynamic-forms/dist/dynamicforms.min.js';
 </script>
 ```
 
 #### Import with CommonJs syntax
 ```javascript
-const dynamicForms = require('dynamicForms');
+const dynamicForms = require('@simomosi/dynamic-forms');
 ```
 
 ## Documentation
