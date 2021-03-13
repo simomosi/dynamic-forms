@@ -1,7 +1,16 @@
 const path = require('path');
 const webpack = require('webpack');
 const { merge } = require('webpack-merge');
+const packagejson = require('./package.json');
 
+const TerserPlugin = require('terser-webpack-plugin');
+
+const banner = `
+Author: ${packagejson.author}
+Version: ${packagejson.version}
+Repository: ${packagejson.repository.url}
+Documentation: ${packagejson.homepage}
+    `;
 
 /*
  * SplitChunksPlugin is enabled by default and replaced
@@ -24,9 +33,6 @@ const { merge } = require('webpack-merge');
  *
  */
 
-const TerserPlugin = require('terser-webpack-plugin');
-const myBanner = "Author: simomosi\nRepository: https://github.com/simomosi/dynamic-forms\nDocumentation: https://simomosi.github.io/dynamic-forms/";
-
 let commonConfiguration = {
     module: {
         rules: [{
@@ -43,7 +49,7 @@ let commonConfiguration = {
     plugins: [
         new webpack.ProgressPlugin(),
         new webpack.BannerPlugin({
-            banner: myBanner,
+            banner: banner,
         })
     ]
 }

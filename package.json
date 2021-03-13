@@ -12,7 +12,10 @@
   "author": "simomosi (https://github.com/simomosi)",
   "license": "MIT",
   "private": true,
-  "repository": "github:simomosi/dynamic-forms.git",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/simomosi/dynamic-forms.git"
+  },
   "homepage": "https://simomosi.github.io/dynamic-forms/",
   "bugs": "https://github.com/simomosi/dynamic-forms/issues",
   "keywords": [
