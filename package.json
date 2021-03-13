@@ -11,7 +11,6 @@
   ],
   "author": "simomosi (https://github.com/simomosi)",
   "license": "MIT",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/simomosi/dynamic-forms.git"
