@@ -1,4 +1,8 @@
 # Dynamic Forms
+![npm bundle size](https://img.shields.io/bundlephobia/min/@simomosi/dynamic-forms)
+![npm](https://img.shields.io/npm/v/@simomosi/dynamic-forms)
+![GitHub deployments](https://img.shields.io/github/deployments/simomosi/dynamic-forms/github-pages)
+![GitHub User's stars](https://img.shields.io/github/stars/simomosi?style=social)
 
 ## What is it and what can I do with it
 DynamicForms is a javascript library that handles all the interaction in forms with dynamic content in an easy and fast way.
