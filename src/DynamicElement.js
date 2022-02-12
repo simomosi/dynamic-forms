@@ -43,7 +43,7 @@ class DynamicElement {
 
         let event = this.io.event ?? DynamicElement.defaultConfig.io.event;
 
-        this.htmlElement = dynamicForm.htmlElement.querySelectorAll(`[name=${config.name}]`);
+        this.htmlElement = dynamicForm.htmlElement.querySelectorAll(`[name="${config.name}"]`);
         this.name = this.htmlElement[0].name;
         if (this.htmlElement.length === 0) {
             throw new Error(`Element ${config.name} not found`);
