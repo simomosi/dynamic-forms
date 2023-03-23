@@ -164,7 +164,9 @@
             'debug': true,
             'behavior': {
                 'beforeUpdate': (subjectName) => document.getElementById('spinner').style.display = 'inline-block',
-                'afterUpdate': (subjectName) => document.getElementById('spinner').style.display = 'none'
+                'afterUpdate': (subjectName) => document.getElementById('spinner').style.display = 'none',
+                'beforeInit': () => document.getElementById('spinner').style.display = 'inline-block', // TODO da documentare
+                'afterInit': () => document.getElementById('spinner').style.display = 'none', // TODO da documentare
             },
             'fields': [
                 {
@@ -305,8 +307,17 @@
             'init': [
                 {
                     'name': 'user',
-                    'externalData': (data, subjectName) => { return { 'timestamp': new Date() }; }
-                }
+                    'value': 1
+                },
+                {
+                    'name': 'album',
+                    'value': 2
+                },
+                // {
+                //     'name': 'user',
+                //     'value': 1,
+                //     //'externalData': (data, subjectName) => { return { 'timestamp': new Date() }; } // DEPRECATO
+                // }
             ]
         };
 
