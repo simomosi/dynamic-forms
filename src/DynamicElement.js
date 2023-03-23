@@ -149,6 +149,8 @@ class DynamicElement {
         if (this.behavior.afterUpdate) {
             return this.behavior.afterUpdate(this.htmlElement, data, subjectName);
         }
+        // Standard
+        return true; // Standard behavior: returns positive value
     }
 }
 
