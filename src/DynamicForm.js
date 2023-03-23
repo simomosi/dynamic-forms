@@ -122,7 +122,7 @@ class DynamicForm {
             }
         });
 
-        // Unlocks "next" fields
+        // Notifies fields about previous fields initialization
         return setValuesPromise.then(result => {
             const initializedFields = self.init.map(f => f.name);
             const nextUpdatePromises = [];
@@ -130,7 +130,7 @@ class DynamicForm {
             .filter(r => initializedFields.includes(r.name))
             .forEach(updateRule => {
                 // Update
-                let params = initialStatus; // this.fetchAllParameters(updateRule);
+                let params = this.fetchAllParameters(updateRule);
                 updateRule.update.forEach(observerName => {
                     if (observerName === updateRule.name) { // This prevents loops
                         return;
