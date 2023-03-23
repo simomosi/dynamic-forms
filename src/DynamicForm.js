@@ -123,6 +123,9 @@ class DynamicForm {
                     if (observerName === updateRule.name) { // This prevents loops
                         return;
                     }
+                    if (initializedFields.includes(observerName)) { // Field already initialized
+                        return;
+                    }
                     if (this.debug) {
                         console.log(`> > [${updateRule.name}] ==update==> [${this.getField(observerName).name}]`);
                         console.log(`Parameters:`, params);
