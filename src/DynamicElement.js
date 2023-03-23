@@ -105,11 +105,15 @@ class DynamicElement {
     * @async
     */
     async update(data, subjectName) {
-        let beforeUpdateResult = this.beforeUpdate(data, subjectName);
-        if (beforeUpdateResult !== false) {
-            this.updateStatus(data, subjectName);
-        }
-        let afterUpdateResult = this.afterUpdate(data, subjectName);
+        return Promise.resolve(() => {
+            return this.beforeUpdate(data, subjectName);
+        }).then(result => {
+            if (result !== false) {
+                return this.updateStatus(data, subjectName);
+            }
+        }).then(() => {
+            return this.afterUpdate(data, subjectName);
+        });
     }
 
     /**
