@@ -108,10 +108,22 @@ class DynamicForm {
         .forEach(element => initialStatus[element.name] = element.value /*initialStatus.set(element.name, element.value)*/);
         
         // Initialize "init" fields
+        if (this.debug) {
+            console.log(`==init==> `, self.init.reduce((acc, curr) => acc + `[${curr.name}] `, ''));
+            console.log(`Parameters:`, initialStatus);
+        }
         const initPromises = self.init.map(field => self.manualUpdate(initialStatus, field.name));
-        
-        return Promise.all(initPromises).then(result => {
-            // Unlocks "next" fields
+        const setValuesPromise = Promise.all(initPromises).then(result => {
+            for(const [name, value] of Object.entries(initialStatus)) { // TODO: fix here for hashmap usage
+                const field = self.fields.get(name);
+                if (field) {
+                    field.set(value);
+                }
+            }
+        });
+
+        // Unlocks "next" fields
+        return setValuesPromise.then(result => {
             const initializedFields = self.init.map(f => f.name);
             const nextUpdatePromises = [];
             self.rules
@@ -138,13 +150,6 @@ class DynamicForm {
                 });
             });
             return Promise.all(nextUpdatePromises);
-        }).then(result => {
-            for(const [name, value] of Object.entries(initialStatus)) { // TODO: fix here for hashmap usage
-                const field = self.fields.get(name);
-                if (field) {
-                    field.set(value);
-                }
-            }
         });
     }
     
