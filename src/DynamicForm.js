@@ -112,7 +112,9 @@ class DynamicForm {
             console.log(`==init==> `, self.init.reduce((acc, curr) => acc + `[${curr.name}] `, ''));
             console.log(`Parameters:`, initialStatus);
         }
-        const initPromises = self.init.map(field => self.manualUpdate(initialStatus, field.name));
+        const initPromises = self.init
+        .filter(x => self.fields.get(x.name) !== undefined)
+        .map(field => self.manualUpdate(initialStatus, field.name));
         const setValuesPromise = Promise.all(initPromises).then(result => {
             for(const [name, value] of Object.entries(initialStatus)) { // TODO: fix here for hashmap usage
                 const field = self.fields.get(name);
