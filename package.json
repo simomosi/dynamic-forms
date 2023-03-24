@@ -1,6 +1,6 @@
 {
   "name": "@simomosi/dynamic-forms",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "DynamicForms is a js library that handles all interactions in forms with dynamic content (e.g. select with variable options, updating rules and visibility changes depending on fields' state).",
   "main": "dist/dynamicforms.min.js",
   "browser": "dist/dynamicforms.min.js",
