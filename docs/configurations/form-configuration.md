@@ -17,6 +17,8 @@ let formConfiguration = {
     'behavior': {
         'beforeUpdate': (subjectName) => { }, // Executed before the update related events. Return false to block all updates
         'afterUpdate': (subjectName) => { }, // Executed after the update related events
+        'beforeInit': () => { }, // Executed before form initialization
+        'afterInit': () => { } // Executed after form initialization
     },
     'fields': [], // Collection of fields objects
     'rules': [], // Collection of rules objects
@@ -32,7 +34,7 @@ Type: `string`.
 *required*
 
 ## `debug`
-A flag to activate the debug mode.
+A flag to activate the debug mode which prints in the console all the rules right before their execution.
 
 Type: `boolean`.
 
@@ -57,6 +59,22 @@ Useful to hide a loader after the fields update.
 
 Parameters
 - {`string | null`} `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
+
+Returns
+- {`void`}
+- 
+### `beforeInit () `
+Method executed before the form initialisation.
+
+Useful to show a loader before all fields are initialised.
+
+Returns
+- {`void`}
+
+### `afterInit () `
+Method executed after the form initialisation.
+
+Useful to hide any loader after the form is ready.
 
 Returns
 - {`void`}
