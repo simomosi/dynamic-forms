@@ -48,7 +48,7 @@ class DynamicForm {
     * @param {object} formConfiguration the form configuration in JSON format
     */
     constructor(formConfiguration) {
-        let self = this;
+        const self = this;
         self.id = formConfiguration.id;
         self.config = formConfiguration;
         self.htmlElement = document.forms[formConfiguration.id];
@@ -81,8 +81,8 @@ class DynamicForm {
     // TODO: remove formConfiguration dependency
     #createFieldsInstances(formConfiguration, self) {
         formConfiguration.fields.forEach(fieldConfig => {
-            let queryResult = self.htmlElement.querySelectorAll(`[name="${fieldConfig.name}"]`);
-            let type = null, instance = null;
+            const queryResult = self.htmlElement.querySelectorAll(`[name="${fieldConfig.name}"]`);
+            let type = null;
             
             if (queryResult.length === 0) {
                 throw new Error(`Element ${fieldConfig.name} not found`);
@@ -96,7 +96,7 @@ class DynamicForm {
             if (type == null || !this.elementToClassMapping[type]) {
                 type = 'default';
             }
-            instance = new this.elementToClassMapping[type](fieldConfig, self);
+            const instance = new this.elementToClassMapping[type](fieldConfig, self);
             this.fields.set(instance.name, instance);
         });
     }
@@ -132,7 +132,7 @@ class DynamicForm {
             .filter(r => initializedFields.includes(r.name))
             .forEach(updateRule => {
                 // Update
-                let params = this.fetchAllParameters(updateRule);
+                const params = this.fetchAllParameters(updateRule);
                 updateRule.update.forEach(observerName => {
                     if (observerName === updateRule.name) { // This prevents loops
                         return;
@@ -144,8 +144,8 @@ class DynamicForm {
                         console.log(`> > [${updateRule.name}] ==update==> [${this.getField(observerName).name}]`);
                         console.log(`Parameters:`, params);
                     }
-                    let observer = this.getField(observerName);
-                    let observerPromise = observer.update(params, updateRule.name);
+                    const observer = this.getField(observerName);
+                    const observerPromise = observer.update(params, updateRule.name);
                     nextUpdatePromises.push(observerPromise);
                     // Clear
                     this.clearCascade(observerName);
@@ -163,17 +163,17 @@ class DynamicForm {
         if (this.isEnabled() === false) {
             return;
         }
-        let subject = this.getField(subjectName);
-        let subjectValue = subject.get();
+        const subject = this.getField(subjectName);
+        const subjectValue = subject.get();
         if (this.debug) {
             console.log(`-\n${new Date()}\n> [${subjectName}] Changed. Notifying observers...\n-`);
         }
-        let beforeUpdateResult = null;
+        const beforeUpdateResult = null;
         if (this.behavior.beforeUpdate) { // Check if notify must be aborted (only if selected value is defined)
             beforeUpdateResult = this.behavior.beforeUpdate(subjectName);
         }
         
-        let updatePromises = [];
+        const updatePromises = [];
         if (beforeUpdateResult !== false) {
             this.rules
             .filter((e) => {
@@ -181,7 +181,7 @@ class DynamicForm {
             })
             .forEach(rule => {
                 // Update
-                let params = this.fetchAllParameters(rule);
+                const params = this.fetchAllParameters(rule);
                 rule.update.forEach(observerName => {
                     if (observerName === subjectName) { // This prevents loops
                         return;
@@ -190,8 +190,8 @@ class DynamicForm {
                         console.log(`> > [${subjectName}] ==update==> [${this.getField(observerName).name}]`);
                         console.log(`Parameters:`, params);
                     }
-                    let observer = this.getField(observerName);
-                    let observerPromise = observer.update(params, subjectName);
+                    const observer = this.getField(observerName);
+                    const observerPromise = observer.update(params, subjectName);
                     updatePromises.push(observerPromise);
                     // Clear
                     this.clearCascade(observerName);
@@ -212,9 +212,9 @@ class DynamicForm {
     * @return an object merging sender data and additional data
     */
     fetchAllParameters(rule) {
-        let subjectName = rule.name;
-        let subjectValue = this.getField(subjectName).get();
-        let params = {};
+        const subjectName = rule.name;
+        const subjectValue = this.getField(subjectName).get();
+        const params = {};
         params[subjectName] = subjectValue;
         // Fetch additional data from the form
         if (rule.additionalData) {
@@ -224,7 +224,7 @@ class DynamicForm {
         }
         // Fetch external data from a user specified function (outside the form)
         if (rule.externalData) {
-            let externalData = rule.externalData(params, subjectName);
+            const externalData = rule.externalData(params, subjectName);
             Object.assign(params, externalData); // params <- params U externalData
         }
         return params;
