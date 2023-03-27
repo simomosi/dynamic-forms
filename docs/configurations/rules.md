@@ -28,6 +28,8 @@ Returns
 - {`object`} An object with external data values (*key-value* format)
 
 ## Init Rule configuration
+Parameters in init rules can reference to form fields and external data.
+
 ```javascript
 let initRuleConfiguration = {
     'name': 'fieldName',
@@ -36,9 +38,11 @@ let initRuleConfiguration = {
 ```
 
 ### `name`*
-The field name inside the form. It's the same as the analogous property in [Update Rule configuration](#Update-Rule-configuration).
+The field name.
 
 ### `value`
+The field value. It can be any primitive value.
+
 This attribute has 2 purposes:
-- It's passed to all other fields during initialisation;
+- It's passed to all other fields during initialisation; 
 - It will be the value automatically selected as the current field value; if the field type is *Dropdown*, the value must be available to be selected.
