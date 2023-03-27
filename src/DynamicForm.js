@@ -178,7 +178,7 @@ class DynamicForm {
         if (this.debug) {
             console.log(`-\n${new Date()}\n> [${subjectName}] Changed. Notifying observers...\n-`);
         }
-        const beforeUpdateResult = null;
+        let beforeUpdateResult = null;
         if (this.behavior.beforeUpdate) { // Check if notify must be aborted (only if selected value is defined)
             beforeUpdateResult = this.behavior.beforeUpdate(subjectName);
         }
