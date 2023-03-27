@@ -31,16 +31,14 @@ Returns
 ```javascript
 let initRuleConfiguration = {
     'name': 'fieldName',
-    'additionalData': [], // Array of field names
-    'externalData': (data, subjectName) => { } // Function which returns a json of data
+    'value': any
 };
 ```
 
 ### `name`*
 The field name inside the form. It's the same as the analogous property in [Update Rule configuration](#Update-Rule-configuration).
 
-### `additionalData`
-It's the same as the analogous property in [Update Rule configuration](#additionalData).
-
-### `externalData (data, subjectName)`
-It's the same as the analogous property in [Update Rule configuration](#externalData-data-subjectName).
+### `value`
+This attribute has 2 purposes:
+- It's passed to all other fields during initialisation;
+- It will be the value automatically selected as the current field value; if the field type is *Dropdown*, the value must be available to be selected.
