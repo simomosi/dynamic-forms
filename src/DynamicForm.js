@@ -185,7 +185,7 @@ class DynamicForm {
         
         const updatePromises = [];
         if (beforeUpdateResult !== false) {
-            const updateRules = self.fieldUpdateRules.get(subjectName);
+            const updateRules = this.fieldUpdateRules.get(subjectName);
             updateRules.forEach(rule => {
                 // Update
                 const params = this.fetchAllParameters(rule);
