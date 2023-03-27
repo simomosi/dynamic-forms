@@ -19,8 +19,8 @@ class DynamicForm {
     /** @param {Map<String, DynamicElement>} fields - a collection of form's DynamicElements instances */
     fields;
     
-    /** @param {Object[]} rules - a collection of form's rule objects */
-    rules;
+    /** @param {Map<string, Object[]} fieldUpdateRules - a collection of all update rules of the specified field name */
+    fieldUpdateRules;
     
     /** @param {Object[]} init - a collection of form's init objects */
     init;
@@ -53,7 +53,7 @@ class DynamicForm {
         self.config = formConfiguration;
         self.htmlElement = document.forms[formConfiguration.id];
         self.fields = new Map();
-        self.rules = formConfiguration.rules ?? [];
+        self.fieldUpdateRules = new Map();
         self.init = formConfiguration.init ?? [];
         self.debug = formConfiguration.debug === true;
         self.enabled = true;
@@ -61,6 +61,13 @@ class DynamicForm {
         
         // Create fields instance
         this.#createFieldsInstances(formConfiguration, self);
+        
+        // Create field-rules map
+        formConfiguration.fields.forEach(f => self.fieldUpdateRules.set(f.name, [])); // All fields, even those for which there is no update rule
+        formConfiguration.rules.forEach(rule => {
+            const previousRules = self.fieldUpdateRules.get(rule.name);
+            self.fieldUpdateRules.set(rule.name, previousRules.concat(rule));
+        });
         
         // Init fields
         if (formConfiguration.init) {
@@ -123,32 +130,35 @@ class DynamicForm {
                 }
             }
         });
-
+        
         // Notifies fields about previous fields initialization
         return setValuesPromise.then(result => {
             const initializedFields = self.init.map(f => f.name);
             const nextUpdatePromises = [];
-            self.rules
-            .filter(r => initializedFields.includes(r.name))
-            .forEach(updateRule => {
-                // Update
-                const params = this.fetchAllParameters(updateRule);
-                updateRule.update.forEach(observerName => {
-                    if (observerName === updateRule.name) { // This prevents loops
-                        return;
-                    }
-                    if (initializedFields.includes(observerName)) { // Field already initialized
-                        return;
-                    }
-                    if (this.debug) {
-                        console.log(`> > [${updateRule.name}] ==update==> [${this.getField(observerName).name}]`);
-                        console.log(`Parameters:`, params);
-                    }
-                    const observer = this.getField(observerName);
-                    const observerPromise = observer.update(params, updateRule.name);
-                    nextUpdatePromises.push(observerPromise);
-                    // Clear
-                    this.clearCascade(observerName);
+            initializedFields
+            .filter(fieldName => self.fields.get(fieldName) !== undefined)
+            .forEach(fieldName => {
+                const updateRules = self.fieldUpdateRules.get(fieldName);
+                updateRules.forEach(updateRule => {
+                    // Update
+                    const params = this.fetchAllParameters(updateRule);
+                    updateRule.update.forEach(observerName => {
+                        if (observerName === updateRule.name) { // This prevents loops
+                            return;
+                        }
+                        if (initializedFields.includes(observerName)) { // Field already initialized
+                            return;
+                        }
+                        if (this.debug) {
+                            console.log(`> > [${updateRule.name}] ==update==> [${this.getField(observerName).name}]`);
+                            console.log(`Parameters:`, params);
+                        }
+                        const observer = this.getField(observerName);
+                        const observerPromise = observer.update(params, updateRule.name);
+                        nextUpdatePromises.push(observerPromise);
+                        // Clear
+                        this.clearCascade(observerName);
+                    });
                 });
             });
             return Promise.all(nextUpdatePromises);
@@ -175,11 +185,8 @@ class DynamicForm {
         
         const updatePromises = [];
         if (beforeUpdateResult !== false) {
-            this.rules
-            .filter((e) => {
-                return e.name === subjectName;
-            })
-            .forEach(rule => {
+            const updateRules = self.fieldUpdateRules.get(subjectName);
+            updateRules.forEach(rule => {
                 // Update
                 const params = this.fetchAllParameters(rule);
                 rule.update.forEach(observerName => {
@@ -238,14 +245,14 @@ class DynamicForm {
     * @param {array} visited array of already cleared (visited) nodes
     */
     async clearCascade(currentSubject, visited = []) {
-        visited.push(currentSubject)
-        this.rules.filter((e) => {
-            return e.name === currentSubject
-        }).forEach(rule => {
+        visited.push(currentSubject);
+        const updateRules = this.fieldUpdateRules.get(currentSubject);
+        updateRules.forEach(rule => {
             rule.update.forEach(observer => {
                 if (!visited.includes(observer)) {
-                    if (this.debug)
-                    console.log(`> > > [${currentSubject}] ==x==> [${this.getField(observer).name}]`);
+                    if (this.debug){
+                        console.log(`> > > [${currentSubject}] ==x==> [${this.getField(observer).name}]`);
+                    }
                     this.getField(observer).clear(this.getField(observer));
                     this.clearCascade(observer, visited);
                 }
