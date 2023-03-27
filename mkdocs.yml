@@ -27,7 +27,7 @@ theme:
   font: false
   language: en
   icon:
-    logo: fontawesome/solid/project-diagram
+    logo: fontawesome/solid/diagram-project
     #favicon: imgs/project-diagram-solid.svg
   features:
     - navigation.instant
@@ -44,4 +44,4 @@ extra:
       link: https://www.linkedin.com/in/simonemosi/
     - icon: fontawesome/brands/github
       link: https://github.com/simomosi
-copyright: Copyright &copy; 2020 - 2021 Simone Mosi
+copyright: Copyright &copy; 2020 - 2023 Simone Mosi
