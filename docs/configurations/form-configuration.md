@@ -68,7 +68,7 @@ Include here all fields involved in the DynamicForm behavior (get/set/update ope
 
 *required*
 
-See [Field configuration](#Field-configuration).
+See [Field configuration](field-configuration.md).
 
 ## `rules`*
 A collection of Update Rules configurations.
@@ -77,11 +77,11 @@ Include here all rules like "if field A changes, trigger the update of fields B 
 
 *required*
 
-See [Update Rule configuration](#Update-Rule-configuration).
+See [Update Rule configuration](rules.md#Update-Rule-configuration).
 
 ## `init`
 A collection of Init Rules configurations.
 
 Include here all fields which will be updated during the DynamicForm instantiation.
 
-See [Init Rule configuration](#Init-Rule-configuration).
+See [Init Rule configuration](rules.md#Init-Rule-configuration).
