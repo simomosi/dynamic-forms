@@ -2,6 +2,7 @@ node_modules
 
 # Doc site deploy
 site/
+.cache
 
 # Different IDE files
 .idea
