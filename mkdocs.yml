@@ -1,10 +1,11 @@
 site_name: DynamicForms
-#site_url: xxx
+site_url: https://simomosi.github.io/dynamic-forms/
 repo_url: https://github.com/simomosi/dynamic-forms
-repo_name: dynamic-forms
-edit_uri: tree/main/docs
+repo_name: simomosi/dynamic-forms
+edit_uri: edit/dev/docs
 site_description: DynamicForms is a javascript library that handles all the interaction in forms with dynamic content in an easy and fast way.
 site_author: simomosi
+
 nav:
   - Home: README.md
   - How to use it: dynamic-forms-module.md
@@ -14,30 +15,57 @@ nav:
     - Fields configuration: configurations/field-configuration.md
   - Example: examples/minimal-example.md
 markdown_extensions:
-    - toc:
-        permalink: '#'
-    - pymdownx.highlight:
-        linenums: true
-        linenums_style: pymdownx.inline
-    - pymdownx.superfences
+  - toc:
+      permalink: '#'
+  - attr_list
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true 
+  - pymdownx.highlight:
+      linenums: true
+      linenums_style: pymdownx.inline
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
 theme:
   name: material
   palette:
-    scheme: default
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/weather-night 
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
   font: false
   language: en
   icon:
     logo: fontawesome/solid/diagram-project
-    #favicon: imgs/project-diagram-solid.svg
   features:
-    - navigation.instant
-    - navigation.expand
-    #- navigation.tabs
+    - navigation.instant # Async page content load
+    - navigation.expand # Expand sections on sidebar
+    - navigation.top # Back to top button
+    - navigation.footer # Prev and Next buttons in footer
+    - search.suggest # Suggest next word
+    - search.highlight # Highlight searched result in document
+    - content.action.edit # Edit doc src button
+    - content.code.copy # Copy src code button
   shortcuts:
     help: 191    # ?
     next: 78     # n
     previous: 80 # p
     search: 83   # s
+
 extra:
   social:
     - icon: fontawesome/brands/linkedin
@@ -45,3 +73,8 @@ extra:
     - icon: fontawesome/brands/github
       link: https://github.com/simomosi
 copyright: Copyright &copy; 2020 - 2023 Simone Mosi
+strict: true
+
+plugins:
+  - search
+  - social
