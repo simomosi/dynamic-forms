@@ -11,15 +11,15 @@ Here's some examples.
 
 ### Select with variable options
 
-![Dynamic Dropdown example gif](./imgs/dynamic-dropdown.gif)
+![Dynamic Dropdown example gif](./imgs/dynamic-dropdown.gif){ loading=lazy }
 
 ### Visibility changes depending on fields' state
 
-![Dynamic Checkbox example gif](./imgs/dynamic-checkbox.gif)
+![Dynamic Checkbox example gif](./imgs/dynamic-checkbox.gif){ loading=lazy }
 
 ### Updating rules
 
-![Dynamic Radio example gif](./imgs/dynamic-radio.gif)
+![Dynamic Radio example gif](./imgs/dynamic-radio.gif){ loading=lazy }
 
 ### Much much more
 Got your attention? Try it!
@@ -27,22 +27,23 @@ Got your attention? Try it!
 Dynamic Forms is released as a **single file**. You can also find an already functioning example!
 
 ## Main features
-- **Easy to use**: DynamicForms works in a declarative way; no code, just a simple configuration!
-- **Simple and modern javascript**: having no dependencies, you can integrate it everywhere!
-- **Automatize repetitive and boring operations**: read values, fetch data making async remote calls, update fields' status, clear other fields, hide/show sections...
-- **Highly customizable**: are you using an external library with custom html elements? Don't worry: you can specify your own functions to read/write data
+- [x] **Easy to use**: DynamicForms works in a declarative way; no code, just a simple configuration!
+- [x] **Simple and modern javascript**: having no dependencies, you can integrate it everywhere!
+- [x] **Automate repetitive and boring operations**: read values, fetch data making async remote calls, update fields' status, clear other fields, hide/show sections...
+- [x] **Highly customizable**: are you using an external library with custom html elements? Don't worry: you can specify your own functions to read/write data
 
 ## Installation
-### npm
-```shell
-npm i @simomosi/dynamic-forms
-```
-This will put the library under `*node_modules/@simomosi/dynamic-forms/dist/dynamicforms.min.js*`
+### Package manager
 
-### Yarn
-```shell
-yarn add @simomosi/dynamic-forms
-```
+=== "npm"
+    ```shell
+    npm i @simomosi/dynamic-forms
+    ```
+=== "Yarn"
+    ```shell
+    yarn add @simomosi/dynamic-forms
+    ```
+
 This will put the library under `*node_modules/@simomosi/dynamic-forms/dist/dynamicforms.min.js*`
 
 ### Local
@@ -55,22 +56,21 @@ If you still want to proceed this way, it is recommended to use the minified fil
 ### Load the library
 Choose your favorite import method
 
-#### Import as script tag
-```html
-<script src = 'your-assets-path/@simomosi/dynamic-forms/dist/dynamicforms.min.js'></script>
-```
+=== "Script tag"
+    ```html
+    <script src = 'your-assets-path/@simomosi/dynamic-forms/dist/dynamicforms.min.js'></script>
+    ```
 
-#### Import as module (ES6 syntax)
-```html
-<script type="module">
-    import * from 'your-assets-path/@simomosi/dynamic-forms/dist/dynamicforms.min.js';
-</script>
-```
-
-#### Import with CommonJs syntax
-```javascript
-const dynamicForms = require('@simomosi/dynamic-forms');
-```
+=== "ES6 Module"
+    ```html
+    <script type="module">
+        import * from 'your-assets-path/@simomosi/dynamic-forms/dist/dynamicforms.min.js';
+    </script>
+    ```
+=== "Commonjs require"
+    ```javascript
+    const dynamicForms = require('@simomosi/dynamic-forms');
+    ```
 
 ## Documentation
 ### Examples of use
@@ -113,11 +113,66 @@ Please, update also the documentation if you can.
 
 Here is the UML Class Diagram to help you understand the project structure.
 
-![Class Diagram](./imgs/classdiagram.svg)
+<!-- ![Class Diagram](./imgs/classdiagram.svg) -->
+<!-- TODO: remove from assets if gh-deploy is ok -->
+
+```mermaid
+classDiagram
+
+    class DynamicForm {
+        JSON config
+        node htmlElement
+        Map~String, DynamicElement~ entities
+        boolean debug
+        boolean enabled
+        json elementToClassMapping
+
+        notify(subjectName)
+        fetchAllParameters(rule) object
+        clearCascade(currentSubject)
+        manualUpdate(data, subjectName)
+        getField(name) DynamicElement
+        getId() string
+        setEnabled() void
+        isEnabled() boolean
+    }
+
+    class dynamicForms {
+        -Map~String, DynamicForm~ formCollection
+        +makeForm(formConfiguration) DynamicForm
+        +getForm(id) DynamicForm
+    }
+
+    class DynamicElement {
+        -JSON config
+        -node htmlElement
+        -string name
+        -JSON defaultConfig
+        +get() string
+        +set(value) string
+        +clear()
+        +update(data, subjectName)
+        +beforeUpdate(data, subjectName) boolean
+        +updateStatus(data, subjectName)
+        +afterUpdate(data, subjectName)
+    }
+
+    class DynamicDropdown {
+        -string method
+        +postProcessData(data) object[]
+        +saveData(data) object[]
+    }
+
+    DynamicForm <.. dynamicForms
+    DynamicForm o-- DynamicElement
+    DynamicElement <|-- DynamicDropdown
+    DynamicElement <|-- DynamicCheckbox
+    DynamicElement <|-- DynamicRadio
+
+```
 
 **Thank you very much for your support ❤**
 
 ## ToDo List
 
-- Implement 'forms configurations': instantiate the DynamicForm *one time*, and specify different sets of rules to switch on. Example: `if (A is Europe) then B updates C; if (A is America) then B updates D.`
 - Apply listener to fields container to use dynamicForms on dynamic collections of checkbox/radio fields
