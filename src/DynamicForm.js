@@ -65,7 +65,7 @@ class DynamicForm {
                 formConfiguration.behavior.beforeInit();
             }
             
-            const initPromise = this.#handleFieldInit(self, formConfiguration);
+            const initPromise = this.#handleFieldInit(this.fields, this.init, this.fieldUpdateRules);
             
             if (formConfiguration.behavior.afterInit) {
                 initPromise.then((value) => {
@@ -109,26 +109,26 @@ class DynamicForm {
         return fieldUpdateRules;
     }
     
-    #handleFieldInit(self) {
+    #handleFieldInit(fieldsMap, initRules, fieldUpdateRules) {
         // Create an object which holds the form's initial status
         const initialStatus = {}; // new Map(); // TODO: use a map for better performance
-        self.init
+        initRules
         .filter(x => x.value !== undefined)
         .forEach(element => initialStatus[element.name] = element.value /*initialStatus.set(element.name, element.value)*/);
         
         // Initialize "init" fields
         if (this.debug) {
-            console.log(`==init==> `, self.init.reduce((acc, curr) => acc + `[${curr.name}] `, ''));
+            console.log(`==init==> `, initRules.reduce((acc, curr) => acc + `[${curr.name}] `, ''));
             console.log(`Parameters:`, initialStatus);
         }
-        const initPromises = self.init
-        .filter(x => self.fields.get(x.name) !== undefined)
-        .map(field => self.manualUpdate(initialStatus, field.name));
+        const initPromises = initRules
+        .filter(x => fieldsMap.get(x.name) !== undefined)
+        .map(field => this.manualUpdate(initialStatus, field.name));
 
         // Set values in initialised fields
         const setValuesPromise = Promise.all(initPromises).then(result => {
             for(const [name, value] of Object.entries(initialStatus)) { // TODO: fix here for hashmap usage
-                const field = self.fields.get(name);
+                const field = fieldsMap.get(name);
                 if (field) {
                     field.set(value);
                 }
@@ -137,12 +137,12 @@ class DynamicForm {
         
         // For each initialised field notifies the next fields to update
         return setValuesPromise.then(result => {
-            const initializedFields = self.init.map(f => f.name);
+            const initializedFields = initRules.map(f => f.name);
             const nextUpdatePromises = [];
             initializedFields
-            .filter(fieldName => self.fields.get(fieldName) !== undefined)
+            .filter(fieldName => fieldsMap.get(fieldName) !== undefined)
             .forEach(fieldName => {
-                const updateRules = self.fieldUpdateRules.get(fieldName);
+                const updateRules = fieldUpdateRules.get(fieldName);
                 updateRules.forEach(updateRule => {
                     // Update
                     const params = this.fetchAllParameters(updateRule);
