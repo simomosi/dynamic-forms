@@ -48,26 +48,16 @@ class DynamicForm {
     * @param {object} formConfiguration the form configuration in JSON format
     */
     constructor(formConfiguration) {
+        this.id = formConfiguration.id;
+        this.config = formConfiguration;
+        this.htmlElement = document.forms[formConfiguration.id];
+        this.init = formConfiguration.init ?? [];
+        this.debug = formConfiguration.debug === true;
+        this.enabled = true;
+        this.behavior = formConfiguration.behavior ?? {};
+        this.fields = this.#createFieldsInstancesMap(formConfiguration.fields, this.htmlElement);
+        this.fieldUpdateRules = this.#createFieldUpdateRulesMap(formConfiguration.fields, formConfiguration.rules);
         const self = this;
-        self.id = formConfiguration.id;
-        self.config = formConfiguration;
-        self.htmlElement = document.forms[formConfiguration.id];
-        self.fields = new Map();
-        self.fieldUpdateRules = new Map();
-        self.init = formConfiguration.init ?? [];
-        self.debug = formConfiguration.debug === true;
-        self.enabled = true;
-        self.behavior = formConfiguration.behavior ?? {};
-        
-        // Create fields instance
-        this.#createFieldsInstances(formConfiguration, self);
-        
-        // Create field-rules map
-        formConfiguration.fields.forEach(f => self.fieldUpdateRules.set(f.name, [])); // All fields, even those for which there is no update rule
-        formConfiguration.rules.forEach(rule => {
-            const previousRules = self.fieldUpdateRules.get(rule.name);
-            self.fieldUpdateRules.set(rule.name, previousRules.concat(rule));
-        });
         
         // Init fields
         if (formConfiguration.init) {
@@ -78,17 +68,17 @@ class DynamicForm {
             const initPromise = this.#handleFieldInit(self, formConfiguration);
             
             if (formConfiguration.behavior.afterInit) {
-                initPromise.then((values) => {
+                initPromise.then((value) => {
                     formConfiguration.behavior.afterInit();
                 });
             }
         }
     }
-    
-    // TODO: remove formConfiguration dependency
-    #createFieldsInstances(formConfiguration, self) {
-        formConfiguration.fields.forEach(fieldConfig => {
-            const queryResult = self.htmlElement.querySelectorAll(`[name="${fieldConfig.name}"]`);
+
+    #createFieldsInstancesMap(fieldsCollection, htmlFormElement) {
+        const fieldsMap = new Map();
+        fieldsCollection.forEach(fieldConfig => {
+            const queryResult = htmlFormElement.querySelectorAll(`[name="${fieldConfig.name}"]`);
             let type = null;
             
             if (queryResult.length === 0) {
@@ -103,12 +93,24 @@ class DynamicForm {
             if (type == null || !this.elementToClassMapping[type]) {
                 type = 'default';
             }
-            const instance = new this.elementToClassMapping[type](fieldConfig, self);
-            this.fields.set(instance.name, instance);
+            const instance = new this.elementToClassMapping[type](fieldConfig, this);
+            fieldsMap.set(instance.name, instance);
         });
+        return fieldsMap;
+    }
+    
+    #createFieldUpdateRulesMap(fieldsCollection, rulesCollection) {
+        const fieldUpdateRules = new Map();
+        fieldsCollection.forEach(f => fieldUpdateRules.set(f.name, [])); // All fields, even those for which there is no update rule
+        rulesCollection.forEach(rule => {
+            const previousRules = fieldUpdateRules.get(rule.name);
+            fieldUpdateRules.set(rule.name, previousRules.concat(rule));
+        });
+        return fieldUpdateRules;
     }
     
     #handleFieldInit(self) {
+        // Create an object which holds the form's initial status
         const initialStatus = {}; // new Map(); // TODO: use a map for better performance
         self.init
         .filter(x => x.value !== undefined)
@@ -122,6 +124,8 @@ class DynamicForm {
         const initPromises = self.init
         .filter(x => self.fields.get(x.name) !== undefined)
         .map(field => self.manualUpdate(initialStatus, field.name));
+
+        // Set values in initialised fields
         const setValuesPromise = Promise.all(initPromises).then(result => {
             for(const [name, value] of Object.entries(initialStatus)) { // TODO: fix here for hashmap usage
                 const field = self.fields.get(name);
@@ -131,7 +135,7 @@ class DynamicForm {
             }
         });
         
-        // Notifies fields about previous fields initialization
+        // For each initialised field notifies the next fields to update
         return setValuesPromise.then(result => {
             const initializedFields = self.init.map(f => f.name);
             const nextUpdatePromises = [];
