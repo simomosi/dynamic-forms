@@ -51,21 +51,21 @@ class DynamicForm {
         this.id = formConfiguration.id;
         this.config = formConfiguration;
         this.htmlElement = document.forms[formConfiguration.id];
-        this.init = formConfiguration.init ?? [];
         this.debug = formConfiguration.debug === true;
         this.enabled = true;
         this.behavior = this.#repairFormBehavior(formConfiguration.behavior);
         this.fields = this.#createFieldsInstancesMap(formConfiguration.fields, this.htmlElement);
         this.fieldUpdateRules = this.#createFieldUpdateRulesMap(formConfiguration.fields, formConfiguration.rules);
         const self = this;
+        const initFields = formConfiguration.init ?? [];
         
         // Init fields
-        if (this.init) {
+        if (initFields) {
             Promise.resolve()
             .then(() => this.behavior.beforeInit())
             .then(result => {
                 if (result) {
-                    return this.#handleFieldInit(this.fields, this.init, this.fieldUpdateRules);
+                    return this.#handleFieldInit(this.fields, initFields, this.fieldUpdateRules);
                 }
                 return null;
             })
