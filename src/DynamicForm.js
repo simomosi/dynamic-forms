@@ -54,27 +54,34 @@ class DynamicForm {
         this.init = formConfiguration.init ?? [];
         this.debug = formConfiguration.debug === true;
         this.enabled = true;
-        this.behavior = formConfiguration.behavior ?? {};
+        this.behavior = this.#repairFormBehavior(formConfiguration.behavior);
         this.fields = this.#createFieldsInstancesMap(formConfiguration.fields, this.htmlElement);
         this.fieldUpdateRules = this.#createFieldUpdateRulesMap(formConfiguration.fields, formConfiguration.rules);
         const self = this;
         
         // Init fields
-        if (formConfiguration.init) {
-            if (formConfiguration.behavior.beforeInit) {
-                formConfiguration.behavior.beforeInit();
-            }
-            
-            const initPromise = this.#handleFieldInit(this.fields, this.init, this.fieldUpdateRules);
-            
-            if (formConfiguration.behavior.afterInit) {
-                initPromise.then((value) => {
-                    formConfiguration.behavior.afterInit();
-                });
-            }
+        if (this.init) {
+            Promise.resolve()
+            .then(() => this.behavior.beforeInit())
+            .then(result => {
+                if (result) {
+                    return this.#handleFieldInit(this.fields, this.init, this.fieldUpdateRules);
+                }
+                return null;
+            })
+            .then((value) => this.behavior.afterInit());
         }
     }
-
+    
+    #repairFormBehavior(behaviorConfig) {
+        const behavior = behaviorConfig ?? {};
+        behavior.beforeInit = behavior.beforeInit ?? (() => {});
+        behavior.afterInit = behavior.afterInit ?? (() => {});
+        behavior.beforeUpdate = behavior.beforeUpdate ?? ((subjectName) => true);
+        behavior.afterUpdate = behavior.afterUpdate ?? ((subjectName) => {});
+        return behavior;
+    }
+    
     #createFieldsInstancesMap(fieldsCollection, htmlFormElement) {
         const fieldsMap = new Map();
         fieldsCollection.forEach(fieldConfig => {
@@ -124,7 +131,7 @@ class DynamicForm {
         const initPromises = initRules
         .filter(x => fieldsMap.get(x.name) !== undefined)
         .map(field => this.manualUpdate(initialStatus, field.name));
-
+        
         // Set values in initialised fields
         const setValuesPromise = Promise.all(initPromises).then(result => {
             for(const [name, value] of Object.entries(initialStatus)) { // TODO: fix here for hashmap usage
@@ -172,6 +179,7 @@ class DynamicForm {
     /**
     * Method to notify the change of the subject to all its observers (Observer Design Pattern).
     * @param {string} subjectName the name of the field who changed
+    * @returns {Promise<void>} promise resolved when all updates are completed
     */
     notify(subjectName) {
         if (this.isEnabled() === false) {
@@ -182,39 +190,35 @@ class DynamicForm {
         if (this.debug) {
             console.log(`-\n${new Date()}\n> [${subjectName}] Changed. Notifying observers...\n-`);
         }
-        let beforeUpdateResult = null;
-        if (this.behavior.beforeUpdate) { // Check if notify must be aborted (only if selected value is defined)
-            beforeUpdateResult = this.behavior.beforeUpdate(subjectName);
-        }
         
-        const updatePromises = [];
-        if (beforeUpdateResult !== false) {
-            const updateRules = this.fieldUpdateRules.get(subjectName);
-            updateRules.forEach(rule => {
-                // Update
-                const params = this.fetchAllParameters(rule);
-                rule.update.forEach(observerName => {
-                    if (observerName === subjectName) { // This prevents loops
-                        return;
-                    }
-                    if (this.debug) {
-                        console.log(`> > [${subjectName}] ==update==> [${this.getField(observerName).name}]`);
-                        console.log(`Parameters:`, params);
-                    }
-                    const observer = this.getField(observerName);
-                    const observerPromise = observer.update(params, subjectName);
-                    updatePromises.push(observerPromise);
-                    // Clear
-                    this.clearCascade(observerName);
+        
+        return Promise.resolve()
+        .then(() => this.behavior.beforeUpdate(subjectName)) 
+        .then(result => {
+            const updatePromises = [];
+            if (result) {
+                const updateRules = this.fieldUpdateRules.get(subjectName);
+                updateRules.forEach(rule => {
+                    // Update
+                    const params = this.fetchAllParameters(rule);
+                    rule.update.forEach(observerName => {
+                        if (observerName === subjectName) { // This prevents loops
+                            return;
+                        }
+                        if (this.debug) {
+                            console.log(`> > [${subjectName}] ==update==> [${this.getField(observerName).name}]`);
+                            console.log(`Parameters:`, params);
+                        }
+                        const observer = this.getField(observerName);
+                        const observerPromise = observer.update(params, subjectName);
+                        updatePromises.push(observerPromise);
+                        // Clear
+                        this.clearCascade(observerName);
+                    });
                 });
-            });
-        }
-        
-        if (this.behavior.afterUpdate) {
-            Promise.allSettled(updatePromises).then((values) => {
-                this.behavior.afterUpdate(subjectName);
-            });
-        }
+            }
+            return Promise.allSettled(updatePromises);
+        }).then((values) => this.behavior.afterUpdate(subjectName));
     }
     
     /**
