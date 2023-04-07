@@ -22,9 +22,6 @@ class DynamicForm {
     /** @param {Map<string, Object[]} fieldUpdateRules - a collection of all update rules of the specified field name */
     fieldUpdateRules;
     
-    /** @param {Object[]} init - a collection of form's init objects */
-    init;
-    
     /** @param {JSON} config - the original form configuration */
     config;
     
@@ -59,18 +56,7 @@ class DynamicForm {
         const self = this;
         const initFields = formConfiguration.init ?? [];
         
-        // Init fields
-        if (initFields) {
-            Promise.resolve()
-            .then(() => this.behavior.beforeInit())
-            .then(result => {
-                if (result) {
-                    return this.#handleFieldInit(this.fields, initFields, this.fieldUpdateRules);
-                }
-                return null;
-            })
-            .then((value) => this.behavior.afterInit());
-        }
+        this.initPromise = this.#handleInitialisation(this.fields, initFields, this.fieldUpdateRules, this.behavior)
     }
     
     #repairFormBehavior(behaviorConfig) {
@@ -116,35 +102,54 @@ class DynamicForm {
         return fieldUpdateRules;
     }
     
-    #handleFieldInit(fieldsMap, initRules, fieldUpdateRules) {
+    #handleInitialisation(fieldsCollection, initFields, fieldUpdateRules, behavior) {
+        if (!initFields) {
+            return Promise.resolve();
+        }
+        return new Promise((resolve, reject) => {
+            Promise.resolve()
+            .then(() => behavior.beforeInit())
+            .then(result => {
+                if (result) {
+                    return this.#initialiseFields(fieldsCollection, initFields, fieldUpdateRules);
+                }
+                return null;
+            })
+            .then((value) => {
+                behavior.afterInit();
+                resolve();
+            });
+        });
+    }
+    
+    async #initialiseFields(fieldsMap, initFields, fieldUpdateRules) {
         // Create an object which holds the form's initial status
         const initialStatus = {}; // new Map(); // TODO: use a map for better performance
-        initRules
+        initFields
         .filter(x => x.value !== undefined)
         .forEach(element => initialStatus[element.name] = element.value /*initialStatus.set(element.name, element.value)*/);
         
         // Initialize "init" fields
         if (this.debug) {
-            console.log(`==init==> `, initRules.reduce((acc, curr) => acc + `[${curr.name}] `, ''));
+            console.log(`==init==> `, initFields.reduce((acc, curr) => acc + `[${curr.name}] `, ''));
             console.log(`Parameters:`, initialStatus);
         }
-        const initPromises = initRules
+        const initPromises = initFields
         .filter(x => fieldsMap.get(x.name) !== undefined)
         .map(field => this.manualUpdate(initialStatus, field.name));
         
+        await Promise.all(initPromises);
+        
         // Set values in initialised fields
-        const setValuesPromise = Promise.all(initPromises).then(result => {
             for(const [name, value] of Object.entries(initialStatus)) { // TODO: fix here for hashmap usage
                 const field = fieldsMap.get(name);
                 if (field) {
                     field.set(value);
                 }
             }
-        });
         
         // For each initialised field notifies the next fields to update
-        return setValuesPromise.then(result => {
-            const initializedFields = initRules.map(f => f.name);
+        const initializedFields = initFields.map(f => f.name);
             const nextUpdatePromises = [];
             initializedFields
             .filter(fieldName => fieldsMap.get(fieldName) !== undefined)
@@ -172,8 +177,9 @@ class DynamicForm {
                     });
                 });
             });
-            return Promise.all(nextUpdatePromises);
-        });
+        
+        await Promise.all(nextUpdatePromises);
+    }
     }
     
     /**
