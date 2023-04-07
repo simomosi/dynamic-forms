@@ -84,6 +84,10 @@ let formConfig = {
 ## 1.4. Initialize the DynamicForm
 ```javascript
 let form = dynamicForms.makeForm(formConfig);
+form.ready()
+.then(() => {
+    /* Code after all fields initialization */
+});
 ```
 
 **Done**. 4 steps. Easy.

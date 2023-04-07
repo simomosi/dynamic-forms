@@ -1,7 +1,7 @@
 # Rules
 Rules to manage fields update and instantiation.
 
-## Update Rule configuration
+## Single Update Rule configuration
 ```javascript
 let updateRuleConfiguration = {
     'name': 'fieldName',
@@ -27,7 +27,7 @@ Parameters
 Returns
 - {`object`} An object with external data values (*key-value* format)
 
-## Init Rule configuration
+## Single Init Rule configuration
 Parameters in init rules can reference to form fields and external data.
 
 ```javascript

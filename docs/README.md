@@ -33,7 +33,7 @@ Dynamic Forms is released as a **single file**. You can also find an already fun
 ## Main features
 - [x] **Easy to use**: DynamicForms works in a declarative way; no code, just a simple configuration!
 - [x] **Simple and modern javascript**: having no dependencies, you can integrate it everywhere!
-- [x] **Automate repetitive and boring operations**: read values, fetch data making async remote calls, update fields' status, clear other fields, hide/show sections...
+- [x] **Automate repetitive and boring operations**: read values, fetch data making async remote calls, update fields' status, clear other fields, hide/show sections... even listing them is BORING!
 - [x] **Highly customizable**: are you using an external library with custom html elements? Don't worry: you can specify your own functions to read/write data
 
 ## Installation
@@ -57,7 +57,7 @@ This is not the recommended method because you can't get updates automatically.
 
 If you still want to proceed this way, it is recommended to use the minified file (*dynamicforms.min.js*) for better performance.
 
-### Load the library
+## Load the library
 Choose your favorite import method
 
 === "Script tag"
@@ -131,6 +131,7 @@ classDiagram
         boolean enabled
         json elementToClassMapping
 
+        ready()
         notify(subjectName)
         fetchAllParameters(rule) object
         clearCascade(currentSubject)
@@ -179,4 +180,4 @@ classDiagram
 
 ## ToDo List
 
-- Apply listener to fields container to use dynamicForms on dynamic collections of checkbox/radio fields
+- Use dynamic-forms with dynamically created fields

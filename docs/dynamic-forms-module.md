@@ -6,14 +6,11 @@ This module let you instantiate and work easily with the whole DynamicForms libr
 
 You only need to use properties declared in this module and nothing else.
 
-Module import example:
-```html
-<script src = './dist/dynamicforms.min.js'></script>
-```
+First import the module (see [first page](./README.md#load-the-library))
 
 Module use example:
 ```javascript
-let form = dynamicForms.makeForm(formConfig);
+const form = dynamicForms.makeForm(formConfig);
 ```
 
 ## Properties
