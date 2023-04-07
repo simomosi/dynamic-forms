@@ -141,45 +141,52 @@ class DynamicForm {
         await Promise.all(initPromises);
         
         // Set values in initialised fields
-            for(const [name, value] of Object.entries(initialStatus)) { // TODO: fix here for hashmap usage
-                const field = fieldsMap.get(name);
-                if (field) {
-                    field.set(value);
-                }
+        for(const [name, value] of Object.entries(initialStatus)) { // TODO: fix here for hashmap usage
+            const field = fieldsMap.get(name);
+            if (field) {
+                field.set(value);
             }
+        }
         
         // For each initialised field notifies the next fields to update
         const initializedFields = initFields.map(f => f.name);
-            const nextUpdatePromises = [];
-            initializedFields
-            .filter(fieldName => fieldsMap.get(fieldName) !== undefined)
-            .forEach(fieldName => {
-                const updateRules = fieldUpdateRules.get(fieldName);
-                updateRules.forEach(updateRule => {
-                    // Update
-                    const params = this.fetchAllParameters(updateRule);
-                    updateRule.update.forEach(observerName => {
-                        if (observerName === updateRule.name) { // This prevents loops
-                            return;
-                        }
-                        if (initializedFields.includes(observerName)) { // Field already initialized
-                            return;
-                        }
-                        if (this.debug) {
-                            console.log(`> > [${updateRule.name}] ==update==> [${this.getField(observerName).name}]`);
-                            console.log(`Parameters:`, params);
-                        }
-                        const observer = this.getField(observerName);
-                        const observerPromise = observer.update(params, updateRule.name);
-                        nextUpdatePromises.push(observerPromise);
-                        // Clear
-                        this.clearCascade(observerName);
-                    });
+        const nextUpdatePromises = [];
+        initializedFields
+        .filter(fieldName => fieldsMap.get(fieldName) !== undefined)
+        .forEach(fieldName => {
+            const updateRules = fieldUpdateRules.get(fieldName);
+            updateRules.forEach(updateRule => {
+                // Update
+                const params = this.fetchAllParameters(updateRule);
+                updateRule.update.forEach(observerName => {
+                    if (observerName === updateRule.name) { // This prevents loops
+                        return;
+                    }
+                    if (initializedFields.includes(observerName)) { // Field already initialized
+                        return;
+                    }
+                    if (this.debug) {
+                        console.log(`> > [${updateRule.name}] ==update==> [${this.getField(observerName).name}]`);
+                        console.log(`Parameters:`, params);
+                    }
+                    const observer = this.getField(observerName);
+                    const observerPromise = observer.update(params, updateRule.name);
+                    nextUpdatePromises.push(observerPromise);
+                    // Clear
+                    this.clearCascade(observerName);
                 });
             });
+        });
         
         await Promise.all(nextUpdatePromises);
     }
+    
+    /**
+     * Method used to understand when the dynamic-form initialisation is completed
+     * @returns {Promise<void>} promise resolved when initialisation is completed
+     */
+    ready() {
+        return this.initPromise;
     }
     
     /**
@@ -223,7 +230,7 @@ class DynamicForm {
                     });
                 });
             }
-            return Promise.allSettled(updatePromises);
+            return Promise.all(updatePromises);
         }).then((values) => this.behavior.afterUpdate(subjectName));
     }
     

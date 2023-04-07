@@ -332,8 +332,10 @@
         // Init
         let start = new Date();
         let form = dynamicForms.makeForm(formConfig);
+            form.ready().then(() => {
         let end = new Date();
         console.log('Benchmark init time:', end.getMilliseconds() - start.getMilliseconds(), 'ms');
+            });
 
         // Enable/Disable form
         function enableDisableForm() {
