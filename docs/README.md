@@ -13,6 +13,10 @@ Here's some examples.
 
 ![Dynamic Dropdown example gif](./imgs/dynamic-dropdown.gif){ loading=lazy }
 
+### Form values easy initialisation
+
+![Dynamic Form initialisation gif](./imgs/initialisation.gif)
+
 ### Visibility changes depending on fields' state
 
 ![Dynamic Checkbox example gif](./imgs/dynamic-checkbox.gif){ loading=lazy }
