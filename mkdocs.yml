@@ -7,13 +7,23 @@ site_description: DynamicForms is a javascript library that handles all the inte
 site_author: simomosi
 
 nav:
-  - Home: README.md
-  - How to use it: dynamic-forms-module.md
-  - Configuration:
+  - About: README.md
+  - Start:
+    - Installation: start/installation.md
+    - Loading: start/loading.md
+  - TL;DR show me the code:
+    - Form creation: tldr/create_instance.md
+    - Initial status: tldr/initial_status.md
+  - Documentation:
+    - How to use it: dynamic-forms-module.md
     - Form configuration: configurations/form-configuration.md
-    - Rules: configurations/rules.md
     - Fields configuration: configurations/field-configuration.md
-  - Example: examples/minimal-example.md
+    - Update rules: configurations/update-rules.md
+    - Initialisation rules: configurations/init-rules.md
+  - Developers:
+    - Contribute: dev/contribute.md
+    - ToDo & Changelog: dev/todo_changelog.md
+    - Cool stuff: dev/cool_stuff.md
 markdown_extensions:
   - toc:
       permalink: '#'
@@ -55,7 +65,7 @@ theme:
     logo: fontawesome/solid/diagram-project
   features:
     - navigation.instant # Async page content load
-    - navigation.expand # Expand sections on sidebar
+    #- navigation.expand # Expand sections on sidebar
     - navigation.top # Back to top button
     - navigation.footer # Prev and Next buttons in footer
     - search.suggest # Suggest next word

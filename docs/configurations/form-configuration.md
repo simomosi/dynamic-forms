@@ -95,11 +95,11 @@ Include here all rules like "if field A changes, trigger the update of fields B 
 
 *required*
 
-See [Update Rule configuration](rules.md#Update-Rule-configuration).
+See [Update Rule configuration](./update-rules.md).
 
 ## `init`
 A collection of Init Rules configurations.
 
 Include here all fields which will be updated during the DynamicForm instantiation.
 
-See [Init Rule configuration](rules.md#Init-Rule-configuration).
+See [Initialisation Rule configuration](./init-rules.md).
