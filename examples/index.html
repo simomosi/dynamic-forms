@@ -152,92 +152,92 @@
         // import '../dist/dynamicforms.js'; // Dev mode (import as module)
         // import '../dist/dynamicforms.min.js'; // Prod mode (import as module)
         
-        let formConfig = {
-            'id': 'jsonPlaceholder',
-            'debug': true,
-            'behavior': {
-                'beforeUpdate': (subjectName) => document.getElementById('spinner').style.display = 'inline-block',
-                'afterUpdate': (subjectName) => document.getElementById('spinner').style.display = 'none',
-                'beforeInit': () => document.getElementById('spinner').style.display = 'inline-block',
-                'afterInit': () => document.getElementById('spinner').style.display = 'none'
+        const formConfiguration = {
+            id: 'jsonPlaceholder',
+            debug: true,
+            behavior: {
+                beforeUpdate: (subjectName) => document.getElementById('spinner').style.display = 'inline-block',
+                afterUpdate: (subjectName) => document.getElementById('spinner').style.display = 'none',
+                beforeInit: () => document.getElementById('spinner').style.display = 'inline-block',
+                afterInit: () => document.getElementById('spinner').style.display = 'none'
             },
-            'fields': [
+            fields: [
             {
-                'name': 'user',
-                'fetch': {
-                    'makeUrl': (data) => `https://jsonplaceholder.typicode.com/users`,
+                name: 'user',
+                fetch: {
+                    makeUrl: (data) => `https://jsonplaceholder.typicode.com/users`,
                 },
-                'dropdown': {
-                    'postProcessData': (htmlElement, data) => {
-                        return data.map(x => { return { 'value': x.id, 'text': x.username }; }).sort((a, b) => a.text > b.text);
+                dropdown: {
+                    postProcessData: (htmlElement, data) => {
+                        return data.map(x => { return { value: x.id, 'text': x.username }; }).sort((a, b) => a.text > b.text);
                     }
                 }
             },
             {
-                'name': 'post',
-                'fetch': {
-                    'makeUrl': (data) => `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`,
+                name: 'post',
+                fetch: {
+                    makeUrl: (data) => `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`,
                 },
-                'dropdown': {
-                    'postProcessData': (htmlElement, data) => {
-                        return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
+                dropdown: {
+                    postProcessData: (htmlElement, data) => {
+                        return data.map(x => { return { value: x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                     }
                 }
             },
             {
-                'name': 'comment',
-                'fetch': {
-                    'makeUrl': (data) => `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`,
+                name: 'comment',
+                fetch: {
+                    makeUrl: (data) => `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`,
                 },
-                'dropdown': {
-                    'postProcessData': (htmlElement, data) => {
-                        return data.map(x => { return { 'value': x.id, 'text': x.name }; }).sort((a, b) => a.text > b.text);
+                dropdown: {
+                    postProcessData: (htmlElement, data) => {
+                        return data.map(x => { return { value: x.id, 'text': x.name }; }).sort((a, b) => a.text > b.text);
                     }
                 }
             },
             {
-                'name': 'album',
-                'fetch': {
-                    'makeUrl': (data) => `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`,
+                name: 'album',
+                fetch: {
+                    makeUrl: (data) => `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`,
                 },
-                'dropdown': {
-                    'postProcessData': (htmlElement, data) => {
-                        return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
+                dropdown: {
+                    postProcessData: (htmlElement, data) => {
+                        return data.map(x => { return { value: x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                     }
                 }
             },
             {
-                'name': 'photo',
-                'fetch': {
-                    'makeUrl': (data) => `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`,
+                name: 'photo',
+                fetch: {
+                    makeUrl: (data) => `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`,
                 },
-                'dropdown': {
-                    'postProcessData': (htmlElement, data) => {
-                        return data.map(x => { return { 'value': x.id, 'text': x.url }; }).sort((a, b) => a.text > b.text);
+                dropdown: {
+                    postProcessData: (htmlElement, data) => {
+                        return data.map(x => { return { value: x.id, 'text': x.url }; }).sort((a, b) => a.text > b.text);
                     }
                 }
             },
             {
-                'name': 'todo',
-                'fetch': {
-                    'makeUrl': (data) => `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`,
+                name: 'todo',
+                fetch: {
+                    makeUrl: (data) => `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`,
                 },
-                'dropdown': {
-                    'postProcessData': (htmlElement, data) => {
-                        return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
+                dropdown: {
+                    postProcessData: (htmlElement, data) => {
+                        return data.map(x => { return { value: x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                     }
                 }
             },
             {
-                'name': 'visibility-checkbox'
+                name: 'visibility-checkbox'
             },
             {
-                'name': 'readonly-checkbox'
+                name: 'readonly-checkbox'
             },
             {
-                'name': 'checkbox-target-field',
-                'behavior': {
-                    'updateStatus': (htmlElement, data, subjectName) => {
+                name: 'checkbox-target-field',
+                behavior: {
+                    updateStatus: (htmlElement, data, subjectName) => {
                         let value = data[subjectName];
                         switch (subjectName) {
                             case 'visibility-checkbox':
@@ -255,71 +255,71 @@
                 },
             },
             {
-                'name': 'rows-radio'
+                name: 'rows-radio'
             },
             {
-                'name': 'radio-target-textarea',
-                'behavior': {
-                    'updateStatus': (htmlElement, data, subjectName) => {
+                name: 'radio-target-textarea',
+                behavior: {
+                    updateStatus: (htmlElement, data, subjectName) => {
                         let value = parseInt(data[subjectName]);
                         htmlElement.rows = value;
                     },
                 },
             }
             ],
-            'rules': [
+            rules: [
             {
-                'name': 'user',
-                'update': ['post', 'album', 'todo'],
+                name: 'user',
+                update: ['post', 'album', 'todo'],
             },
             {
-                'name': 'post',
-                'update': ['comment'],
-                'additionalData': ['user'],
-                'externalData': (data, subjectName) => { return { 'timestamp': new Date() } }
+                name: 'post',
+                update: ['comment'],
+                additionalData: ['user'],
+                externalData: (data, subjectName) => { return { 'timestamp': new Date() } }
             },
             {
-                'name': 'album',
-                'update': ['photo']
+                name: 'album',
+                update: ['photo']
             },
             {
-                'name': 'visibility-checkbox',
-                'update': ['checkbox-target-field'],
-                'additionalData': ['readonly-checkbox'],
+                name: 'visibility-checkbox',
+                update: ['checkbox-target-field'],
+                additionalData: ['readonly-checkbox'],
             },
             {
-                'name': 'readonly-checkbox',
-                'update': ['checkbox-target-field'],
-                'additionalData': ['visibility-checkbox'],
+                name: 'readonly-checkbox',
+                update: ['checkbox-target-field'],
+                additionalData: ['visibility-checkbox'],
             },
             {
-                'name': 'rows-radio',
-                'update': ['radio-target-textarea']
+                name: 'rows-radio',
+                update: ['radio-target-textarea']
             }
             ],
-            'init': [
+            init: [
             {
-                'name': 'user',
-                'value': "1"
+                name: 'user',
+                value: "1"
             },
             {
-                'name': 'post',
-                'value': "2"
+                name: 'post',
+                value: "2"
             },
             {
-                'name': 'timestamp',
-                'value': new Date()
+                name: 'timestamp',
+                value: new Date()
             },
             {
-                'name': 'isInit',
-                'value': true
+                name: 'isInit',
+                value: true
             }
             ]
         };
         
         // Init
         let start = new Date();
-        let form = dynamicForms.makeForm(formConfig);
+        let form = dynamicForms.makeForm(formConfiguration);
         form.ready().then(() => {
             let end = new Date();
             console.log('Benchmark init time:', end.getMilliseconds() - start.getMilliseconds(), 'ms');
