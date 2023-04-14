@@ -1,7 +1,7 @@
 /*!
  * 
  * Author: simomosi (https://github.com/simomosi)
- * Version: 1.1.3
+ * Version: 1.2.0
  * Repository: https://github.com/simomosi/dynamic-forms.git
  * Documentation: https://simomosi.github.io/dynamic-forms/
  *
