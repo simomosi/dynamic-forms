@@ -2,6 +2,7 @@
 - [Dynamic Forms](#dynamic-forms)
   - [What is it and what can I do with it](#what-is-it-and-what-can-i-do-with-it)
     - [Select with variable options](#select-with-variable-options)
+    - [Form values easy initialisation](#form-values-easy-initialisation)
     - [Visibility changes depending on fields' state](#visibility-changes-depending-on-fields-state)
     - [Updating rules](#updating-rules)
     - [Much much more](#much-much-more)
@@ -21,6 +22,10 @@ Here's some examples.
 ### Select with variable options
 
 ![Dynamic Dropdown example gif](./docs/imgs/dynamic-dropdown.gif)
+
+### Form values easy initialisation
+
+![Dynamic Form initialisation gif](./docs/imgs/initialisation.gif)
 
 ### Visibility changes depending on fields' state
 

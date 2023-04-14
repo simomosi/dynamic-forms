@@ -3,8 +3,7 @@
 <meta charset="UTF-8">
 
 <head>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 </head>
 
 <body>
@@ -16,7 +15,7 @@
         </div>
         <p>DynamicForms sandbox: test fields interactions!</p>
         <p>Tip: open developer tools and keep an eye on console/network tabs.</p>
-
+        
         <form id='jsonPlaceholder'>
             <p class="mt-4">Dynamic Dropdown</p>
             <div class="row">
@@ -79,13 +78,13 @@
                     </select>
                 </div>
             </div>
-
+            
             <div class="row mt-4">
                 <div class="col-2">
                     <p class="mt-4">Dynamic Checkbox</p>
                     <div class="form-check">
                         <input type="checkbox" id="visibility-checkbox" name="visibility-checkbox"
-                            class="form-check-input" checked>
+                        class="form-check-input" checked>
                         <label for="visibility-checkbox" class="form-check-label"> Field Visible </label>
                     </div>
                     <div class="form-check">
@@ -96,17 +95,17 @@
                 <div class="col-4">
                     <p class="mt-4">Dynamic Input</p>
                     <input type="text" class="form-control" name="checkbox-target-field"
-                        placeholder="Visible? Readonly?" />
+                    placeholder="Visible? Readonly?" />
                 </div>
             </div>
-
+            
             <div class="row mt-4">
                 <div class="col-2">
                     <p class="mt-4">Dynamic Radio Button</p>
                     Rows number:
                     <div class="form-check">
                         <input type="radio" id="rows-radio-1" name="rows-radio" value="1" class="form-check-input"
-                            checked>
+                        checked>
                         <label for="rows-radio-1" class="form-check-label">1 Row</label>
                     </div>
                     <div class="form-check">
@@ -121,10 +120,10 @@
                 <div class="col-4">
                     <p class="mt-4">Dynamic Textarea</p>
                     <textarea class="form-control" name="radio-target-textarea" rows="1"
-                        placeholder="How many rows?"></textarea>
+                    placeholder="How many rows?"></textarea>
                 </div>
             </div>
-
+            
             <div class="row mt-4">
                 <div class="col">
                     <div class="custom-control custom-radio custom-control-inline">
@@ -139,183 +138,193 @@
             </div>
         </form>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
-        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
-        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
-        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
-        crossorigin="anonymous"></script>
-
+    
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    
+    
     <!-- Dev mode (import as script tag) -->
     <script src='../dist/dynamicforms.js'></script>
     <!-- Prod mode (import as script tag) -->
-<!--    <script src='../dist/dynamicforms.min.js'></script>-->
-
+    <!--    <script src='../dist/dynamicforms.min.js'></script>-->
+    
     <script defer>
         // import '../dist/dynamicforms.js'; // Dev mode (import as module)
         // import '../dist/dynamicforms.min.js'; // Prod mode (import as module)
-
-        let formConfig = {
-            'id': 'jsonPlaceholder',
-            'debug': true,
-            'behavior': {
-                'beforeUpdate': (subjectName) => document.getElementById('spinner').style.display = 'inline-block',
-                'afterUpdate': (subjectName) => document.getElementById('spinner').style.display = 'none'
+        
+        const formConfiguration = {
+            id: 'jsonPlaceholder',
+            debug: true,
+            behavior: {
+                beforeUpdate: (subjectName) => document.getElementById('spinner').style.display = 'inline-block',
+                afterUpdate: (subjectName) => document.getElementById('spinner').style.display = 'none',
+                beforeInit: () => document.getElementById('spinner').style.display = 'inline-block',
+                afterInit: () => document.getElementById('spinner').style.display = 'none'
             },
-            'fields': [
-                {
-                    'name': 'user',
-                    'fetch': {
-                        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/users`,
-                    },
-                    'dropdown': {
-                        'postProcessData': (htmlElement, data) => {
-                            return data.map(x => { return { 'value': x.id, 'text': x.username }; }).sort((a, b) => a.text > b.text);
-                        }
+            fields: [
+            {
+                name: 'user',
+                fetch: {
+                    makeUrl: (data) => `https://jsonplaceholder.typicode.com/users`,
+                },
+                dropdown: {
+                    postProcessData: (htmlElement, data) => {
+                        return data.map(x => { return { value: x.id, 'text': x.username }; }).sort((a, b) => a.text > b.text);
                     }
+                }
+            },
+            {
+                name: 'post',
+                fetch: {
+                    makeUrl: (data) => `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`,
                 },
-                {
-                    'name': 'post',
-                    'fetch': {
-                        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`,
-                    },
-                    'dropdown': {
-                        'postProcessData': (htmlElement, data) => {
-                            return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
-                        }
+                dropdown: {
+                    postProcessData: (htmlElement, data) => {
+                        return data.map(x => { return { value: x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                     }
+                }
+            },
+            {
+                name: 'comment',
+                fetch: {
+                    makeUrl: (data) => `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`,
                 },
-                {
-                    'name': 'comment',
-                    'fetch': {
-                        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`,
-                    },
-                    'dropdown': {
-                        'postProcessData': (htmlElement, data) => {
-                            return data.map(x => { return { 'value': x.id, 'text': x.name }; }).sort((a, b) => a.text > b.text);
-                        }
+                dropdown: {
+                    postProcessData: (htmlElement, data) => {
+                        return data.map(x => { return { value: x.id, 'text': x.name }; }).sort((a, b) => a.text > b.text);
                     }
+                }
+            },
+            {
+                name: 'album',
+                fetch: {
+                    makeUrl: (data) => `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`,
                 },
-                {
-                    'name': 'album',
-                    'fetch': {
-                        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`,
-                    },
-                    'dropdown': {
-                        'postProcessData': (htmlElement, data) => {
-                            return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
-                        }
+                dropdown: {
+                    postProcessData: (htmlElement, data) => {
+                        return data.map(x => { return { value: x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                     }
+                }
+            },
+            {
+                name: 'photo',
+                fetch: {
+                    makeUrl: (data) => `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`,
                 },
-                {
-                    'name': 'photo',
-                    'fetch': {
-                        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`,
-                    },
-                    'dropdown': {
-                        'postProcessData': (htmlElement, data) => {
-                            return data.map(x => { return { 'value': x.id, 'text': x.url }; }).sort((a, b) => a.text > b.text);
-                        }
+                dropdown: {
+                    postProcessData: (htmlElement, data) => {
+                        return data.map(x => { return { value: x.id, 'text': x.url }; }).sort((a, b) => a.text > b.text);
                     }
+                }
+            },
+            {
+                name: 'todo',
+                fetch: {
+                    makeUrl: (data) => `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`,
                 },
-                {
-                    'name': 'todo',
-                    'fetch': {
-                        'makeUrl': (data) => `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`,
-                    },
-                    'dropdown': {
-                        'postProcessData': (htmlElement, data) => {
-                            return data.map(x => { return { 'value': x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
-                        }
+                dropdown: {
+                    postProcessData: (htmlElement, data) => {
+                        return data.map(x => { return { value: x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                     }
-                },
-                {
-                    'name': 'visibility-checkbox'
-                },
-                {
-                    'name': 'readonly-checkbox'
-                },
-                {
-                    'name': 'checkbox-target-field',
-                    'behavior': {
-                        'updateStatus': (htmlElement, data, subjectName) => {
-                            let value = data[subjectName];
-                            switch (subjectName) {
-                                case 'visibility-checkbox':
-                                    if (value === true) {
-                                        htmlElement.style.display = "block";
-                                    } else {
-                                        htmlElement.style.display = "none";
-                                    }
-                                    break;
-                                case 'readonly-checkbox':
-                                    htmlElement.readOnly = value;
-                                    break;
+                }
+            },
+            {
+                name: 'visibility-checkbox'
+            },
+            {
+                name: 'readonly-checkbox'
+            },
+            {
+                name: 'checkbox-target-field',
+                behavior: {
+                    updateStatus: (htmlElement, data, subjectName) => {
+                        let value = data[subjectName];
+                        switch (subjectName) {
+                            case 'visibility-checkbox':
+                            if (value === true) {
+                                htmlElement.style.display = "block";
+                            } else {
+                                htmlElement.style.display = "none";
                             }
-                        },
+                            break;
+                            case 'readonly-checkbox':
+                            htmlElement.readOnly = value;
+                            break;
+                        }
                     },
                 },
-                {
-                    'name': 'rows-radio'
-                },
-                {
-                    'name': 'radio-target-textarea',
-                    'behavior': {
-                        'updateStatus': (htmlElement, data, subjectName) => {
-                            let value = parseInt(data[subjectName]);
-                            htmlElement.rows = value;
-                        },
+            },
+            {
+                name: 'rows-radio'
+            },
+            {
+                name: 'radio-target-textarea',
+                behavior: {
+                    updateStatus: (htmlElement, data, subjectName) => {
+                        let value = parseInt(data[subjectName]);
+                        htmlElement.rows = value;
                     },
-                }
+                },
+            }
             ],
-            'rules': [
-                {
-                    'name': 'user',
-                    'update': ['post', 'album', 'todo'],
-                },
-                {
-                    'name': 'post',
-                    'update': ['comment'],
-                    'additionalData': ['user'],
-                    'externalData': (data, subjectName) => { return { 'timestamp': new Date() } }
-                },
-                {
-                    'name': 'album',
-                    'update': ['photo']
-                },
-                {
-                    'name': 'visibility-checkbox',
-                    'update': ['checkbox-target-field'],
-                    'additionalData': ['readonly-checkbox'],
-                },
-                {
-                    'name': 'readonly-checkbox',
-                    'update': ['checkbox-target-field'],
-                    'additionalData': ['visibility-checkbox'],
-                },
-                {
-                    'name': 'rows-radio',
-                    'update': ['radio-target-textarea']
-                }
+            rules: [
+            {
+                name: 'user',
+                update: ['post', 'album', 'todo'],
+            },
+            {
+                name: 'post',
+                update: ['comment'],
+                additionalData: ['user'],
+                externalData: (data, subjectName) => { return { 'timestamp': new Date() } }
+            },
+            {
+                name: 'album',
+                update: ['photo']
+            },
+            {
+                name: 'visibility-checkbox',
+                update: ['checkbox-target-field'],
+                additionalData: ['readonly-checkbox'],
+            },
+            {
+                name: 'readonly-checkbox',
+                update: ['checkbox-target-field'],
+                additionalData: ['visibility-checkbox'],
+            },
+            {
+                name: 'rows-radio',
+                update: ['radio-target-textarea']
+            }
             ],
-            'init': [
-                {
-                    'name': 'user',
-                    'externalData': (data, subjectName) => { return { 'timestamp': new Date() }; }
-                }
+            init: [
+            {
+                name: 'user',
+                value: "1"
+            },
+            {
+                name: 'post',
+                value: "2"
+            },
+            {
+                name: 'timestamp',
+                value: new Date()
+            },
+            {
+                name: 'isInit',
+                value: true
+            }
             ]
         };
-
+        
         // Init
         let start = new Date();
-        let form = dynamicForms.makeForm(formConfig);
-        let end = new Date();
-        console.log('Benchmark init time:', end.getMilliseconds() - start.getMilliseconds(), 'ms');
-
+        let form = dynamicForms.makeForm(formConfiguration);
+        form.ready().then(() => {
+            let end = new Date();
+            console.log('Benchmark init time:', end.getMilliseconds() - start.getMilliseconds(), 'ms');
+        });
+        
         // Enable/Disable form
         function enableDisableForm() {
             let value = document.querySelectorAll('input[name=formEnabled]:checked')[0].value;
@@ -325,7 +334,7 @@
                 form.setEnabled(false);
             }
         }
-
+        
         document.getElementsByName('formEnabled').forEach((item) => item.addEventListener('click', enableDisableForm));
         enableDisableForm();
     </script>

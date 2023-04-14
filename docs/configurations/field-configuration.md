@@ -7,31 +7,31 @@ Here's a complete single field configuration:
 
 ```javascript
 let fieldConfiguration = {
-    'name': 'fieldName',
-    'io': {  // Customize field input/output
-        'event': 'change',
-        'get': (htmlElement) => { },
-        'set': (htmlElement, value) => { },
+    name: 'fieldName',
+    io: {  // Customize field input/output
+        event: 'change',
+        get: (htmlElement) => { },
+        set: (htmlElement, value) => { },
     },
-    'fetch': { // Remote call options
-        'method': 'GET',
-        'makeUrl': (data) => { },
-        'makeBody': (data) => { }, // JSON.stringify, formData, text...
-        'fullFetchConfig': {}, // Fetch complete configuration
+    fetch: { // Remote call options
+        method: 'GET',
+        makeUrl: (data) => { },
+        makeBody: (data) => { }, // JSON.stringify, formData, text...
+        fullFetchConfig: {}, // Fetch complete configuration
     },
-    'behavior': {
-        'clear': (htmlElement) => { }, // Clear field from its content
-        'beforeUpdate': (htmlElement, data, subjectName) => { return true; }, // Executed before the remote call. Return false to block the update
-        'updateStatus': (htmlElement, data, subjectName) => { },
-        'afterUpdate': (htmlElement, data, subjectName) => { } // Executed after the remote call
+    behavior: {
+        clear: (htmlElement) => { }, // Clear field from its content
+        beforeUpdate: (htmlElement, data, subjectName) => { return true; }, // Executed before the remote call. Return false to block the update
+        updateStatus: (htmlElement, data, subjectName) => { },
+        afterUpdate: (htmlElement, data, subjectName) => { } // Executed after the remote call
     },
-    'dropdown': { // Only for dropdown elements
-        'postProcessData': (htmlElement, data) => { }, // Process data retrieved by remote call
-        'saveData': (htmlElement, data) => { }, // Save data in html (es: <option value="value">'text'</option>)
-        'clearOnParentVoid': true, // True (default) to clear field content when subject is empty; false to trigger a remote call
+    dropdown: { // Only for dropdown elements
+        postProcessData: (htmlElement, data) => { }, // Process data retrieved by remote call
+        saveData: (htmlElement, data) => { }, // Save data in html (es: <option value="value">'text'</option>)
+        clearOnParentVoid: true, // True (default) to clear field content when subject is empty; false to trigger a remote call
     },
-    'checkbox': { // Only for checkbox elements
-        'booleanValue': true // True (default) to get element's value as boolean, based on the checked property; false to get the value property
+    checkbox: { // Only for checkbox elements
+        booleanValue: true // True (default) to get element's value as boolean, based on the checked property; false to get the value property
     }
 };
 ```

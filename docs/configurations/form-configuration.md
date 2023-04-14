@@ -11,16 +11,18 @@ Glossary:
 Here's the complete form configuration:
 
 ```javascript
-let formConfiguration = {
-    'id': 'formId',
-    'debug': true,
-    'behavior': {
-        'beforeUpdate': (subjectName) => { }, // Executed before the update related events. Return false to block all updates
-        'afterUpdate': (subjectName) => { }, // Executed after the update related events
+const formConfiguration = {
+    id: 'form_id',
+    debug: true,
+    behavior: {
+        beforeUpdate: (subjectName) => { }, // Executed before the update related events. Return false to block all updates
+        afterUpdate: (subjectName) => { }, // Executed after the update related events
+        beforeInit: () => { }, // Executed before form initialization
+        afterInit: () => { } // Executed after form initialization
     },
-    'fields': [], // Collection of fields objects
-    'rules': [], // Collection of rules objects
-    'init': [] // Collection of init objects
+    fields: [], // Collection of fields objects
+    rules: [], // Collection of rules objects
+    init: [] // Collection of init objects
 };
 ```
 
@@ -32,7 +34,7 @@ Type: `string`.
 *required*
 
 ## `debug`
-A flag to activate the debug mode.
+A flag to activate the debug mode which prints in the console all the rules right before their execution.
 
 Type: `boolean`.
 
@@ -60,6 +62,22 @@ Parameters
 
 Returns
 - {`void`}
+- 
+### `beforeInit () `
+Method executed before the form initialisation.
+
+Useful to show a loader before all fields are initialised.
+
+Returns
+- {`void`}
+
+### `afterInit () `
+Method executed after the form initialisation.
+
+Useful to hide any loader after the form is ready.
+
+Returns
+- {`void`}
 
 ## `fields`*
 A collection of Fields configurations.
@@ -68,7 +86,7 @@ Include here all fields involved in the DynamicForm behavior (get/set/update ope
 
 *required*
 
-See [Field configuration](#Field-configuration).
+See [Field configuration](field-configuration.md).
 
 ## `rules`*
 A collection of Update Rules configurations.
@@ -77,11 +95,11 @@ Include here all rules like "if field A changes, trigger the update of fields B 
 
 *required*
 
-See [Update Rule configuration](#Update-Rule-configuration).
+See [Update Rule configuration](./update-rules.md).
 
 ## `init`
 A collection of Init Rules configurations.
 
 Include here all fields which will be updated during the DynamicForm instantiation.
 
-See [Init Rule configuration](#Init-Rule-configuration).
+See [Initialisation Rule configuration](./init-rules.md).
