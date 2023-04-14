@@ -4,9 +4,9 @@ These rules are used to manage fields initialization.
 Parameters in init rules can reference to form fields and external data.
 
 ```javascript
-let initialisationRuleConfiguration = {
-    'name': 'fieldName',
-    'value': any
+const initialisationRuleConfiguration = {
+    name: 'fieldName',
+    value: any
 };
 ```
 

@@ -2,11 +2,11 @@
 These rules are used to manage fields update.
 
 ```javascript
-let updateRuleConfiguration = {
-    'name': 'fieldName',
-    'update': [],  // Array of form fields names
-    'additionalData': [], // Array of other field names to send to server
-    'externalData': (data, subjectName) => { } // Function which returns a json of data
+const updateRuleConfiguration = {
+    name: 'fieldName',
+    update: [],  // Array of form fields names
+    additionalData: [], // Array of other field names to send to server
+    externalData: (data, subjectName) => { } // Function which returns a json of data
 };
 ```
 

@@ -11,18 +11,18 @@ Glossary:
 Here's the complete form configuration:
 
 ```javascript
-let formConfiguration = {
-    'id': 'formId',
-    'debug': true,
-    'behavior': {
-        'beforeUpdate': (subjectName) => { }, // Executed before the update related events. Return false to block all updates
-        'afterUpdate': (subjectName) => { }, // Executed after the update related events
-        'beforeInit': () => { }, // Executed before form initialization
-        'afterInit': () => { } // Executed after form initialization
+const formConfiguration = {
+    id: 'form_id',
+    debug: true,
+    behavior: {
+        beforeUpdate: (subjectName) => { }, // Executed before the update related events. Return false to block all updates
+        afterUpdate: (subjectName) => { }, // Executed after the update related events
+        beforeInit: () => { }, // Executed before form initialization
+        afterInit: () => { } // Executed after form initialization
     },
-    'fields': [], // Collection of fields objects
-    'rules': [], // Collection of rules objects
-    'init': [] // Collection of init objects
+    fields: [], // Collection of fields objects
+    rules: [], // Collection of rules objects
+    init: [] // Collection of init objects
 };
 ```
 
