@@ -1,10 +1,12 @@
 # Loading the library
 Choose your favorite import method
 
+## From installed sources
+
 === "ES6 Module"
     ```html
     <script type="module">
-        import * from 'your-assets-path/@simomosi/dynamic-forms/dist/dynamicforms.min.js';
+        import 'your-assets-path/@simomosi/dynamic-forms/dist/dynamicforms.min.js';
     </script>
     ```
 
@@ -15,5 +17,19 @@ Choose your favorite import method
 
 === "Script tag"
     ```html
-    <script src = 'your-assets-path/@simomosi/dynamic-forms/dist/dynamicforms.min.js'></script>
+    <script src='your-assets-path/@simomosi/dynamic-forms/dist/dynamicforms.min.js'></script>
+    ```
+
+## From CDN
+
+=== "ES6 Module"
+    ```html
+    <script type="module">
+        import 'https://unpkg.com/@simomosi/dynamic-forms@latest';
+    </script>
+    ```
+
+=== "Script tag"
+    ```html
+    <script src = 'https://unpkg.com/@simomosi/dynamic-forms@latest'></script>
     ```

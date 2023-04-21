@@ -2,7 +2,7 @@
 
 ## Preconditions
 
-Did you already [installed](../start/installation.md) and [loaded](../start/loading.md) the library? Then go on, you are almost there!
+<!-- Did you already [installed](../start/installation.md) and [loaded](../start/loading.md) the library? Then go on, you are almost there! -->
 
 Let's assume we are working on the following html form:
 
