@@ -1,9 +1,9 @@
 # Field configuration
-This document describes a single field configuration.
+This document describes a single field configuration. The field configuration list must be included in the *fields* section in the [form configuration](./form-configuration.md).
 
-The field configuration must be included in the *fields* collection in the [form configuration](./form-configuration.md).
+Just specify fields with custom behavior as the standard ones will be discovered and included in the dynamic-form automatically.
 
-Here's a complete single field configuration:
+Here's a complete single field configuration. You just need to specify the attributes you need, the other will have default values.
 
 ```javascript
 let fieldConfiguration = {

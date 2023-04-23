@@ -79,27 +79,23 @@ Useful to hide any loader after the form is ready.
 Returns
 - {`void`}
 
-## `fields`*
+## `fields`
 A collection of Fields configurations.
 
-Include here all fields involved in the DynamicForm behavior (get/set/update operations). Fields with no dynamic behavior may not be included.
+Include here fields with custom behavior (get/set/update operations). Standard fields will be discovered automatically.
 
-*required*
+See [Fields configuration](fields-configuration.md).
 
-See [Field configuration](field-configuration.md).
-
-## `rules`*
+## `rules`
 A collection of Update Rules configurations.
 
 Include here all rules like "if field A changes, trigger the update of fields B and C".
 
-*required*
-
-See [Update Rule configuration](./update-rules.md).
+See [Update Rules configuration](./update-rules.md).
 
 ## `init`
 A collection of Init Rules configurations.
 
 Include here all fields which will be updated during the DynamicForm instantiation.
 
-See [Initialisation Rule configuration](./init-rules.md).
+See [Initialisation Rules configuration](./init-rules.md).

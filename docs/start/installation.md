@@ -1,5 +1,5 @@
 # Installation
-## Using a package manager
+## Using a package manager (recommeded)
 
 === "npm"
     ```shell
@@ -10,11 +10,18 @@
     yarn add @simomosi/dynamic-forms
     ```
 
-This will put the library under the path `node_modules/@simomosi/dynamic-forms/dist/dynamicforms.min.js`
+## Using a CDN
+
+```html
+<script src='https://unpkg.com/@simomosi/dynamic-forms@latest'></script>
+```
+
+You can set the specific version (e.g. `dynamic-forms@1.2.0`), use tags (e.g. `dynamic-forms@latest`) or semver ranges (e.g. `dynamic-forms@^1.2.0`).
+See [UNPKG page](https://www.unpkg.com/) for more information.
 
 ## Using local files
-Download the last release from [GitHub release section](https://github.com/simomosi/dynamic-forms/releases). Extracts files in your assets folder and load them in your project (see section below).
+Download the last release from [GitHub release section](https://github.com/simomosi/dynamic-forms/releases). Extracts files in your assets folder and load them in your project (see next section).
 
-This is not the recommended method because you can't get updates automatically.
+This is not the recommended method because you can't get security updates automatically.
 
 If you still want to proceed this way, it is recommended to use the minified file (*dynamicforms.min.js*) for better performance.
