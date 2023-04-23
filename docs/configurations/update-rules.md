@@ -4,8 +4,8 @@ These rules are used to manage fields update.
 ```javascript
 const updateRuleConfiguration = {
     name: 'fieldName',
-    update: [],  // Array of form fields names
-    additionalData: [], // Array of other field names to send to server
+    update: [],  // Array of form fields names to notify when events occour
+    additionalData: [], // Array of other form field names to send to server
     externalData: (data, subjectName) => { } // Function which returns a json of data
 };
 ```

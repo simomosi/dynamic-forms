@@ -17,7 +17,7 @@ nav:
   - Documentation:
     - How to use it: dynamic-forms-module.md
     - Form configuration: configurations/form-configuration.md
-    - Fields configuration: configurations/field-configuration.md
+    - Fields configuration: configurations/fields-configuration.md
     - Update rules: configurations/update-rules.md
     - Initialisation rules: configurations/init-rules.md
   - Developers:

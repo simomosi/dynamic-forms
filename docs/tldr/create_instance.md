@@ -24,8 +24,8 @@ Let's assume we are working on the following html form:
 
 For the form configuration we need to write 2 lists:
 
-1. **fields**: a list of all form fields
-2. **rules**: a list which indicates when an event in a field (usually a `change`) should notify other fields
+1. **fields**: a list of form fields with custom behavior (using the following [format](../configurations/fields-configuration.md))
+2. **rules**: a list which indicates when a field related event (usually a `change`) should notify other fields (using the following [format](../configurations/update-rules.md))
 
 ```javascript
 const formConfiguration = {
@@ -36,10 +36,7 @@ const formConfiguration = {
             fetch: {
                 makeUrl: (data) => `https://url/to/api`,
             }
-        },
-        {
-            name: 'field_two'
-        },
+        }
     ],
     rules: [
         {
@@ -49,6 +46,8 @@ const formConfiguration = {
     ]
 };
 ```
+
+Note: we didn't specify `field_two`'s configuration.
 
 ## Create the dynamic form
 

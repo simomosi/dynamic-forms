@@ -7,7 +7,6 @@ You need to list all the fields which requires the initialisation, describing:
 1. Their **name**
 2. Their initial **value**, if you want to set one
 
-Dynamic-forms uses the information specified earlier to retrieve remote data for each field.
 
 ```javascript
 const formConfiguration = {
@@ -22,6 +21,13 @@ const formConfiguration = {
     ]
 };
 ```
+
+Dynamic-forms uses:
+
+- the information specified in the `fields` section to retrieve remote data for each field in the `init` section
+- the informations specified in the `rules` section to infer what data should be retrieved next
+
+In the example above, first `fields` and `init` rules will initialise `field_one`, then (update) `rules` will initialise `field_two` as specified in the previous page.
 
 If you need to specify other data, just list their name and value in the `init` collection just like they were form fields.
 
