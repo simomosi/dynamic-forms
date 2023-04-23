@@ -20,6 +20,11 @@ Choose your favorite import method
     <script src='your-assets-path/@simomosi/dynamic-forms/dist/dynamicforms.min.js'></script>
     ```
 
+Note that 2 different sources exist:
+
+- `@simomosi/dynamic-forms/dist` (recommended) is transpiled with *Webpack* and *Babel* to enhance performance and ensure compatibility with different browsers
+- `@simomosi/dynamic-forms/src` is the actual source
+
 ## From CDN
 
 === "Script tag"
