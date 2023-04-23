@@ -22,14 +22,14 @@ Choose your favorite import method
 
 ## From CDN
 
+=== "Script tag"
+    ```html
+    <script src = 'https://unpkg.com/@simomosi/dynamic-forms@latest'></script>
+    ```
+
 === "ES6 Module"
     ```html
     <script type="module">
         import 'https://unpkg.com/@simomosi/dynamic-forms@latest';
     </script>
-    ```
-
-=== "Script tag"
-    ```html
-    <script src = 'https://unpkg.com/@simomosi/dynamic-forms@latest'></script>
     ```
