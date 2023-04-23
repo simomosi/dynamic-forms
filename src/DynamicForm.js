@@ -51,8 +51,11 @@ class DynamicForm {
         this.debug = formConfiguration.debug === true;
         this.enabled = true;
         this.behavior = this.#repairFormBehavior(formConfiguration.behavior);
-        this.fields = this.#createFieldsInstancesMap(formConfiguration.fields, this.htmlElement);
-        this.fieldUpdateRules = this.#createFieldUpdateRulesMap(formConfiguration.fields, formConfiguration.rules);
+        
+        const repairedConfigurationFields = this.#repairConfigurationFields(this.htmlElement, formConfiguration.fields ?? []);
+        this.fields = this.#createFieldsInstancesMap(repairedConfigurationFields, this.htmlElement);
+        this.fieldUpdateRules = this.#createFieldUpdateRulesMap(repairedConfigurationFields, formConfiguration.rules ?? []);
+        
         const self = this;
         const initFields = formConfiguration.init ?? [];
         
@@ -66,6 +69,23 @@ class DynamicForm {
         behavior.beforeUpdate = behavior.beforeUpdate ?? ((subjectName) => true);
         behavior.afterUpdate = behavior.afterUpdate ?? ((subjectName) => {});
         return behavior;
+    }
+
+    #repairConfigurationFields(formHtmlElement, configurationFields) {
+        const configurationFieldsNames = new Set();
+        configurationFields.forEach(v => configurationFieldsNames.add(v.name));
+
+        const formFieldsNames = new Set();
+        formHtmlElement.querySelectorAll('[name]').forEach(v => formFieldsNames.add(v.name));
+
+        formFieldsNames.forEach(v => {
+            if (!configurationFieldsNames.has(v)) {
+                configurationFields.push({
+                    name: v
+                });
+            }
+        });
+        return configurationFields;
     }
     
     #createFieldsInstancesMap(fieldsCollection, htmlFormElement) {
