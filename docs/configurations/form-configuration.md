@@ -47,9 +47,11 @@ Method called after a subject registers an update, but before triggering the upd
 Useful to show a loader during the fields update.
 
 Parameters
+
 - {`string | null`} `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
 
 Returns
+
 - {`bool`} *false* to abort the update, *true* otherwise
 
 ### `afterUpdate (subjectName)`
@@ -58,17 +60,20 @@ Method called after the form update, and in particular after all involved form's
 Useful to hide a loader after the fields update.
 
 Parameters
+
 - {`string | null`} `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
 
 Returns
+
 - {`void`}
-- 
+
 ### `beforeInit () `
 Method executed before the form initialisation.
 
 Useful to show a loader before all fields are initialised.
 
 Returns
+
 - {`void`}
 
 ### `afterInit () `
@@ -77,6 +82,7 @@ Method executed after the form initialisation.
 Useful to hide any loader after the form is ready.
 
 Returns
+
 - {`void`}
 
 ## `fields`
