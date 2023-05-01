@@ -56,9 +56,9 @@ class DynamicDropdown extends DynamicElement {
         }
         // Standard
         const firstElement = this.htmlElement[0] as HTMLSelectElement;
-        let options = firstElement.getElementsByTagName('option');
+        const options = firstElement.options;
         for (let i = options.length - 1; i >= 0; i--) {
-            let value = options[i].value;
+            const value = options[i].value;
             if (value != null && value.trim() != '') { // Leave empty options
                 firstElement.options[i] = null;
             }
@@ -80,7 +80,7 @@ class DynamicDropdown extends DynamicElement {
         }
         // Standard
         if (subjectName && !data[subjectName]) { // Clear field on empty subject
-            let clearFieldFlag = (this.dropdown.clearOnParentVoid !== undefined) ? (this.dropdown.clearOnParentVoid) : (DynamicDropdown.defaultConfig.dropdown.clearOnParentVoid);
+            const clearFieldFlag = (this.dropdown.clearOnParentVoid !== undefined) ? (this.dropdown.clearOnParentVoid) : (DynamicDropdown.defaultConfig.dropdown.clearOnParentVoid);
             if (clearFieldFlag === true) {
                 this.clear();
                 return false;
@@ -102,14 +102,14 @@ class DynamicDropdown extends DynamicElement {
             return this.behavior.updateStatus(this.htmlElement, data, subjectName);
         }
         // Standard
-        let requestUrl = this.fetch.makeUrl(data);
+        const requestUrl = this.fetch.makeUrl(data);
         let fetchConfig = null;
         if (this.fetch.fullFetchConfig) {
             fetchConfig = this.fetch.fullFetchConfig;
         } else {
             fetchConfig = {};
             fetchConfig.method = this.method;
-            let body = this.fetch.makeBody ? this.fetch.makeBody(data) : null;
+            const body = this.fetch.makeBody ? this.fetch.makeBody(data) : null;
             if (body) {
                 fetchConfig.body = body;
             }
@@ -160,20 +160,23 @@ class DynamicDropdown extends DynamicElement {
             const firstElement = this.htmlElement[0] as HTMLSelectElement;
             const emptyOption = firstElement.querySelector('option:not([value]), option[value=""]');
             if (!emptyOption) {
-                let newEmptyOption = document.createElement("option");
-                newEmptyOption.text = '';
-                newEmptyOption.value = '';
+                const newEmptyOption = this.createOption('', '');
                 firstElement.add(newEmptyOption);
             }
             // Add other options
             data.forEach((item: {text: string, value: string}) => {
-                let option = document.createElement("option");
-                option.text = item.text;
-                option.value = item.value;
+                const option = this.createOption(item.text, item.value);
                 firstElement.add(option);
             });
         }
         return;
+    }
+
+    private createOption(text: string, value: string): HTMLOptionElement {
+        const option = document.createElement("option");
+        option.text = text;
+        option.value = value;
+        return option;
     }
 
 }
