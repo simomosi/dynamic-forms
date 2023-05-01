@@ -60,19 +60,23 @@ Default value: `change`.
 Function to fetch the html element's value. Useful for custom html elements.
 
 Parameters
+
 - {`node | NodeList`} `htmlElement`: the html node
 
 Returns
+
 - {`string`} the field content
 
 ### `set (htmlElement)`
 Function to set the html element's value. Useful for custom html elements.
 
 Parameters
+
 - {`node | NodeList`} `htmlElement`: the html node
 - {`mixed`} `value`: the field's new value
 
 Returns
+
 - {`void`}
 
 ## `fetch`*
@@ -96,9 +100,11 @@ A function to generate the url to make the remote call to.
 *required*
 
 Parameters
+
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 
 Returns
+
 - {`string`} The remote call url
 
 ### `makeBody (data)`
@@ -107,9 +113,11 @@ A function to generate the remote call body in the desired method (e.g. JSON.str
 It's not necessary if the remote call uses the GET request method (parameters need to be placed in the url).
 
 Parameters
+
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 
 Returns
+
 - {`object`} The remote call body
 
 ### `fullFetchConfig (data)`
@@ -118,9 +126,11 @@ A function to generate the complete Fetch configuration for remote calls.
 If this function is defined, the updateStatus default function will ignore *fetch.method* property and *fetch.makeBody* function.
 
 Parameters
+
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 
 Returns
+
 - {`object`} The complete Fetch configuration
 
 ## `behavior`
@@ -130,9 +140,11 @@ Object which groups properties related to field behavior.
 Function to unset the field's current value. Sometimes it is used to clear the field from its content (for input and dropdown types).
 
 Parameters
+
 - {`node | NodeList`} `htmlElement`: the html node
 
 Returns
+
 - {`void`}
 
 
@@ -142,11 +154,13 @@ Method called before triggering the field's status update. If return value is *f
 Default behavior: nothing. For **DynamicDropdown** elements it clear the field content if *clearOnParentVoid* conditions are satisfied.
 
 Parameters
+
 - {`node | NodeList`} `htmlElement`: the html node
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 - {`string`}: `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
 
 Returns
+
 - {`boolean`} *false* to abort the update, *true* otherwise
 
 ### `updateStatus (htmlElement, data, subjectName)`
@@ -155,22 +169,26 @@ Method to update the field status. It is useful to update the field's attributes
 Default behavior: nothing. For **DynamicDropdown** elements it makes a remote call (using *fetch*), retrieves new date and saves it as *select* new content (*option*).
 
 Parameters
+
 - {`node | NodeList`} `htmlElement`: the html node
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 - {`string`}: `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
 
 Returns
+
 - {`void`}
 
 ### `afterUpdate (htmlElement, data, subjectName)`
 Method called after triggering the field's status update.
 
 Parameters
+
 - {`node | NodeList`} `htmlElement`: the html node
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 - {`string`}: `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
 
 Returns
+
 - {`boolean`} (currently) unused
 
 ## `dropdown`
@@ -180,10 +198,12 @@ Object which groups properties related to select-option elements.
 Function to process data retrieved by remote call. It is useful for filtering/ordering data.
 
 Parameters
+
 - {`node | NodeList`} `htmlElement`: the html node
 - {`JSON | object[]`} `data`: data retrieved from the remote call
 
 Returns
+
 - {`JSON | object[]`} post-processed data
 
 ### `saveData (htmlElement, data)`
@@ -192,10 +212,12 @@ Function to phisically save (post-processed) data retrieved by a remote call as 
 Default behavior: saves data as *option* html elements using *value* and *test* properties.
 
 Parameters
+
 - {`node | NodeList`} `htmlElement`: the html node where data will be saved
 - {`JSON | object[]`} `data`: data retrieved from the remote call
 
 Returns
+
 - {`JSON | object[]`} post-processed data (not used)
 
 ### `clearOnParentVoid`

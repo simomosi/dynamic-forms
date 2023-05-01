@@ -19,16 +19,20 @@ const form = dynamicForms.makeForm(formConfiguration);
 Istantiates a DynamicForm.
 
 Parameters
+
 - {`object`} `formConfiguration`: the form configuration
 
 Returns
+
 - {`DynamicForm`} a DynamicForm instance
 
 ### `getForm (id)`
 Returns a DynamicForm instance corresponding to the form id, if it exists.
 
 Parameters
+
 - {`string`} `id`: the form id
 
 Returns
+
 - {`DynamicForm | null`} the DynamicForm instance or null if it does not exists
