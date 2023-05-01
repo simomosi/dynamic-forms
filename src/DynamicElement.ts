@@ -58,7 +58,7 @@ class DynamicElement {
         }
     }
 
-    private getElement(): HTMLInputElement | NodeList {
+    private getHtmlInputElementOrList(): HTMLInputElement | NodeList {
         if (this.htmlElement.length === 1) {
             return this.htmlElement[0] as HTMLInputElement;
         }
@@ -72,7 +72,7 @@ class DynamicElement {
     public get(): any {
         // Custom
         if (this.io.get) {
-            return this.io.get(this.getElement());
+            return this.io.get(this.getHtmlInputElementOrList());
         }
         // Standard
         const firstElement = this.htmlElement[0] as HTMLInputElement;
@@ -86,7 +86,7 @@ class DynamicElement {
     public set(value: string): void {
         // Custom
         if (this.io.set) {
-            return this.io.set(this.getElement(), value);
+            return this.io.set(this.getHtmlInputElementOrList(), value);
         }
         // Standard
         const firstElement = this.htmlElement[0] as HTMLInputElement;
@@ -100,7 +100,7 @@ class DynamicElement {
     public clear(): void {
         // Custom
         if (this.behavior.clear) {
-            return this.behavior.clear(this.getElement());
+            return this.behavior.clear(this.getHtmlInputElementOrList());
         }
         // Standard
         const firstElement = this.htmlElement[0] as HTMLInputElement;
@@ -133,7 +133,7 @@ class DynamicElement {
     protected beforeUpdate(data: object, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.beforeUpdate) {
-            return this.behavior.beforeUpdate(this.getElement(), data, subjectName);
+            return this.behavior.beforeUpdate(this.getHtmlInputElementOrList(), data, subjectName);
         }
         // Standard
         return true; // Does not block field update
@@ -147,7 +147,7 @@ class DynamicElement {
     protected updateStatus(data: object, subjectName: string|null): void {
         // Custom
         if (this.behavior.updateStatus) {
-            return this.behavior.updateStatus(this.getElement(), data, subjectName);
+            return this.behavior.updateStatus(this.getHtmlInputElementOrList(), data, subjectName);
         }
     }
 
@@ -159,7 +159,7 @@ class DynamicElement {
     protected afterUpdate(data: object, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.afterUpdate) {
-            return this.behavior.afterUpdate(this.getElement(), data, subjectName);
+            return this.behavior.afterUpdate(this.getHtmlInputElementOrList(), data, subjectName);
         }
         // Standard
         return true; // Standard behavior: returns positive value
