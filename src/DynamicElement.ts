@@ -133,7 +133,7 @@ class DynamicElement {
     protected beforeUpdate(data: object, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.beforeUpdate) {
-            return this.behavior.beforeUpdate(this.htmlElement, data, subjectName);
+            return this.behavior.beforeUpdate(this.getElement(), data, subjectName);
         }
         // Standard
         return true; // Does not block field update
@@ -147,7 +147,7 @@ class DynamicElement {
     protected updateStatus(data: object, subjectName: string|null): void {
         // Custom
         if (this.behavior.updateStatus) {
-            return this.behavior.updateStatus(this.htmlElement, data, subjectName);
+            return this.behavior.updateStatus(this.getElement(), data, subjectName);
         }
     }
 
@@ -159,7 +159,7 @@ class DynamicElement {
     protected afterUpdate(data: object, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.afterUpdate) {
-            return this.behavior.afterUpdate(this.htmlElement, data, subjectName);
+            return this.behavior.afterUpdate(this.getElement(), data, subjectName);
         }
         // Standard
         return true; // Standard behavior: returns positive value
