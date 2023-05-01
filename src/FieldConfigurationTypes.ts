@@ -7,8 +7,8 @@ export interface FieldConfiguration {
 
 export interface FieldIoConfiguration {
     event?: string,
-    get?: (htmlElement: Element | NodeList) => any,
-    set?: (htmlElement: Element | NodeList, value: any) => void,
+    get?: (htmlElement: HTMLElement | NodeList) => any,
+    set?: (htmlElement: HTMLElement | NodeList, value: any) => void,
 }
 
 export interface FieldFetchConfiguration {
@@ -19,10 +19,10 @@ export interface FieldFetchConfiguration {
 }
 
 export interface FieldBehaviorConfiguration {
-    clear?: (htmlElement: Element | NodeList) => void,
-    beforeUpdate?: (htmlElement: Element | NodeList, data: object, subjectName: string|null) => boolean,
-    updateStatus?: (htmlElement: Element | NodeList, data: object, subjectName: string|null) => void,
-    afterUpdate?: (htmlElement: Element | NodeList, data: object, subjectName: string|null) => boolean,
+    clear?: (htmlElement: HTMLElement | NodeList) => void,
+    beforeUpdate?: (htmlElement: HTMLElement | NodeList, data: object, subjectName: string|null) => boolean,
+    updateStatus?: (htmlElement: HTMLElement | NodeList, data: object, subjectName: string|null) => void,
+    afterUpdate?: (htmlElement: HTMLElement | NodeList, data: object, subjectName: string|null) => boolean,
 }
 
 
@@ -32,9 +32,9 @@ export interface DropdownConfiguration extends FieldConfiguration {
 }
 
 export interface DropdownDropdownConfiguration {
-    postProcessData: (htmlElement: Element | NodeList, data: object[]) => object[],
-    saveData: (htmlElement: Element | NodeList, data: object[]) => void,
-    clearOnParentVoid: boolean
+    postProcessData?: (htmlElement: Element | NodeList, data: object[]) => object[],
+    saveData?: (htmlElement: Element | NodeList, data: object[]) => void,
+    clearOnParentVoid?: boolean
 }
 
 
@@ -44,5 +44,5 @@ export interface CheckboxConfiguration extends FieldConfiguration{
 }
 
 export interface CheckboxCheckboxConfiguration {
-    booleanValue: boolean
+    booleanValue?: boolean
 }
