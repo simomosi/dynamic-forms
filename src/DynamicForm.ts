@@ -154,20 +154,15 @@ class DynamicForm {
             console.log(`Parameters:`, initialStatus);
         }
 
-        const tmpInitialStatusAsObject = {}; // TODO: Remove this ugly thing
-        initialStatus.forEach((value, key) => {
-            tmpInitialStatusAsObject[key] = value;
-        });
-
+        const tmpInitialStatusAsObject = Object.fromEntries(initialStatus); // Evaluate if using maps instead of objects makes the module harder to use
         const initPromises: Promise<void>[] = initFields
         .filter(x => fieldsMap.get(x.name) !== undefined)
         .map(field => this.manualUpdate(tmpInitialStatusAsObject, field.name));
         
         await Promise.all(initPromises);
         
-        // Set values in initialised fields
-        for(const name of initialStatus.keys()) { // TODO: fix here for hashmap usage
-            const value = initialStatus.get(name);
+        // Set initial values in initialised fields
+        for (const [name, value] of initialStatus) {
             const field = fieldsMap.get(name);
             if (field) {
                 field.set(value);
@@ -175,9 +170,9 @@ class DynamicForm {
         }
         
         // For each initialised field notifies the next fields to update
-        const initializedFields = initFields.map(f => f.name);
+        const initializedFieldsNames = initFields.map(f => f.name);
         const nextUpdatePromises = [];
-        initializedFields
+        initializedFieldsNames
         .filter(fieldName => fieldsMap.get(fieldName) !== undefined)
         .forEach(fieldName => {
             const updateRules = fieldUpdateRules.get(fieldName);
@@ -188,7 +183,7 @@ class DynamicForm {
                     if (observerName === updateRule.name) { // This prevents loops
                         return;
                     }
-                    if (initializedFields.includes(observerName)) { // Field already initialized
+                    if (initializedFieldsNames.includes(observerName)) { // Field already initialized
                         return;
                     }
                     if (this.debug) {
