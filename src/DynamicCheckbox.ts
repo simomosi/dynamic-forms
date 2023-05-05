@@ -1,4 +1,4 @@
-import DynamicElement from './DynamicElement.js';
+import DynamicElement from './DynamicElement';
 import DynamicForm from './DynamicForm';
 import { CheckboxCheckboxConfiguration, CheckboxConfiguration } from './FieldConfigurationTypes';
 

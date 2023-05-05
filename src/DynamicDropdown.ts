@@ -1,6 +1,6 @@
-import DynamicElement from './DynamicElement.js';
-import DynamicForm from './DynamicForm.js';
-import { DropdownConfiguration, DropdownDropdownConfiguration } from './FieldConfigurationTypes.js';
+import DynamicElement from './DynamicElement';
+import DynamicForm from './DynamicForm';
+import { DropdownConfiguration, DropdownDropdownConfiguration } from './FieldConfigurationTypes';
 
 /**
 * This class represents a dropdown field with dynamic content (like a standard html-select with dynamic options)

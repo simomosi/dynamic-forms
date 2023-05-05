@@ -1,6 +1,6 @@
 /** Module to easily manage dynamic forms */
-import DynamicForm from './DynamicForm.js';
-import { FormConfiguration } from './FormConfigurationTypes.js';
+import DynamicForm from './DynamicForm';
+import { FormConfiguration } from './FormConfigurationTypes';
 
 const formCollection: Map<string, DynamicForm> = new Map();
 

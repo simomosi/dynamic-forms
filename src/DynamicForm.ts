@@ -1,7 +1,7 @@
-import DynamicDropdown from './DynamicDropdown.js';
-import DynamicElement from './DynamicElement.js';
-import DynamicCheckbox from './DynamicCheckbox.js';
-import DynamicRadio from './DynamicRadio.js';
+import DynamicDropdown from './DynamicDropdown';
+import DynamicElement from './DynamicElement';
+import DynamicCheckbox from './DynamicCheckbox';
+import DynamicRadio from './DynamicRadio';
 import { FormConfiguration, FormBehavior, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
 import { FieldConfiguration } from './FieldConfigurationTypes';
 
