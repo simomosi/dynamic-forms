@@ -96,7 +96,7 @@ class DynamicDropdown extends DynamicElement {
     *
     * @returns a Promise in fulfilled state when data has been updated
     */
-    protected updateStatus(data: object, subjectName: string|null) {
+    protected async updateStatus(data: object, subjectName: string|null): Promise<void> {
         // Custom
         if (this.behavior.updateStatus) {
             return this.behavior.updateStatus(this.htmlElement, data, subjectName);

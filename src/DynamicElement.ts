@@ -119,7 +119,7 @@ class DynamicElement {
     public async update(data: object, subjectName: string|null): Promise<void> {
         const beforeUpdateResult = this.beforeUpdate(data, subjectName);
         if (beforeUpdateResult !== false) {
-            this.updateStatus(data, subjectName);
+            await this.updateStatus(data, subjectName);
         }
         this.afterUpdate(data, subjectName);
     }
@@ -144,7 +144,7 @@ class DynamicElement {
      * @param {object} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
      */
-    protected updateStatus(data: object, subjectName: string|null): void {
+    protected async updateStatus(data: object, subjectName: string|null): Promise<void> {
         // Custom
         if (this.behavior.updateStatus) {
             return this.behavior.updateStatus(this.getHtmlInputElementOrList(), data, subjectName);

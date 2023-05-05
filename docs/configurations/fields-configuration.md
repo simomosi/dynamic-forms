@@ -176,7 +176,7 @@ Parameters
 
 Returns
 
-- {`void`}
+- {`Promise<void>`}
 
 ### `afterUpdate (htmlElement, data, subjectName)`
 Method called after triggering the field's status update.
