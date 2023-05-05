@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "lib": [ "es2017", "DOM" ],
+    "target": "es6",
+    "outDir": "./build/",
+    "sourceMap": true,
+    "strict": false // Will be updated to true asap
+  },
+  "exclude": ["node_modules"]
+}

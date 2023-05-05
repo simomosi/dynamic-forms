@@ -4,7 +4,7 @@
   "description": "DynamicForms is a js library that handles all interactions in forms with dynamic content (e.g. select with variable options, updating rules and visibility changes depending on fields' state).",
   "main": "dist/dynamicforms.min.js",
   "browser": "dist/dynamicforms.min.js",
-  "module": "src/index.js",
+  "module": "src/index.ts",
   "files": [
     "dist",
     "src"
@@ -35,10 +35,12 @@
     "javascript"
   ],
   "devDependencies": {
-    "@babel/core": "^7.12.9",
+    "@babel/cli": "^7.21.0",
+    "@babel/core": "^7.21.4",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-transform-runtime": "^7.12.1",
     "@babel/preset-env": "^7.12.7",
+    "@babel/preset-typescript": "^7.21.4",
     "@babel/runtime": "^7.12.5",
     "@mermaid-js/mermaid-cli": "^10.1.0",
     "@webpack-cli/init": "^1.0.3",
@@ -51,7 +53,10 @@
     "clean-webpack-plugin": "^3.0.0",
     "html-webpack-plugin": "^4.5.0",
     "mermaid": "^10.1.0",
+    "source-map-loader": "^4.0.1",
     "terser-webpack-plugin": "^5.0.3",
+    "ts-loader": "^9.4.2",
+    "typescript": "^5.0.4",
     "webpack": "^5.10.0",
     "webpack-cli": "^4.2.0",
     "webpack-merge": "^5.7.3"
