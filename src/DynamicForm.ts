@@ -155,10 +155,9 @@ class DynamicForm {
         }
 
         const tmpInitialStatusAsObject = {}; // TODO: Remove this ugly thing
-        initialStatus.forEach((key, value) => {
+        initialStatus.forEach((value, key) => {
             tmpInitialStatusAsObject[key] = value;
         });
-        
 
         const initPromises: Promise<void>[] = initFields
         .filter(x => fieldsMap.get(x.name) !== undefined)
