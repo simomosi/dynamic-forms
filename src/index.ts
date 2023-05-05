@@ -2,7 +2,7 @@
 import DynamicForm from './DynamicForm.js';
 import { FormConfiguration } from './FormConfigurationTypes.js';
 
-let formCollection: Map<string, DynamicForm> = new Map();
+const formCollection: Map<string, DynamicForm> = new Map();
 
 /**
  * Instantiate a single DynamicForm
