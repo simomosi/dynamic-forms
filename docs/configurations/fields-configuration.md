@@ -5,36 +5,57 @@ Just specify fields with custom behavior as the standard ones will be discovered
 
 Here's a complete single field configuration. You just need to specify the attributes you need, the other will have default values.
 
-```javascript
-let fieldConfiguration = {
-    name: 'fieldName',
-    io: {  // Customize field input/output
-        event: 'change',
-        get: (htmlElement) => { },
-        set: (htmlElement, value) => { },
-    },
-    fetch: { // Remote call options
-        method: 'GET',
-        makeUrl: (data) => { },
-        makeBody: (data) => { }, // JSON.stringify, formData, text...
-        fullFetchConfig: {}, // Fetch complete configuration
-    },
-    behavior: {
-        clear: (htmlElement) => { }, // Clear field from its content
-        beforeUpdate: (htmlElement, data, subjectName) => { return true; }, // Executed before the remote call. Return false to block the update
-        updateStatus: (htmlElement, data, subjectName) => { },
-        afterUpdate: (htmlElement, data, subjectName) => { } // Executed after the remote call
-    },
-    select: { // Only for select elements
-        postProcessData: (htmlElement, data) => { }, // Process data retrieved by remote call
-        saveData: (htmlElement, data) => { }, // Save data in html (es: <option value="value">'text'</option>)
-        clearOnParentVoid: true, // True (default) to clear field content when subject is empty; false to trigger a remote call
-    },
-    checkbox: { // Only for checkbox elements
-        booleanValue: true // True (default) to get element's value as boolean, based on the checked property; false to get the value property
-    }
-};
-```
+=== "Generic element"
+    ```javascript
+    const fieldConfiguration = {
+        name: 'fieldName',
+        io: {  // Customize field input/output
+            event: 'change',
+            get: (htmlElement) => { },
+            set: (htmlElement, value) => { },
+        },
+        fetch: { // Remote call options
+            method: 'GET',
+            makeUrl: (data) => { },
+            makeBody: (data) => { }, // JSON.stringify, formData, text...
+            fullFetchConfig: {}, // Fetch complete configuration
+        },
+        behavior: {
+            clear: (htmlElement) => { }, // Clear field from its content
+            beforeUpdate: (htmlElement, data, subjectName) => { return true; }, // Executed before the remote call. Return false to block the update
+            updateStatus: (htmlElement, data, subjectName) => { },
+            afterUpdate: (htmlElement, data, subjectName) => { } // Executed after the remote call
+        }
+    };
+    ```
+
+=== "Select element"
+    ```javascript
+    const fieldConfiguration = {
+        name: 'fieldName',
+        io: /* ... */,
+        fetch: /* ... */,
+        behavior: /* ... */,
+        select: { // Only for select elements
+            postProcessData: (htmlElement, data) => { }, // Process data retrieved by remote call
+            saveData: (htmlElement, data) => { }, // Manually save data in html (e.g. creating `<option value="value">'text'</option>` nodes)
+            clearOnParentVoid: true, // True (default) to clear field content when subject is empty; false to trigger a remote call
+        }
+    };
+    ```
+
+=== "Checkbox element"
+    ```javascript
+    const fieldConfiguration = {
+        name: 'fieldName',
+        io: /* ... */,
+        fetch: /* ... */,
+        behavior: /* ... */,
+        checkbox: { // Only for checkbox elements
+            booleanValue: true // True (default) to get element's value as boolean, based on the checked property; false to get the value property
+        }
+    };
+    ```
 
 ## `name`*
 The html element name.
