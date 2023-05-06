@@ -15,13 +15,13 @@ class DynamicElement {
     /** @param {string} name - the element name */
     name: string;
 
-    /** @param {object} io - object which groups some properties related to field input/output */
+    /** @param {FieldIoConfiguration} io - object which groups some properties related to field input/output */
     io: FieldIoConfiguration;
 
-    /** @param {object} fetch - object which groups some properties related to remote calls */
+    /** @param {FieldFetchConfiguration} fetch - object which groups some properties related to remote calls */
     fetch: FieldFetchConfiguration;
 
-    /** @param {object} behavior - object which groups some properties related to field behavior */
+    /** @param {FieldBehaviorConfiguration} behavior - object which groups some properties related to field behavior */
     behavior: FieldBehaviorConfiguration;
 
     /** @param {object} defaultConfig - property with default configuration values */
