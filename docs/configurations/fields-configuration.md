@@ -209,7 +209,7 @@ Returns
 ### `saveData (htmlElement, data)`
 Function to phisically save (post-processed) data retrieved by a remote call as html.
 
-Default behavior: saves data as *option* html elements using *value* and *test* properties.
+Default behavior: saves data as *option* html elements using *value* and *text* properties, creating also empty option if they are not present in retrieved data.
 
 Parameters
 
@@ -218,7 +218,7 @@ Parameters
 
 Returns
 
-- {`JSON | object[]`} post-processed data (not used)
+- {`void`}
 
 ### `clearOnParentVoid`
 Property which (when `true`) tells to clear field content when subject value is empty instead of triggering a remote call (when `false`).
