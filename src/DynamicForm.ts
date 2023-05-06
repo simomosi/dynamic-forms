@@ -1,4 +1,4 @@
-import DynamicDropdown from './DynamicDropdown';
+import DynamicSelect from './DynamicSelect';
 import DynamicElement from './DynamicElement';
 import DynamicCheckbox from './DynamicCheckbox';
 import DynamicRadio from './DynamicRadio';
@@ -38,8 +38,8 @@ class DynamicForm {
         'default': DynamicElement,
         'checkbox': DynamicCheckbox,
         'radio': DynamicRadio,
-        'select-one': DynamicDropdown,
-        'select-multiple': DynamicDropdown
+        'select-one': DynamicSelect,
+        'select-multiple': DynamicSelect
     };
 
     initPromise: Promise<void>;

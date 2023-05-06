@@ -17,7 +17,7 @@
         <p>Tip: open developer tools and keep an eye on console/network tabs.</p>
         
         <form id='jsonPlaceholder'>
-            <p class="mt-4">Dynamic Dropdown</p>
+            <p class="mt-4">Dynamic Select</p>
             <div class="row">
                 <div class="col-1">
                     <label for="user">Users</label>
@@ -166,7 +166,7 @@
                 fetch: {
                     makeUrl: (data) => `https://jsonplaceholder.typicode.com/users`,
                 },
-                dropdown: {
+                select: {
                     postProcessData: (htmlElement, data) => {
                         return data.map(x => { return { value: x.id, 'text': x.username }; }).sort((a, b) => a.text > b.text);
                     }
@@ -177,7 +177,7 @@
                 fetch: {
                     makeUrl: (data) => `https://jsonplaceholder.typicode.com/posts?userId=${data.user}`,
                 },
-                dropdown: {
+                select: {
                     postProcessData: (htmlElement, data) => {
                         return data.map(x => { return { value: x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                     }
@@ -188,7 +188,7 @@
                 fetch: {
                     makeUrl: (data) => `https://jsonplaceholder.typicode.com/comments?postId=${data.post}`,
                 },
-                dropdown: {
+                select: {
                     postProcessData: (htmlElement, data) => {
                         return data.map(x => { return { value: x.id, 'text': x.name }; }).sort((a, b) => a.text > b.text);
                     }
@@ -199,7 +199,7 @@
                 fetch: {
                     makeUrl: (data) => `https://jsonplaceholder.typicode.com/albums?userId=${data.user}`,
                 },
-                dropdown: {
+                select: {
                     postProcessData: (htmlElement, data) => {
                         return data.map(x => { return { value: x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                     }
@@ -210,7 +210,7 @@
                 fetch: {
                     makeUrl: (data) => `https://jsonplaceholder.typicode.com/photos?albumId=${data.album}`,
                 },
-                dropdown: {
+                select: {
                     postProcessData: (htmlElement, data) => {
                         return data.map(x => { return { value: x.id, 'text': x.url }; }).sort((a, b) => a.text > b.text);
                     }
@@ -221,7 +221,7 @@
                 fetch: {
                     makeUrl: (data) => `https://jsonplaceholder.typicode.com/todos?userId=${data.user}`,
                 },
-                dropdown: {
+                select: {
                     postProcessData: (htmlElement, data) => {
                         return data.map(x => { return { value: x.id, 'text': x.title }; }).sort((a, b) => a.text > b.text);
                     }

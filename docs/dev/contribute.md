@@ -72,7 +72,7 @@ classDiagram
         +afterUpdate(data, subjectName)
     }
 
-    class DynamicDropdown {
+    class DynamicSelect {
         -string method
         +postProcessData(data) object[]
         +saveData(data) object[]
@@ -80,7 +80,7 @@ classDiagram
 
     DynamicForm <.. dynamicForms
     DynamicForm o-- DynamicElement
-    DynamicElement <|-- DynamicDropdown
+    DynamicElement <|-- DynamicSelect
     DynamicElement <|-- DynamicCheckbox
     DynamicElement <|-- DynamicRadio
 

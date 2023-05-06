@@ -11,7 +11,7 @@ Here's some examples.
 
 ### Select with variable options
 
-![Dynamic Dropdown example gif](./imgs/dynamic-dropdown.gif){ loading=lazy }
+![Dynamic Select example gif](./imgs/dynamic-select.gif){ loading=lazy }
 
 ### Form values easy initialisation
 

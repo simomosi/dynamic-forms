@@ -1,17 +1,17 @@
 import DynamicElement from './DynamicElement';
 import DynamicForm from './DynamicForm';
-import { DropdownConfiguration, DropdownDropdownConfiguration } from './FieldConfigurationTypes';
+import { SelectConfiguration, SelectSelectConfiguration } from './FieldConfigurationTypes';
 
 /**
-* This class represents a dropdown field with dynamic content (like a standard html-select with dynamic options)
+* This class represents a select field with dynamic content (like a standard html-select with dynamic options)
 */
-class DynamicDropdown extends DynamicElement {
+class DynamicSelect extends DynamicElement {
 
     /** @param {string} method the http request method for the remote call (async update) */
     method: string;
 
-    /** @param {object} dropdown - property with dropdown related properties */
-    dropdown: DropdownDropdownConfiguration;
+    /** @param {object} dropdown - property with select related properties */
+    select: SelectSelectConfiguration;
 
     /** @param {object} defaultConfig property with default configuration values */
     static defaultConfig = { // Todo: inherit superclass' defaultConfig
@@ -21,21 +21,21 @@ class DynamicDropdown extends DynamicElement {
         'fetch': {
             'method': 'GET',
         },
-        'dropdown': {
+        'select': {
             'clearOnParentVoid': true
         },
     }
 
     /**
     * Class constructor
-    * @param {object} config the dropdown configuration
+    * @param {object} config the select configuration
     * @param {object} dynamicForm the DynamicForm instance
     * @async
     */
-    constructor(config: DropdownConfiguration, dynamicForm: DynamicForm) {
+    constructor(config: SelectConfiguration, dynamicForm: DynamicForm) {
         super(config, dynamicForm);
-        this.method = this.fetch.method ?? DynamicDropdown.defaultConfig.fetch.method;
-        this.dropdown = config.dropdown ?? {};
+        this.method = this.fetch.method ?? DynamicSelect.defaultConfig.fetch.method;
+        this.select = config.select ?? {};
     }
 
 
@@ -47,7 +47,7 @@ class DynamicDropdown extends DynamicElement {
     }
 
     /**
-    * Method to clear the dropdown from all its non-empty options
+    * Method to clear the select from all its non-empty options
     */
     public clear(): void {
         // Custom
@@ -67,7 +67,7 @@ class DynamicDropdown extends DynamicElement {
 
     /**
      * Method executed before the status update. If it returns false, the update is aborted.
-     * If dropdown.clearOnParentVoid is true and the subject value is empty, this method calls the clear function and aborts the update.
+     * If select.clearOnParentVoid is true and the subject value is empty, this method calls the clear function and aborts the update.
      *
      * @param {object} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
@@ -80,7 +80,7 @@ class DynamicDropdown extends DynamicElement {
         }
         // Standard
         if (subjectName && !data[subjectName]) { // Clear field on empty subject
-            const clearFieldFlag = (this.dropdown.clearOnParentVoid !== undefined) ? (this.dropdown.clearOnParentVoid) : (DynamicDropdown.defaultConfig.dropdown.clearOnParentVoid);
+            const clearFieldFlag = (this.select.clearOnParentVoid !== undefined) ? (this.select.clearOnParentVoid) : (DynamicSelect.defaultConfig.select.clearOnParentVoid);
             if (clearFieldFlag === true) {
                 this.clear();
                 return false;
@@ -135,8 +135,8 @@ class DynamicDropdown extends DynamicElement {
      */
     protected postProcessData(data: object[]): object[] {
         // Custom
-        if (this.dropdown.postProcessData) {
-            return this.dropdown.postProcessData(this.htmlElement, data);
+        if (this.select.postProcessData) {
+            return this.select.postProcessData(this.htmlElement, data);
         }
         // Standard (no operation)
         return data;
@@ -150,8 +150,8 @@ class DynamicDropdown extends DynamicElement {
     */
     protected saveData(data: object[]): void {
         // Custom
-        if (this.dropdown.saveData) {
-            return this.dropdown.saveData(this.htmlElement, data);
+        if (this.select.saveData) {
+            return this.select.saveData(this.htmlElement, data);
         }
         // Standard
         this.clear();
@@ -181,4 +181,4 @@ class DynamicDropdown extends DynamicElement {
 
 }
 
-export default DynamicDropdown;
+export default DynamicSelect;

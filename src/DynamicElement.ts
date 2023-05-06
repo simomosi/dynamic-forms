@@ -19,7 +19,7 @@ class DynamicElement {
     io: FieldIoConfiguration;
 
     /** @param {object} fetch - object which groups some properties related to remote calls */
-    fetch: FieldFetchConfiguration; // todo maybe we can move this property to DynamicDropdown ?
+    fetch: FieldFetchConfiguration;
 
     /** @param {object} behavior - object which groups some properties related to field behavior */
     behavior: FieldBehaviorConfiguration;

@@ -27,11 +27,11 @@ export interface FieldBehaviorConfiguration {
 
 
 
-export interface DropdownConfiguration extends FieldConfiguration {
-    dropdown?: DropdownDropdownConfiguration
+export interface SelectConfiguration extends FieldConfiguration {
+    select?: SelectSelectConfiguration
 }
 
-export interface DropdownDropdownConfiguration {
+export interface SelectSelectConfiguration {
     postProcessData?: (htmlElement: Element | NodeList, data: object[]) => object[],
     saveData?: (htmlElement: Element | NodeList, data: object[]) => void,
     clearOnParentVoid?: boolean
