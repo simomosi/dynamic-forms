@@ -1,9 +1,11 @@
-import DynamicElement from './DynamicElement.js';
+import DynamicElement from './DynamicElement';
+import DynamicForm from './DynamicForm';
+import { CheckboxCheckboxConfiguration, CheckboxConfiguration } from './FieldConfigurationTypes';
 
 class DynamicCheckbox extends DynamicElement {
 
     /** @param {object} checkbox - property with checkbox related properties */
-    checkbox;
+    checkbox: CheckboxCheckboxConfiguration;
 
     /** @param {JSON} defaultConfig - property with default configuration values */
     static defaultConfig = { // Todo: inherit superclass' defaultConfig ?
@@ -16,43 +18,46 @@ class DynamicCheckbox extends DynamicElement {
     }
 
     /** @inheritdoc */
-    constructor(config, dynamicForm) {
-        super(config, dynamicForm);
-        this.checkbox = this.config.checkbox ?? {};
+    constructor(config: CheckboxConfiguration, dynamicForm: DynamicForm, htmlElement: NodeList) {
+        super(config, dynamicForm, htmlElement);
+        this.checkbox = config.checkbox ?? {};
     }
 
     /** @inheritdoc */
-    get() {
+    public get(): any {
         // Custom
         if (this.io.get) {
             return this.io.get(this.htmlElement);
         }
         // Standard
-        let booleanValueFlag = (this.checkbox.booleanValue !== undefined) ? (this.checkbox.booleanValue) : (DynamicCheckbox.defaultConfig.checkbox.booleanValue);
+        const firstElement = this.htmlElement[0] as HTMLInputElement;
+        const booleanValueFlag = (this.checkbox.booleanValue !== undefined) ? (this.checkbox.booleanValue) : (DynamicCheckbox.defaultConfig.checkbox.booleanValue);
         if (booleanValueFlag === true) {
-            return this.htmlElement.checked;
+            return firstElement.checked;
         }
-        return this.htmlElement.value;
+        return firstElement.value;
     }
 
     /** @inheritdoc */
-    set(value) {
+    public set(value: string): void {
         // Custom
         if (this.io.set) {
             return this.io.set(this.htmlElement, value);
         }
         // Standard
-        return this.htmlElement.checked = value;
+        const firstElement = this.htmlElement[0] as HTMLInputElement;
+        firstElement.checked = (value === 'false' ? false : !!value);
+        return;
     }
 
     /** @inheritdoc */
-    clear() {
+    public clear(): void {
         // Custom
         if (this.behavior.clear) {
             return this.behavior.clear(this.htmlElement);
         }
         // Standard
-        this.set(false);
+        this.set("0");
     }
 }
 
