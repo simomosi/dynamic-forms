@@ -1,72 +1,68 @@
-import DynamicSelect from './DynamicSelect';
-import DynamicElement from './DynamicElement';
-import DynamicCheckbox from './DynamicCheckbox';
-import DynamicRadio from './DynamicRadio';
-import { FormConfiguration, FormBehavior, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
-import { FieldConfiguration } from './FieldConfigurationTypes';
+import DynamicDropdown from './DynamicDropdown.js';
+import DynamicElement from './DynamicElement.js';
+import DynamicCheckbox from './DynamicCheckbox.js';
+import DynamicRadio from './DynamicRadio.js';
 
 /**
 * This class represents a form with dynamic content, e.g. select with variable options, updating rules and visibility depending on fields' state...
 */
 class DynamicForm {
-    /** @param {string} id - the form id */
-    id: string;
+    /** @param {int} id - the form id */
+    id;
     
     /** @param {boolean} debug - a flag to enable debug mode */
-    debug: boolean;
+    debug;
     
-    /** @param {FormBehavior} behavior - object which groups some properties related to form behavior */
-    behavior: FormBehavior;
+    /** @param {object} behavior - object which groups some properties related to form behavior */
+    behavior;
     
     /** @param {Map<String, DynamicElement>} fields - a collection of form's DynamicElements instances */
-    fields: Map<string, DynamicElement>;
+    fields;
     
-    /** @param {Map<string, UpdateRule[]} fieldUpdateRules - a collection of all update rules of the specified field name */
-    fieldUpdateRules: Map<string, UpdateRule[]>;
+    /** @param {Map<string, Object[]} fieldUpdateRules - a collection of all update rules of the specified field name */
+    fieldUpdateRules;
     
-    /** @param {FormConfiguration} config - the original form configuration */
-    config: FormConfiguration;
+    /** @param {JSON} config - the original form configuration */
+    config;
     
-    /** @param {HTMLFormElement} HTMLFormElement - the actual html element returned by getElementById */
-    htmlElement: HTMLFormElement;
+    /** @param {node} htmlElement - the actual html element returned by getElementById */
+    htmlElement;
     
     /** @param {boolean} enabled - a flag to enable/disable the Dynamic Form */
-    enabled: boolean;
+    enabled;
     
     /** @param {JSON} elementToClassMapping - Object which maps a field's type attribute with the class to instantiate */
     elementToClassMapping = {
         'default': DynamicElement,
         'checkbox': DynamicCheckbox,
         'radio': DynamicRadio,
-        'select-one': DynamicSelect,
-        'select-multiple': DynamicSelect
+        'select-one': DynamicDropdown,
+        'select-multiple': DynamicDropdown
     };
-
-    initPromise: Promise<void>;
     
     /**
     * Class constructor.
     * @param {object} formConfiguration the form configuration in JSON format
     */
-    constructor(formConfiguration: FormConfiguration) {
+    constructor(formConfiguration) {
         this.id = formConfiguration.id;
         this.config = formConfiguration;
         this.htmlElement = document.forms[formConfiguration.id];
         this.debug = formConfiguration.debug === true;
         this.enabled = true;
-        this.behavior = this.repairFormBehavior(formConfiguration.behavior);
+        this.behavior = this.#repairFormBehavior(formConfiguration.behavior);
         
-        const repairedConfigurationFields = this.repairConfigurationFields(this.htmlElement, formConfiguration.fields ?? []);
-        this.fields = this.createFieldsInstancesMap(repairedConfigurationFields, this.htmlElement);
-        this.fieldUpdateRules = this.createFieldUpdateRulesMap(repairedConfigurationFields, formConfiguration.rules ?? []);
+        const repairedConfigurationFields = this.#repairConfigurationFields(this.htmlElement, formConfiguration.fields ?? []);
+        this.fields = this.#createFieldsInstancesMap(repairedConfigurationFields, this.htmlElement);
+        this.fieldUpdateRules = this.#createFieldUpdateRulesMap(repairedConfigurationFields, formConfiguration.rules ?? []);
         
         const self = this;
         const initFields = formConfiguration.init ?? [];
         
-        this.initPromise = this.handleInitialisation(this.fields, initFields, this.fieldUpdateRules, this.behavior)
+        this.initPromise = this.#handleInitialisation(this.fields, initFields, this.fieldUpdateRules, this.behavior)
     }
     
-    private repairFormBehavior(behaviorConfig: FormBehavior): FormBehavior {
+    #repairFormBehavior(behaviorConfig) {
         const behavior = behaviorConfig ?? {};
         behavior.beforeInit = behavior.beforeInit ?? (() => {});
         behavior.afterInit = behavior.afterInit ?? (() => {});
@@ -75,14 +71,12 @@ class DynamicForm {
         return behavior;
     }
 
-    private repairConfigurationFields(formHtmlElement: HTMLFormElement, configurationFields: FieldConfiguration[]): FieldConfiguration[] {
-        const configurationFieldsNames = new Set<string>();
+    #repairConfigurationFields(formHtmlElement, configurationFields) {
+        const configurationFieldsNames = new Set();
         configurationFields.forEach(v => configurationFieldsNames.add(v.name));
 
-        const formFieldsNames = new Set<string>();
-        formHtmlElement
-        .querySelectorAll('[name]')
-        .forEach((v: HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement) => formFieldsNames.add(v.name));
+        const formFieldsNames = new Set();
+        formHtmlElement.querySelectorAll('[name]').forEach(v => formFieldsNames.add(v.name));
 
         formFieldsNames.forEach(v => {
             if (!configurationFieldsNames.has(v)) {
@@ -94,29 +88,32 @@ class DynamicForm {
         return configurationFields;
     }
     
-    private createFieldsInstancesMap(fieldsCollection: FieldConfiguration[], htmlFormElement: HTMLFormElement): Map<string, DynamicElement> {
-        const fieldsMap = new Map<string, DynamicElement>();
-        fieldsCollection.forEach((fieldConfig: FieldConfiguration) => {
+    #createFieldsInstancesMap(fieldsCollection, htmlFormElement) {
+        const fieldsMap = new Map();
+        fieldsCollection.forEach(fieldConfig => {
             const queryResult = htmlFormElement.querySelectorAll(`[name="${fieldConfig.name}"]`);
-            let type: string|null = null;
+            let type = null;
             
             if (queryResult.length === 0) {
                 throw new Error(`Element ${fieldConfig.name} not found`);
+            } else if (queryResult.length === 1) {
+                type = queryResult[0].type; // Use the type of field
             } else {
-                type = (queryResult[0] as HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement).type;
+                // if (Array.from(queryResult).every(current => current.type === 'radio')) { // Multiple radio only if all fields have the same name
+                type = queryResult[0].type;
+                // }
             }
             if (type == null || !this.elementToClassMapping[type]) {
                 type = 'default';
             }
-            const classType = this.elementToClassMapping[type];
-            const instance: DynamicElement = new classType(fieldConfig, this, queryResult);
+            const instance = new this.elementToClassMapping[type](fieldConfig, this);
             fieldsMap.set(instance.name, instance);
         });
         return fieldsMap;
     }
     
-    private createFieldUpdateRulesMap(fieldsCollection: FieldConfiguration[], rulesCollection: UpdateRule[]): Map<string, UpdateRule[]> {
-        const fieldUpdateRules = new Map<string, UpdateRule[]>();
+    #createFieldUpdateRulesMap(fieldsCollection, rulesCollection) {
+        const fieldUpdateRules = new Map();
         fieldsCollection.forEach(f => fieldUpdateRules.set(f.name, [])); // All fields, even those for which there is no update rule
         rulesCollection.forEach(rule => {
             const previousRules = fieldUpdateRules.get(rule.name);
@@ -125,45 +122,46 @@ class DynamicForm {
         return fieldUpdateRules;
     }
     
-    private handleInitialisation(fieldsCollection: Map<string, DynamicElement>, initFields: InitialisationRule[], fieldUpdateRules:Map<string, UpdateRule[]>, behavior: FormBehavior): Promise<void> {
+    #handleInitialisation(fieldsCollection, initFields, fieldUpdateRules, behavior) {
         if (!initFields) {
             return Promise.resolve();
         }
         return new Promise((resolve, reject) => {
             Promise.resolve()
             .then(() => behavior.beforeInit())
-            .then(() => {
-                return this.initialiseFields(fieldsCollection, initFields, fieldUpdateRules);
+            .then(result => {
+                if (result) {
+                    return this.#initialiseFields(fieldsCollection, initFields, fieldUpdateRules);
+                }
+                return null;
             })
-            .then(() => {
+            .then((value) => {
                 behavior.afterInit();
                 resolve();
             });
         });
     }
     
-    private async initialiseFields(fieldsMap: Map<string, DynamicElement>, initFields: InitialisationRule[], fieldUpdateRules: Map<string, UpdateRule[]>): Promise<void> {
+    async #initialiseFields(fieldsMap, initFields, fieldUpdateRules) {
         // Create an object which holds the form's initial status
-        const initialStatus = new Map<string, any>(); // TODO: use a map for better performance
+        const initialStatus = {}; // new Map(); // TODO: use a map for better performance
         initFields
         .filter(x => x.value !== undefined)
-        .forEach(element => initialStatus.set(element.name, element.value));
+        .forEach(element => initialStatus[element.name] = element.value /*initialStatus.set(element.name, element.value)*/);
         
         // Initialize "init" fields
         if (this.debug) {
             console.log(`==init==> `, initFields.reduce((acc, curr) => acc + `[${curr.name}] `, ''));
             console.log(`Parameters:`, initialStatus);
         }
-
-        const tmpInitialStatusAsObject = Object.fromEntries(initialStatus); // Evaluate if using maps instead of objects makes the module harder to use
-        const initPromises: Promise<void>[] = initFields
+        const initPromises = initFields
         .filter(x => fieldsMap.get(x.name) !== undefined)
-        .map(field => this.manualUpdate(tmpInitialStatusAsObject, field.name));
+        .map(field => this.manualUpdate(initialStatus, field.name));
         
         await Promise.all(initPromises);
         
-        // Set initial values in initialised fields
-        for (const [name, value] of initialStatus) {
+        // Set values in initialised fields
+        for(const [name, value] of Object.entries(initialStatus)) { // TODO: fix here for hashmap usage
             const field = fieldsMap.get(name);
             if (field) {
                 field.set(value);
@@ -171,9 +169,9 @@ class DynamicForm {
         }
         
         // For each initialised field notifies the next fields to update
-        const initializedFieldsNames = initFields.map(f => f.name);
+        const initializedFields = initFields.map(f => f.name);
         const nextUpdatePromises = [];
-        initializedFieldsNames
+        initializedFields
         .filter(fieldName => fieldsMap.get(fieldName) !== undefined)
         .forEach(fieldName => {
             const updateRules = fieldUpdateRules.get(fieldName);
@@ -184,7 +182,7 @@ class DynamicForm {
                     if (observerName === updateRule.name) { // This prevents loops
                         return;
                     }
-                    if (initializedFieldsNames.includes(observerName)) { // Field already initialized
+                    if (initializedFields.includes(observerName)) { // Field already initialized
                         return;
                     }
                     if (this.debug) {
@@ -207,7 +205,7 @@ class DynamicForm {
      * Method used to understand when the dynamic-form initialisation is completed
      * @returns {Promise<void>} promise resolved when initialisation is completed
      */
-    public ready(): Promise<void> {
+    ready() {
         return this.initPromise;
     }
     
@@ -216,7 +214,7 @@ class DynamicForm {
     * @param {string} subjectName the name of the field who changed
     * @returns {Promise<void>} promise resolved when all updates are completed
     */
-    public async notify(subjectName: string): Promise<void> {
+    notify(subjectName) {
         if (this.isEnabled() === false) {
             return;
         }
@@ -226,40 +224,42 @@ class DynamicForm {
             console.log(`-\n${new Date()}\n> [${subjectName}] Changed. Notifying observers...\n-`);
         }
         
-        const updatePromises: Promise<void>[] = [];
-        const beforeUpdateResult = this.behavior.beforeUpdate(subjectName);
-        if (beforeUpdateResult) {
-            const updateRules = this.fieldUpdateRules.get(subjectName);
-            updateRules.forEach(rule => {
-                // Update
-                const params = this.fetchAllParameters(rule);
-                rule.update.forEach(observerName => {
-                    if (observerName === subjectName) { // This prevents loops
-                        return;
-                    }
-                    if (this.debug) {
-                        console.log(`> > [${subjectName}] ==update==> [${this.getField(observerName).name}]`);
-                        console.log(`Parameters:`, params);
-                    }
-                    const observer = this.getField(observerName);
-                    const observerPromise = observer.update(params, subjectName);
-                    updatePromises.push(observerPromise);
-                    // Clear
-                    this.clearCascade(observerName);
+        
+        return Promise.resolve()
+        .then(() => this.behavior.beforeUpdate(subjectName)) 
+        .then(result => {
+            const updatePromises = [];
+            if (result) {
+                const updateRules = this.fieldUpdateRules.get(subjectName);
+                updateRules.forEach(rule => {
+                    // Update
+                    const params = this.fetchAllParameters(rule);
+                    rule.update.forEach(observerName => {
+                        if (observerName === subjectName) { // This prevents loops
+                            return;
+                        }
+                        if (this.debug) {
+                            console.log(`> > [${subjectName}] ==update==> [${this.getField(observerName).name}]`);
+                            console.log(`Parameters:`, params);
+                        }
+                        const observer = this.getField(observerName);
+                        const observerPromise = observer.update(params, subjectName);
+                        updatePromises.push(observerPromise);
+                        // Clear
+                        this.clearCascade(observerName);
+                    });
                 });
-            });
-        }
-        await Promise.all(updatePromises);
-        this.behavior.afterUpdate(subjectName);
-        return;
+            }
+            return Promise.all(updatePromises);
+        }).then((values) => this.behavior.afterUpdate(subjectName));
     }
     
     /**
     * Method to retrieve all parameter required for a remote call according to a form update rule.
-    * @param {UpdateRule} rule a specific form update rule
+    * @param {JSON} rule a specific form update rule
     * @return an object merging sender data and additional data
     */
-    private fetchAllParameters(rule: UpdateRule): object {
+    fetchAllParameters(rule) {
         const subjectName = rule.name;
         const subjectValue = this.getField(subjectName).get();
         const params = {};
@@ -285,7 +285,7 @@ class DynamicForm {
     * @param {string} currentSubject node name whom observers will be cleared
     * @param {array} visited array of already cleared (visited) nodes
     */
-    private async clearCascade(currentSubject: string, visited: string[] = []): Promise<void> {
+    async clearCascade(currentSubject, visited = []) {
         visited.push(currentSubject);
         const updateRules = this.fieldUpdateRules.get(currentSubject);
         updateRules.forEach(rule => {
@@ -294,7 +294,7 @@ class DynamicForm {
                     if (this.debug){
                         console.log(`> > > [${currentSubject}] ==x==> [${this.getField(observer).name}]`);
                     }
-                    this.getField(observer).clear();
+                    this.getField(observer).clear(this.getField(observer));
                     this.clearCascade(observer, visited);
                 }
             })
@@ -303,11 +303,11 @@ class DynamicForm {
     
     /**
     * Method to manual trigger the update function of a subject.
-    * @param {object} data data useful to the element's status change
+    * @param {JSON} data data useful to the element's status change
     * @param {string} subjectName name of the changed subject
     * @returns a Promise in fulfilled state when element status has been updated
     */
-    public async manualUpdate(data: object, subjectName: string|null): Promise<void> {
+    async manualUpdate(data, subjectName) {
         return this.getField(subjectName).update(data, null);
     }
     
@@ -316,7 +316,7 @@ class DynamicForm {
     * @param {string} name name of dynamic field instance to retrieve
     * @returns the DynamicElement instance
     */
-    private getField(name: string): DynamicElement {
+    getField(name) {
         return this.fields.get(name);
     }
     
@@ -324,7 +324,7 @@ class DynamicForm {
     * Return form's id
     * @return {string} the form id
     */
-    public getId(): string {
+    getId() {
         return this.id;
     }
     
@@ -332,7 +332,7 @@ class DynamicForm {
     * Method to enable/disable the form update
     * @param {boolean} enable true to enable the form update, false otherwise
     */
-    public setEnabled(enable: boolean): void {
+    setEnabled(enable) {
         this.enabled = !!enable;
         if (this.debug) {
             console.log(`Form enabled: ${this.enabled}`);
@@ -340,11 +340,11 @@ class DynamicForm {
     }
     
     /**
-    * Method to know if the form update is currently enabled
+    * Method to know if the form update is currently enabled-
     * @return {boolean} true if the form is currently enabled, false otherwise
     */
-    public isEnabled(): boolean {
-        return this.enabled;
+    isEnabled() {
+        return !!this.enabled;
     }
     
 }

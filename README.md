@@ -21,7 +21,7 @@ Here's some examples.
 
 ### Select with variable options
 
-![Dynamic Select example gif](./docs/imgs/dynamic-select.gif)
+![Dynamic Dropdown example gif](./docs/imgs/dynamic-dropdown.gif)
 
 ### Form values easy initialisation
 
