@@ -18,4 +18,4 @@ The field value. It can be any primitive value.
 
 This attribute has 2 purposes:
 - It's passed to all other fields during initialisation; 
-- It will be the value automatically selected as the current field value; if the field type is *select*, the value must be available to be selected.
+- It will be the value automatically selected as the current field value; if the field type is *Dropdown*, the value must be available to be selected.

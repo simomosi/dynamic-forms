@@ -1,23 +1,21 @@
-import DynamicElement from './DynamicElement';
-import DynamicForm from './DynamicForm';
-import { FieldConfiguration } from './FieldConfigurationTypes';
+import DynamicElement from './DynamicElement.js';
 
 class DynamicRadio extends DynamicElement {
 
     /** @inheritdoc */
-    constructor(config: FieldConfiguration, dynamicForm: DynamicForm, htmlElement: NodeList) {
-        super(config, dynamicForm, htmlElement);
+    constructor(config, dynamicForm) {
+        super(config, dynamicForm);
     }
 
     /** @inheritdoc */
-    public get(): any {
+    get() {
         // Custom
         if (this.io.get) {
             return this.io.get(this.htmlElement);
         }
         // Standard
         for (let i = 0; i < this.htmlElement.length; i++) {
-            const element = this.htmlElement[i] as HTMLInputElement;
+            let element = this.htmlElement[i];
             if (element.checked === true) {
                 return element.value;
             }
@@ -26,14 +24,14 @@ class DynamicRadio extends DynamicElement {
     }
 
     /** @inheritdoc */
-    public set(value: string): void {
+    set(value) {
         // Custom
         if (this.io.set) {
             return this.io.set(this.htmlElement, value);
         }
         // Standard
         for (let i = 0; i < this.htmlElement.length; i++) {
-            let element = this.htmlElement[i] as HTMLInputElement;
+            let element = this.htmlElement[i];
             if (element.value === value) {
                 element.checked = true;
                 return;
@@ -43,15 +41,14 @@ class DynamicRadio extends DynamicElement {
     }
 
     /** @inheritdoc */
-    public clear(): void {
+    clear() {
         // Custom
         if (this.behavior.clear) {
             return this.behavior.clear(this.htmlElement);
         }
         // Standard
         for (let i = 0; i < this.htmlElement.length; i++) {
-            const element = this.htmlElement[i] as HTMLInputElement;
-            element.checked = false;
+            this.htmlElement[i].checked = false;
         }
     }
 }

@@ -1,6 +1,4 @@
 node_modules
-dist
-build
 
 # Doc site deploy
 site/

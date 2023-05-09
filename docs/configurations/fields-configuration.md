@@ -5,57 +5,36 @@ Just specify fields with custom behavior as the standard ones will be discovered
 
 Here's a complete single field configuration. You just need to specify the attributes you need, the other will have default values.
 
-=== "Generic element"
-    ```javascript
-    const fieldConfiguration = {
-        name: 'fieldName',
-        io: {  // Customize field input/output
-            event: 'change',
-            get: (htmlElement) => { },
-            set: (htmlElement, value) => { },
-        },
-        fetch: { // Remote call options
-            method: 'GET',
-            makeUrl: (data) => { },
-            makeBody: (data) => { }, // JSON.stringify, formData, text...
-            fullFetchConfig: {}, // Fetch complete configuration
-        },
-        behavior: {
-            clear: (htmlElement) => { }, // Clear field from its content
-            beforeUpdate: (htmlElement, data, subjectName) => { return true; }, // Executed before the remote call. Return false to block the update
-            updateStatus: (htmlElement, data, subjectName) => { },
-            afterUpdate: (htmlElement, data, subjectName) => { } // Executed after the remote call
-        }
-    };
-    ```
-
-=== "Select element"
-    ```javascript
-    const fieldConfiguration = {
-        name: 'fieldName',
-        io: /* ... */,
-        fetch: /* ... */,
-        behavior: /* ... */,
-        select: { // Only for select elements
-            postProcessData: (htmlElement, data) => { }, // Process data retrieved by remote call
-            saveData: (htmlElement, data) => { }, // Manually save data in html (e.g. creating `<option value="value">'text'</option>` nodes)
-            clearOnParentVoid: true, // True (default) to clear field content when subject is empty; false to trigger a remote call
-        }
-    };
-    ```
-
-=== "Checkbox element"
-    ```javascript
-    const fieldConfiguration = {
-        name: 'fieldName',
-        io: /* ... */,
-        fetch: /* ... */,
-        behavior: /* ... */,
-        checkbox: { // Only for checkbox elements
-            booleanValue: true // True (default) to get element's value as boolean, based on the checked property; false to get the value property
-        }
-    };
-    ```
+```javascript
+let fieldConfiguration = {
+    name: 'fieldName',
+    io: {  // Customize field input/output
+        event: 'change',
+        get: (htmlElement) => { },
+        set: (htmlElement, value) => { },
+    },
+    fetch: { // Remote call options
+        method: 'GET',
+        makeUrl: (data) => { },
+        makeBody: (data) => { }, // JSON.stringify, formData, text...
+        fullFetchConfig: {}, // Fetch complete configuration
+    },
+    behavior: {
+        clear: (htmlElement) => { }, // Clear field from its content
+        beforeUpdate: (htmlElement, data, subjectName) => { return true; }, // Executed before the remote call. Return false to block the update
+        updateStatus: (htmlElement, data, subjectName) => { },
+        afterUpdate: (htmlElement, data, subjectName) => { } // Executed after the remote call
+    },
+    dropdown: { // Only for dropdown elements
+        postProcessData: (htmlElement, data) => { }, // Process data retrieved by remote call
+        saveData: (htmlElement, data) => { }, // Save data in html (es: <option value="value">'text'</option>)
+        clearOnParentVoid: true, // True (default) to clear field content when subject is empty; false to trigger a remote call
+    },
+    checkbox: { // Only for checkbox elements
+        booleanValue: true // True (default) to get element's value as boolean, based on the checked property; false to get the value property
+    }
+};
+```
 
 ## `name`*
 The html element name.
@@ -69,7 +48,7 @@ Object which groups properties related to field input and output.
 
 
 ### `event`
-The html event which symbolize the Subject's status change (e.g. *change* for a select, *click* for a checkbox...).
+The html event which symbolize the Subject's status change (e.g. *change* for a dropdown, *click* for a checkbox...).
 
 It is used to put an event listener which will notify Subject's Observers.
 
@@ -103,9 +82,9 @@ Returns
 ## `fetch`*
 Object which groups properties related to remote calls.
 
-**Available only for *DynamicSelect* instances** (select-option like fields).
+**Available only for *DynamicDropdown* instances** (select-option like fields).
 
-**Required only if the select element is an observer** (it will be updated for every observed subject change), unless you specify a new *updateStatus* function.
+**Required only if the dropdown element is an observer** (it will be updated for every observed subject change), unless you specify a new *updateStatus* function.
 
 ### `method`
 It's the *http request method* (or verb).
@@ -158,7 +137,7 @@ Returns
 Object which groups properties related to field behavior.
 
 ### `clear (htmlElement)`
-Function to unset the field's current value. Sometimes it is used to clear the field from its content (for input and select types).
+Function to unset the field's current value. Sometimes it is used to clear the field from its content (for input and dropdown types).
 
 Parameters
 
@@ -172,7 +151,7 @@ Returns
 ### `beforeUpdate (htmlElement, data, subjectName)`
 Method called before triggering the field's status update. If return value is *false*, the update is aborted.
 
-Default behavior: nothing. For **DynamicSelect** elements it clear the field content if *clearOnParentVoid* conditions are satisfied.
+Default behavior: nothing. For **DynamicDropdown** elements it clear the field content if *clearOnParentVoid* conditions are satisfied.
 
 Parameters
 
@@ -187,7 +166,7 @@ Returns
 ### `updateStatus (htmlElement, data, subjectName)`
 Method to update the field status. It is useful to update the field's attributes (*display*, *disabled*...) and content.
 
-Default behavior: nothing. For **DynamicSelect** elements it makes a remote call (using *fetch*), retrieves new date and saves it as *select* new content (*option*).
+Default behavior: nothing. For **DynamicDropdown** elements it makes a remote call (using *fetch*), retrieves new date and saves it as *select* new content (*option*).
 
 Parameters
 
@@ -197,7 +176,7 @@ Parameters
 
 Returns
 
-- {`Promise<void>`}
+- {`void`}
 
 ### `afterUpdate (htmlElement, data, subjectName)`
 Method called after triggering the field's status update.
@@ -212,7 +191,7 @@ Returns
 
 - {`boolean`} (currently) unused
 
-## `select`
+## `dropdown`
 Object which groups properties related to select-option elements.
 
 ### `postProcessData (htmlElement, data)`
@@ -230,7 +209,7 @@ Returns
 ### `saveData (htmlElement, data)`
 Function to phisically save (post-processed) data retrieved by a remote call as html.
 
-Default behavior: saves data as *option* html elements using *value* and *text* properties, creating also empty option if they are not present in retrieved data.
+Default behavior: saves data as *option* html elements using *value* and *test* properties.
 
 Parameters
 
@@ -239,7 +218,7 @@ Parameters
 
 Returns
 
-- {`void`}
+- {`JSON | object[]`} post-processed data (not used)
 
 ### `clearOnParentVoid`
 Property which (when `true`) tells to clear field content when subject value is empty instead of triggering a remote call (when `false`).

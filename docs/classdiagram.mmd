@@ -1,54 +1,51 @@
 classDiagram
 
     class DynamicForm {
-        FormConfiguration config
-        HTMLFormElement htmlElement
-        Map❬String DynamicElement❭ entities
+        JSON config
+        node htmlElement
+        Map~String, DynamicElement~ entities
         boolean debug
         boolean enabled
         json elementToClassMapping
 
-        +ready() Promise❬void❭
-        +notify(subjectName) Promise❬void❭
-        -fetchAllParameters(rule) object
-        -clearCascade(currentSubject) Promise❬void❭
-        +manualUpdate(data, subjectName) Promise❬void❭
-        -getField(name) DynamicElement
-        +getId() string
-        +setEnabled() void
-        +isEnabled() boolean
+        notify(subjectName)
+        fetchAllParameters(rule) object
+        clearCascade(currentSubject)
+        manualUpdate(data, subjectName)
+        getField(name) DynamicElement
+        getId() string
+        setEnabled() void
+        isEnabled() boolean
     }
 
     class dynamicForms {
-        -Map❬String DynamicForm❭ formCollection
+        -Map~String, DynamicForm~ formCollection
         +makeForm(formConfiguration) DynamicForm
         +getForm(id) DynamicForm
     }
 
-    note for dynamicForms "Library entrypoint"
-
     class DynamicElement {
-        -FieldConfiguration config
-        -NodeList htmlElement
+        -JSON config
+        -node htmlElement
         -string name
         -JSON defaultConfig
         +get() string
         +set(value) string
         +clear()
         +update(data, subjectName)
-        #beforeUpdate(data, subjectName) boolean
-        #updateStatus(data, subjectName) Promise❬void❭
-        #afterUpdate(data, subjectName) boolean
+        +beforeUpdate(data, subjectName) boolean
+        +updateStatus(data, subjectName)
+        +afterUpdate(data, subjectName)
     }
 
-    class DynamicSelect {
+    class DynamicDropdown {
         -string method
         +postProcessData(data) object[]
-        +saveData(data) void
+        +saveData(data) object[]
     }
 
     DynamicForm <.. dynamicForms
     DynamicForm o-- DynamicElement
-    DynamicElement <|-- DynamicSelect
+    DynamicElement <|-- DynamicDropdown
     DynamicElement <|-- DynamicCheckbox
     DynamicElement <|-- DynamicRadio
