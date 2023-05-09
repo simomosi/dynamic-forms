@@ -27,13 +27,10 @@ class DynamicSelect extends DynamicElement {
     }
 
     /**
-    * Class constructor
-    * @param {object} config the select configuration
-    * @param {object} dynamicForm the DynamicForm instance
-    * @async
+    * @inheritdoc
     */
-    constructor(config: SelectConfiguration, dynamicForm: DynamicForm) {
-        super(config, dynamicForm);
+    constructor(config: SelectConfiguration, dynamicForm: DynamicForm, htmlElement: NodeList) {
+        super(config, dynamicForm, htmlElement);
         this.method = this.fetch.method ?? DynamicSelect.defaultConfig.fetch.method;
         this.select = config.select ?? {};
     }

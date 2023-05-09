@@ -35,9 +35,10 @@ class DynamicElement {
     * Class constructor
     * @param {FieldConfiguration} config the element configuration
     * @param {DynamicForm} dynamicForm the DynamicForm instance
+    * @param {NodeList} htmlElement the html element(s) returned by querySelectorAll
     * @async
     */
-    constructor(config: FieldConfiguration, dynamicForm: DynamicForm) {
+    constructor(config: FieldConfiguration, dynamicForm: DynamicForm, htmlElement: NodeList) {
         this.config = config;
         // Repairing config file if parameters are missing (to write code easily)
         this.io = config.io ?? {};
@@ -46,8 +47,7 @@ class DynamicElement {
 
         let event = this.io.event ?? DynamicElement.defaultConfig.io.event;
 
-        this.htmlElement = dynamicForm.htmlElement.querySelectorAll(`[name="${config.name}"]`); // TODO: make the query only in DynamicForm
-        // this.name = this.htmlElement[0].name;
+        this.htmlElement = htmlElement;
         this.name = config.name;
         if (this.htmlElement.length === 0) {
             throw new Error(`Element ${config.name} not found`);

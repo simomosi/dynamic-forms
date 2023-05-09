@@ -108,7 +108,8 @@ class DynamicForm {
             if (type == null || !this.elementToClassMapping[type]) {
                 type = 'default';
             }
-            const instance: DynamicElement = new this.elementToClassMapping[type](fieldConfig, this);
+            const classType = this.elementToClassMapping[type];
+            const instance: DynamicElement = new classType(fieldConfig, this, queryResult);
             fieldsMap.set(instance.name, instance);
         });
         return fieldsMap;

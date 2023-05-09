@@ -18,8 +18,8 @@ class DynamicCheckbox extends DynamicElement {
     }
 
     /** @inheritdoc */
-    constructor(config: CheckboxConfiguration, dynamicForm: DynamicForm) {
-        super(config, dynamicForm);
+    constructor(config: CheckboxConfiguration, dynamicForm: DynamicForm, htmlElement: NodeList) {
+        super(config, dynamicForm, htmlElement);
         this.checkbox = config.checkbox ?? {};
     }
 
