@@ -4,11 +4,12 @@ import DynamicCheckbox from './DynamicCheckbox';
 import DynamicRadio from './DynamicRadio';
 import { FormConfiguration, FormBehavior, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
 import { FieldConfiguration } from './FieldConfigurationTypes';
+import { Subject } from './ObserverPatternTypes';
 
 /**
 * This class represents a form with dynamic content, e.g. select with variable options, updating rules and visibility depending on fields' state...
 */
-class DynamicForm {
+class DynamicForm implements Subject {
     /** @param {string} id - the form id */
     id: string;
     

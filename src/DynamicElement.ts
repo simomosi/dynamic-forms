@@ -1,11 +1,11 @@
-import DynamicForm from './DynamicForm';
 import { FieldBehaviorConfiguration, FieldConfiguration, FieldFetchConfiguration, FieldIoConfiguration } from './FieldConfigurationTypes';
+import { Observer, Subject } from './ObserverPatternTypes';
 
 /**
  * This class represents a Dynamic Element in a form.
  * In particular it is a generic input element, whose behavior is based on element.value property
  */
-class DynamicElement {
+class DynamicElement implements Observer {
     /** @param {object} config - the element configuration */
     config: FieldConfiguration;
 
@@ -34,11 +34,11 @@ class DynamicElement {
     /**
     * Class constructor
     * @param {FieldConfiguration} config the element configuration
-    * @param {DynamicForm} dynamicForm the DynamicForm instance
+    * @param {Subject} subject the subject to notify when changes occour (according to Observer pattern)
     * @param {NodeList} htmlElement the html element(s) returned by querySelectorAll
     * @async
     */
-    constructor(config: FieldConfiguration, dynamicForm: DynamicForm, htmlElement: NodeList) {
+    constructor(config: FieldConfiguration, subject: Subject, htmlElement: NodeList) {
         this.config = config;
         // Repairing config file if parameters are missing (to write code easily)
         this.io = config.io ?? {};
@@ -53,7 +53,7 @@ class DynamicElement {
             throw new Error(`Element ${config.name} not found`);
         } else {
             this.htmlElement.forEach(current => {
-                current.addEventListener(event, (e) => { dynamicForm.notify((e.target as HTMLInputElement).name); });
+                current.addEventListener(event, (e) => { subject.notify((e.target as HTMLInputElement).name); });
             });
         }
     }
