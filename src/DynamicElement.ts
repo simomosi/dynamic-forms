@@ -7,13 +7,13 @@ import { Observer, Subject } from './ObserverPatternTypes';
  */
 class DynamicElement implements Observer {
     /** @param {object} config - the element configuration */
-    config: FieldConfiguration;
+    readonly config: FieldConfiguration;
 
     /** @param {NodeList} htmlElement - the HTML Element returned by querySelectorAll. If more than one exists, the element is a NodeList */
-    htmlElement: NodeList;
+    readonly htmlElement: NodeList;
 
     /** @param {string} name - the element name */
-    name: string;
+    readonly name: string;
 
     /** @param {FieldIoConfiguration} io - object which groups some properties related to field input/output */
     io: FieldIoConfiguration;

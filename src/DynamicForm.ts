@@ -11,7 +11,7 @@ import { FieldBuilder } from './FieldBuilder';
 */
 class DynamicForm implements Subject {
     /** @param {string} id - the form id */
-    id: string;
+    readonly id: string;
     
     /** @param {boolean} debug - a flag to enable debug mode */
     debug: boolean;
@@ -29,7 +29,7 @@ class DynamicForm implements Subject {
     config: FormConfiguration;
     
     /** @param {HTMLFormElement} HTMLFormElement - the actual html element returned by getElementById */
-    htmlElement: HTMLFormElement;
+    readonly htmlElement: HTMLFormElement;
     
     /** @param {boolean} enabled - a flag to enable/disable the Dynamic Form */
     enabled: boolean;

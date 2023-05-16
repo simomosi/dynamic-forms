@@ -8,7 +8,7 @@ import { SelectConfiguration, SelectSelectConfiguration } from './FieldConfigura
 class DynamicSelect extends DynamicElement {
 
     /** @param {string} method the http request method for the remote call (async update) */
-    method: string;
+    readonly method: string;
 
     /** @param {object} dropdown - property with select related properties */
     select: SelectSelectConfiguration;
