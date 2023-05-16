@@ -60,7 +60,7 @@ class DynamicForm implements Subject {
         const fieldUpdateRules = new Map<string, UpdateRule[]>();
         fieldsCollection.forEach(f => fieldUpdateRules.set(f.name, [])); // All fields, even those for which there is no update rule
         rulesCollection.forEach(rule => {
-            const previousRules = fieldUpdateRules.get(rule.name);
+            const previousRules = fieldUpdateRules.get(rule.name) ?? [];
             fieldUpdateRules.set(rule.name, previousRules.concat(rule));
         });
         return fieldUpdateRules;

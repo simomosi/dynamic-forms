@@ -1,7 +1,7 @@
 import { FormBehavior } from "./FormConfigurationTypes";
 
 export class FormConfigurationFixer {
-    public fixBehavior(formBehavior: FormBehavior): FormBehavior {
+    public fixBehavior(formBehavior: FormBehavior|undefined): FormBehavior {
         const behavior = formBehavior ?? {};
         behavior.beforeInit = behavior.beforeInit ?? (() => {});
         behavior.afterInit = behavior.afterInit ?? (() => {});
