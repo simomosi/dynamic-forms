@@ -113,11 +113,11 @@ class DynamicForm implements Subject {
         
         // For each initialised field notifies the next fields to update
         const initializedFieldsNames = initFields.map(f => f.name);
-        const nextUpdatePromises = [];
+        const nextUpdatePromises: Array<Promise<void>> = [];
         initializedFieldsNames
         .filter(fieldName => fieldsMap.get(fieldName) !== undefined)
         .forEach(fieldName => {
-            const updateRules = fieldUpdateRules.get(fieldName);
+            const updateRules = fieldUpdateRules.get(fieldName) ?? [];
             updateRules.forEach(updateRule => {
                 // Update
                 const params = this.fetchAllParameters(updateRule);
@@ -170,7 +170,7 @@ class DynamicForm implements Subject {
         const updatePromises: Promise<void>[] = [];
         const beforeUpdateResult = this.behavior.beforeUpdate(subjectName);
         if (beforeUpdateResult) {
-            const updateRules = this.fieldUpdateRulesMap.get(subjectName);
+            const updateRules = this.fieldUpdateRulesMap.get(subjectName) ?? [];
             updateRules.forEach(rule => {
                 // Update
                 const params = this.fetchAllParameters(rule);
@@ -228,7 +228,7 @@ class DynamicForm implements Subject {
     */
     private async clearCascade(currentSubject: string, visited: string[] = []): Promise<void> {
         visited.push(currentSubject);
-        const updateRules = this.fieldUpdateRulesMap.get(currentSubject);
+        const updateRules = this.fieldUpdateRulesMap.get(currentSubject) ?? [];
         updateRules.forEach(rule => {
             rule.update.forEach(observer => {
                 if (!visited.includes(observer)) {
@@ -249,7 +249,11 @@ class DynamicForm implements Subject {
     * @returns a Promise in fulfilled state when element status has been updated
     */
     public async manualUpdate(data: object, subjectName: string|null): Promise<void> {
-        return this.getField(subjectName).update(data, null);
+        const field = this.getField(subjectName);
+        if (field) {
+            return field.update(data, null);
+        }
+        return;
     }
     
     /**
@@ -258,7 +262,11 @@ class DynamicForm implements Subject {
     * @returns the DynamicElement instance
     */
     private getField(name: string): DynamicElement {
-        return this.fieldsMap.get(name);
+        const element = this.fieldsMap.get(name);
+        if (!element) {
+            throw new Error("Unknown element")
+        }
+        return element;
     }
     
     /**
