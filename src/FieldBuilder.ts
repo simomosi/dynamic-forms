@@ -1,45 +1,42 @@
 import DynamicCheckbox from "./DynamicCheckbox";
 import DynamicElement from "./DynamicElement";
+import DynamicForm from "./DynamicForm";
 import DynamicRadio from "./DynamicRadio";
 import DynamicSelect from "./DynamicSelect";
 import { FieldConfiguration } from "./FieldConfigurationTypes";
 
 export class FieldBuilder {
-    /** @param {object} elementToClassMapping - Object which maps a field's type attribute with the class to instantiate */
-    private elementToClassMapping = {
-        'default': DynamicElement,
-        'checkbox': DynamicCheckbox,
-        'radio': DynamicRadio,
-        'select-one': DynamicSelect,
-        'select-multiple': DynamicSelect
-    };
-
-    public createFieldsMap(fieldsCollection: FieldConfiguration[], htmlFormElement: HTMLFormElement): Map<string, DynamicElement> {
+    public createFieldsMap(fieldsCollection: FieldConfiguration[], dynamicForm: DynamicForm): Map<string, DynamicElement> {
         const fieldsMap = new Map<string, DynamicElement>();
-        const fields = this.createFieldsInstance(fieldsCollection, htmlFormElement);
-        fields.forEach((dynamicElement: DynamicElement) => {
-            fieldsMap.set(dynamicElement.name, dynamicElement);
-        });
+        fieldsCollection
+        .map((fieldConfiguration) => this.factoryField(fieldConfiguration, dynamicForm))
+        .forEach((dynamicElement) => fieldsMap.set(dynamicElement.name, dynamicElement));
         return fieldsMap;
     }
-
-    private createFieldsInstance(fieldsCollection: FieldConfiguration[], htmlFormElement: HTMLFormElement): DynamicElement[] {
-        const fieldCollection : DynamicElement[] = [];
-        fieldsCollection.forEach((fieldConfig: FieldConfiguration) => {
-            const queryResult = htmlFormElement.querySelectorAll(`[name="${fieldConfig.name}"]`);
-            let type: string|null = null;
-            
-            if (queryResult.length === 0) {
-                throw new Error(`Element ${fieldConfig.name} not found`);
-            }
-            type = (queryResult[0] as HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement).type;
-            if (type == null || !this.elementToClassMapping[type]) {
-                type = 'default';
-            }
-            const classType = this.elementToClassMapping[type];
-            const instance: DynamicElement = new classType(fieldConfig, this, queryResult);
-            fieldCollection.push(instance);
-        });
-        return fieldCollection;
+    
+    private factoryField(fieldConfiguration: FieldConfiguration, dynamicForm: DynamicForm): DynamicElement {
+        const queryResult = dynamicForm.htmlElement.querySelectorAll(`[name="${fieldConfiguration.name}"]`);
+        let type: string;
+        
+        if (queryResult.length === 0) {
+            throw new Error(`Element ${fieldConfiguration.name} not found`);
+        }
+        type = (queryResult[0] as HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement).type;
+        let instance: DynamicElement;
+        switch(type) {
+            case 'checkbox':
+                instance = new DynamicCheckbox(fieldConfiguration, dynamicForm, queryResult);
+                break;
+            case 'radio':
+                instance = new DynamicRadio(fieldConfiguration, dynamicForm, queryResult);
+                break;
+            case 'select-one':
+            case 'select-multiple':
+                instance = new DynamicSelect(fieldConfiguration, dynamicForm, queryResult);
+                break;
+            default:
+                instance = new DynamicElement(fieldConfiguration, dynamicForm, queryResult);
+        }
+        return instance;
     }
 }

@@ -50,7 +50,7 @@ class DynamicForm implements Subject {
         this.behavior = (new FormConfigurationFixer()).fixBehavior(formConfiguration.behavior);
         
         const completeConfigurationFields = (new FieldConfigurationFixer()).fix(this.htmlElement, formConfiguration.fields);
-        this.fieldsMap = (new FieldBuilder()).createFieldsMap(completeConfigurationFields, this.htmlElement);
+        this.fieldsMap = (new FieldBuilder()).createFieldsMap(completeConfigurationFields, this);
         this.fieldUpdateRulesMap = this.createFieldUpdateRulesMap(completeConfigurationFields, formConfiguration.rules);
         
         this.initPromise = this.handleInitialisation(this.fieldsMap, formConfiguration.init, this.fieldUpdateRulesMap, this.behavior)
