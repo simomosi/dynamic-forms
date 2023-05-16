@@ -1,10 +1,10 @@
-import DynamicSelect from './DynamicSelect';
 import DynamicElement from './DynamicElement';
-import DynamicCheckbox from './DynamicCheckbox';
-import DynamicRadio from './DynamicRadio';
 import { FormConfiguration, FormBehavior, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
 import { FieldConfiguration } from './FieldConfigurationTypes';
 import { Subject } from './ObserverPatternTypes';
+import { FormConfigurationFixer } from './FormConfigurationFixer';
+import { FieldConfigurationFixer } from './FieldConfigurationFixer';
+import { FieldBuilder } from './FieldBuilder';
 
 /**
 * This class represents a form with dynamic content, e.g. select with variable options, updating rules and visibility depending on fields' state...
@@ -20,10 +20,10 @@ class DynamicForm implements Subject {
     behavior: FormBehavior;
     
     /** @param {Map<String, DynamicElement>} fields - a collection of form's DynamicElements instances */
-    fields: Map<string, DynamicElement>;
+    fieldsMap: Map<string, DynamicElement>;
     
     /** @param {Map<string, UpdateRule[]} fieldUpdateRules - a collection of all update rules of the specified field name */
-    fieldUpdateRules: Map<string, UpdateRule[]>;
+    fieldUpdateRulesMap: Map<string, UpdateRule[]>;
     
     /** @param {FormConfiguration} config - the original form configuration */
     config: FormConfiguration;
@@ -33,16 +33,8 @@ class DynamicForm implements Subject {
     
     /** @param {boolean} enabled - a flag to enable/disable the Dynamic Form */
     enabled: boolean;
-    
-    /** @param {JSON} elementToClassMapping - Object which maps a field's type attribute with the class to instantiate */
-    elementToClassMapping = {
-        'default': DynamicElement,
-        'checkbox': DynamicCheckbox,
-        'radio': DynamicRadio,
-        'select-one': DynamicSelect,
-        'select-multiple': DynamicSelect
-    };
 
+    /** @param {Promise<void>} initPromise - promise fulfilled when dynamicform initialisation is complete */
     initPromise: Promise<void>;
     
     /**
@@ -55,68 +47,16 @@ class DynamicForm implements Subject {
         this.htmlElement = document.forms[formConfiguration.id];
         this.debug = formConfiguration.debug === true;
         this.enabled = true;
-        this.behavior = this.repairFormBehavior(formConfiguration.behavior);
+        this.behavior = (new FormConfigurationFixer()).fixBehavior(formConfiguration.behavior);
         
-        const repairedConfigurationFields = this.repairConfigurationFields(this.htmlElement, formConfiguration.fields ?? []);
-        this.fields = this.createFieldsInstancesMap(repairedConfigurationFields, this.htmlElement);
-        this.fieldUpdateRules = this.createFieldUpdateRulesMap(repairedConfigurationFields, formConfiguration.rules ?? []);
+        const completeConfigurationFields = (new FieldConfigurationFixer()).fix(this.htmlElement, formConfiguration.fields);
+        this.fieldsMap = (new FieldBuilder()).createFieldsMap(completeConfigurationFields, this.htmlElement);
+        this.fieldUpdateRulesMap = this.createFieldUpdateRulesMap(completeConfigurationFields, formConfiguration.rules);
         
-        const self = this;
-        const initFields = formConfiguration.init ?? [];
-        
-        this.initPromise = this.handleInitialisation(this.fields, initFields, this.fieldUpdateRules, this.behavior)
+        this.initPromise = this.handleInitialisation(this.fieldsMap, formConfiguration.init, this.fieldUpdateRulesMap, this.behavior)
     }
     
-    private repairFormBehavior(behaviorConfig: FormBehavior): FormBehavior {
-        const behavior = behaviorConfig ?? {};
-        behavior.beforeInit = behavior.beforeInit ?? (() => {});
-        behavior.afterInit = behavior.afterInit ?? (() => {});
-        behavior.beforeUpdate = behavior.beforeUpdate ?? ((subjectName) => true);
-        behavior.afterUpdate = behavior.afterUpdate ?? ((subjectName) => {});
-        return behavior;
-    }
-
-    private repairConfigurationFields(formHtmlElement: HTMLFormElement, configurationFields: FieldConfiguration[]): FieldConfiguration[] {
-        const configurationFieldsNames = new Set<string>();
-        configurationFields.forEach(v => configurationFieldsNames.add(v.name));
-
-        const formFieldsNames = new Set<string>();
-        formHtmlElement
-        .querySelectorAll('[name]')
-        .forEach((v: HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement) => formFieldsNames.add(v.name));
-
-        formFieldsNames.forEach(v => {
-            if (!configurationFieldsNames.has(v)) {
-                configurationFields.push({
-                    name: v
-                });
-            }
-        });
-        return configurationFields;
-    }
-    
-    private createFieldsInstancesMap(fieldsCollection: FieldConfiguration[], htmlFormElement: HTMLFormElement): Map<string, DynamicElement> {
-        const fieldsMap = new Map<string, DynamicElement>();
-        fieldsCollection.forEach((fieldConfig: FieldConfiguration) => {
-            const queryResult = htmlFormElement.querySelectorAll(`[name="${fieldConfig.name}"]`);
-            let type: string|null = null;
-            
-            if (queryResult.length === 0) {
-                throw new Error(`Element ${fieldConfig.name} not found`);
-            } else {
-                type = (queryResult[0] as HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement).type;
-            }
-            if (type == null || !this.elementToClassMapping[type]) {
-                type = 'default';
-            }
-            const classType = this.elementToClassMapping[type];
-            const instance: DynamicElement = new classType(fieldConfig, this, queryResult);
-            fieldsMap.set(instance.name, instance);
-        });
-        return fieldsMap;
-    }
-    
-    private createFieldUpdateRulesMap(fieldsCollection: FieldConfiguration[], rulesCollection: UpdateRule[]): Map<string, UpdateRule[]> {
+    private createFieldUpdateRulesMap(fieldsCollection: FieldConfiguration[], rulesCollection: UpdateRule[] = []): Map<string, UpdateRule[]> {
         const fieldUpdateRules = new Map<string, UpdateRule[]>();
         fieldsCollection.forEach(f => fieldUpdateRules.set(f.name, [])); // All fields, even those for which there is no update rule
         rulesCollection.forEach(rule => {
@@ -126,7 +66,7 @@ class DynamicForm implements Subject {
         return fieldUpdateRules;
     }
     
-    private handleInitialisation(fieldsCollection: Map<string, DynamicElement>, initFields: InitialisationRule[], fieldUpdateRules:Map<string, UpdateRule[]>, behavior: FormBehavior): Promise<void> {
+    private handleInitialisation(fieldsCollection: Map<string, DynamicElement>, initFields: InitialisationRule[] = [], fieldUpdateRules:Map<string, UpdateRule[]>, behavior: FormBehavior): Promise<void> {
         if (!initFields) {
             return Promise.resolve();
         }
@@ -230,7 +170,7 @@ class DynamicForm implements Subject {
         const updatePromises: Promise<void>[] = [];
         const beforeUpdateResult = this.behavior.beforeUpdate(subjectName);
         if (beforeUpdateResult) {
-            const updateRules = this.fieldUpdateRules.get(subjectName);
+            const updateRules = this.fieldUpdateRulesMap.get(subjectName);
             updateRules.forEach(rule => {
                 // Update
                 const params = this.fetchAllParameters(rule);
@@ -288,7 +228,7 @@ class DynamicForm implements Subject {
     */
     private async clearCascade(currentSubject: string, visited: string[] = []): Promise<void> {
         visited.push(currentSubject);
-        const updateRules = this.fieldUpdateRules.get(currentSubject);
+        const updateRules = this.fieldUpdateRulesMap.get(currentSubject);
         updateRules.forEach(rule => {
             rule.update.forEach(observer => {
                 if (!visited.includes(observer)) {
@@ -318,7 +258,7 @@ class DynamicForm implements Subject {
     * @returns the DynamicElement instance
     */
     private getField(name: string): DynamicElement {
-        return this.fields.get(name);
+        return this.fieldsMap.get(name);
     }
     
     /**
