@@ -44,7 +44,11 @@ class DynamicForm implements Subject {
     constructor(formConfiguration: FormConfiguration) {
         this.id = formConfiguration.id;
         this.config = formConfiguration;
-        this.htmlElement = document.forms[formConfiguration.id];
+        const form = document.forms.namedItem(formConfiguration.id);
+        if (!form) {
+            throw new Error(`Form ${formConfiguration.id} not found`);
+        }
+        this.htmlElement = form;
         this.debug = formConfiguration.debug === true;
         this.enabled = true;
         this.behavior = (new FormConfigurationFixer()).fixBehavior(formConfiguration.behavior);
@@ -203,7 +207,7 @@ class DynamicForm implements Subject {
     private fetchAllParameters(rule: UpdateRule): object {
         const subjectName = rule.name;
         const subjectValue = this.getField(subjectName).get();
-        const params = {};
+        const params: {[key: string]:any} = {};
         params[subjectName] = subjectValue;
         // Fetch additional data from the form
         if (rule.additionalData) {
@@ -248,7 +252,7 @@ class DynamicForm implements Subject {
     * @param {string} subjectName name of the changed subject
     * @returns a Promise in fulfilled state when element status has been updated
     */
-    public async manualUpdate(data: object, subjectName: string|null): Promise<void> {
+    public async manualUpdate(data: object, subjectName: string): Promise<void> {
         const field = this.getField(subjectName);
         if (field) {
             return field.update(data, null);
