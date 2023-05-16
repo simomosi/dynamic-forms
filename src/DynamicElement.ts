@@ -2,7 +2,7 @@ import { FieldBehaviorConfiguration, FieldConfiguration, FieldFetchConfiguration
 import { Observer, Subject } from './ObserverPatternTypes';
 
 /**
- * This class represents a Dynamic Element in a form.
+ * This class represents a generic Input in a form.
  * In particular it is a generic input element, whose behavior is based on element.value property
  */
 class DynamicElement implements Observer {

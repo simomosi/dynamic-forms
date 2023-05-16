@@ -2,6 +2,9 @@ import DynamicElement from './DynamicElement';
 import DynamicForm from './DynamicForm';
 import { CheckboxCheckboxConfiguration, CheckboxConfiguration } from './FieldConfigurationTypes';
 
+/**
+ * This class represents a Checkbox in a form.
+ */
 class DynamicCheckbox extends DynamicElement {
 
     /** @param {object} checkbox - property with checkbox related properties */

@@ -2,6 +2,9 @@ import DynamicElement from './DynamicElement';
 import DynamicForm from './DynamicForm';
 import { FieldConfiguration } from './FieldConfigurationTypes';
 
+/**
+ * This class represents a Radio button group in a form.
+ */
 class DynamicRadio extends DynamicElement {
 
     /** @inheritdoc */
