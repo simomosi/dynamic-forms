@@ -1,7 +1,7 @@
 import DynamicElement from './DynamicElement';
 import { FormConfiguration, FormBehavior, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
 import { FieldConfiguration } from './FieldConfigurationTypes';
-import { Subject } from './ObserverPatternTypes';
+import { Observer, Subject } from './ObserverPatternTypes';
 import { FormConfigurationFixer } from './FormConfigurationFixer';
 import { FieldConfigurationFixer } from './FieldConfigurationFixer';
 import { FieldBuilder } from './FieldBuilder';
@@ -57,6 +57,9 @@ class DynamicForm implements Subject {
         this.fieldsMap = (new FieldBuilder()).createFieldsMap(completeConfigurationFields, this);
         this.fieldUpdateRulesMap = this.createFieldUpdateRulesMap(completeConfigurationFields, formConfiguration.rules);
         
+        this.fieldsMap.forEach((field) => {
+            this.attach(field);
+        });
         this.initPromise = this.handleInitialisation(this.fieldsMap, formConfiguration.init, this.fieldUpdateRulesMap, this.behavior)
     }
     
@@ -147,13 +150,16 @@ class DynamicForm implements Subject {
         
         await Promise.all(nextUpdatePromises);
     }
-    
     /**
      * Method used to understand when the dynamic-form initialisation is completed
      * @returns {Promise<void>} promise resolved when initialisation is completed
      */
     public ready(): Promise<void> {
         return this.initPromise;
+    }
+
+    public attach(observer: Observer): void {
+        observer.attach(this);
     }
     
     /**

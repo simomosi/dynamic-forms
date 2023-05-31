@@ -24,6 +24,9 @@ class DynamicElement implements Observer {
     /** @param {FieldBehaviorConfiguration} behavior - object which groups some properties related to field behavior */
     behavior: FieldBehaviorConfiguration;
 
+    /** @param {string} event - the event to listen to */
+    event: string;
+
     /** @param {object} defaultConfig - property with default configuration values */
     static defaultConfig = {
         'io': {
@@ -44,17 +47,12 @@ class DynamicElement implements Observer {
         this.io = config.io ?? {};
         this.fetch = config.fetch ?? {}; // todo remove
         this.behavior = config.behavior ?? {};
-
-        let event = this.io.event ?? DynamicElement.defaultConfig.io.event;
+        this.event = this.io.event ?? DynamicElement.defaultConfig.io.event;
 
         this.htmlElement = htmlElement;
         this.name = config.name;
         if (this.htmlElement.length === 0) {
             throw new Error(`Element ${config.name} not found`);
-        } else {
-            this.htmlElement.forEach(current => {
-                current.addEventListener(event, (e) => { subject.notify((e.target as HTMLInputElement).name); });
-            });
         }
     }
 
@@ -63,6 +61,12 @@ class DynamicElement implements Observer {
             return this.htmlElement[0] as HTMLInputElement;
         }
         return this.htmlElement;
+    }
+
+    public attach(subject: Subject): void {
+        this.htmlElement.forEach(current => {
+            current.addEventListener(this.event, (e) => { subject.notify((e.target as HTMLInputElement).name); });
+        });
     }
 
     /**
