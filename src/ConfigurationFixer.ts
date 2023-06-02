@@ -2,9 +2,12 @@ import { FieldConfiguration } from "./FieldConfigurationTypes";
 import { FormBehavior, FormConfiguration } from "./FormConfigurationTypes";
 
 export class ConfigurationFixer {
-    public fix(formHtmlElement: HTMLFormElement, formConfiguration: FormConfiguration): Required<FormConfiguration> {
+    public fix(formHtmlElement: HTMLFormElement | null, formConfiguration: FormConfiguration): Required<FormConfiguration> {
         if (!formConfiguration.id) {
             throw new Error("Required field in form configuration: id");
+        }
+        if (!formHtmlElement) {
+            throw new Error("Form not found for id " + formConfiguration.id);
         }
         if (formConfiguration.debug === undefined) {
             formConfiguration.debug = false;
@@ -41,8 +44,8 @@ export class ConfigurationFixer {
         const voidBehavior = {
             beforeInit: () => {},
             afterInit: () => {},
-            beforeUpdate: (subjectName) => true,
-            afterUpdate: (subjectName) => {},
+            beforeUpdate: () => true,
+            afterUpdate: () => {},
         }
         if (!behavior) {
             return voidBehavior;
@@ -66,7 +69,10 @@ export class ConfigurationFixer {
         const namesInForm = new Set<string>();
         formHtmlElement
         .querySelectorAll('[name]')
-        .forEach((v: HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement) => namesInForm.add(v.name));
+        .forEach((value: Element) => {
+            const fieldWithContext = value as HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement;
+            namesInForm.add(fieldWithContext.name);
+        });
 
         namesInForm.forEach(fieldName => {
             if (!namesInConfigurations.has(fieldName)) {

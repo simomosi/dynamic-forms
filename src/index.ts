@@ -11,7 +11,7 @@ const formCollection: Map<string, DynamicForm> = new Map();
  * @returns Single DynamicForm instance
  */
 export function makeForm(formConfiguration: FormConfiguration): DynamicForm {
-    const htmlFormElement = document.forms.namedItem(formConfiguration.id);
+    const htmlFormElement = document.forms.namedItem(formConfiguration.id) as HTMLFormElement;
     const configurationFixer = new ConfigurationFixer();
     const completeFormConfiguration = configurationFixer.fix(htmlFormElement, formConfiguration);
     const form = new DynamicForm(htmlFormElement, completeFormConfiguration);
