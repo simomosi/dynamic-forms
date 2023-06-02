@@ -41,21 +41,20 @@ class DynamicForm implements Subject {
     * Class constructor.
     * @param {object} formConfiguration the form configuration in JSON format
     */
-    constructor(formConfiguration: FormConfiguration) {
+    constructor(formHtmlElement: HTMLFormElement, formConfiguration: FormConfiguration) {
         this.id = formConfiguration.id;
         this.config = formConfiguration;
         const form = document.forms.namedItem(formConfiguration.id);
         if (!form) {
             throw new Error(`Form ${formConfiguration.id} not found`);
         }
-        this.htmlElement = form;
+        this.htmlElement = formHtmlElement;
         this.debug = formConfiguration.debug === true;
         this.enabled = true;
-        this.behavior = (new FormConfigurationFixer()).fixBehavior(formConfiguration.behavior);
+        this.behavior = formConfiguration.behavior;
         
-        const completeConfigurationFields = (new FieldConfigurationFixer()).fix(this.htmlElement, formConfiguration.fields);
-        this.fieldsMap = (new FieldBuilder()).createFieldsMap(completeConfigurationFields, this);
-        this.fieldUpdateRulesMap = this.createFieldUpdateRulesMap(completeConfigurationFields, formConfiguration.rules);
+        this.fieldsMap = (new FieldBuilder()).createFieldsMap(formConfiguration.fields, this);
+        this.fieldUpdateRulesMap = this.createFieldUpdateRulesMap(formConfiguration.fields, formConfiguration.rules);
         
         this.fieldsMap.forEach((field) => {
             this.attach(field);
