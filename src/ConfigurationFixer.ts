@@ -2,21 +2,35 @@ import { FieldConfiguration } from "./FieldConfigurationTypes";
 import { FormBehavior, FormConfiguration } from "./FormConfigurationTypes";
 
 export class ConfigurationFixer {
-    public fix(formHtmlElement: HTMLFormElement, formConfiguration: FormConfiguration): FormConfiguration {
+    public fix(formHtmlElement: HTMLFormElement, formConfiguration: FormConfiguration): Required<FormConfiguration> {
+        if (!formConfiguration.id) {
+            throw new Error("Required field in form configuration: id");
+        }
+        if (formConfiguration.debug === undefined) {
+            formConfiguration.debug = false;
+        }
         formConfiguration.behavior = this.fixBehavior(formConfiguration.behavior);
         formConfiguration.fields = this.addMissingFields(formHtmlElement, formConfiguration.fields);
+        if (!formConfiguration.rules) {
+            formConfiguration.rules = [];
+        }
+        if (!formConfiguration.init) {
+            formConfiguration.init = [];
+        }
         return formConfiguration;
     }
 
     private fixBehavior(behavior: FormBehavior|undefined): FormBehavior {
-        if (!behavior) {
-            behavior = {};
+        const voidBehavior = {
+            beforeInit: () => {},
+            afterInit: () => {},
+            beforeUpdate: (subjectName) => true,
+            afterUpdate: (subjectName) => {},
         }
-        behavior.beforeInit = behavior.beforeInit ?? (() => {});
-        behavior.afterInit = behavior.afterInit ?? (() => {});
-        behavior.beforeUpdate = behavior.beforeUpdate ?? ((subjectName) => true);
-        behavior.afterUpdate = behavior.afterUpdate ?? ((subjectName) => {});
-        return behavior;
+        if (!behavior) {
+            return voidBehavior;
+        }
+        return {...voidBehavior, ...behavior};
     }
 
     /**

@@ -2,8 +2,6 @@ import DynamicElement from './DynamicElement';
 import { FormConfiguration, FormBehavior, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
 import { FieldConfiguration } from './FieldConfigurationTypes';
 import { Observer, Subject } from './ObserverPatternTypes';
-import { FormConfigurationFixer } from './FormConfigurationFixer';
-import { FieldConfigurationFixer } from './FieldConfigurationFixer';
 import { FieldBuilder } from './FieldBuilder';
 
 /**
@@ -49,7 +47,7 @@ class DynamicForm implements Subject {
             throw new Error(`Form ${formConfiguration.id} not found`);
         }
         this.htmlElement = formHtmlElement;
-        this.debug = formConfiguration.debug === true;
+        this.debug = formConfiguration.debug;
         this.enabled = true;
         this.behavior = formConfiguration.behavior;
         
