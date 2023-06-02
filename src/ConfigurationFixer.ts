@@ -17,6 +17,23 @@ export class ConfigurationFixer {
         if (!formConfiguration.init) {
             formConfiguration.init = [];
         }
+
+        // Check "name" property in field configuration and update/init rules
+        for(let i = 0; i<formConfiguration.fields.length; i++) {
+            if (!formConfiguration.fields[i].name) {
+                throw new Error("Missing required name in field configuration #"+i);
+            }
+        }
+        for(let i = 0; i<formConfiguration.rules.length; i++) {
+            if (!formConfiguration.rules[i].name) {
+                throw new Error("Missing required name in update rule #"+i);
+            }
+        }
+        for(let i = 0; i<formConfiguration.init.length; i++) {
+            if (!formConfiguration.init[i].name) {
+                throw new Error("Missing required name in initialisation rule #"+i);
+            }
+        }
         return formConfiguration;
     }
 
