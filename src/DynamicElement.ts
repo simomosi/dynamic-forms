@@ -45,7 +45,7 @@ class DynamicElement implements Observer {
         this.config = config;
         // Repairing config file if parameters are missing (to write code easily)
         this.io = config.io ?? {};
-        this.fetch = config.fetch ?? {}; // todo remove
+        this.fetch = config.fetch ?? {};
         this.behavior = config.behavior ?? {};
         this.event = this.io.event ?? DynamicElement.defaultConfig.io.event;
 

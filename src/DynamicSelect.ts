@@ -57,7 +57,7 @@ class DynamicSelect extends DynamicElement {
         for (let i = options.length - 1; i >= 0; i--) {
             const value = options[i].value;
             if (value != null && value.trim() != '') { // Leave empty options
-                firstElement.options[i] = null;
+                firstElement.options[i].remove();
             }
         }
     }
@@ -70,7 +70,7 @@ class DynamicSelect extends DynamicElement {
      * @param {string|null} subjectName name of the changed subject
      * @returns false to abort the update, true otherwise
      */
-    protected beforeUpdate(data: object, subjectName: string|null): boolean {
+    protected beforeUpdate(data: any, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.beforeUpdate) {
             return this.behavior.beforeUpdate(this.getHtmlSelectElementOrList(), data, subjectName);
@@ -99,8 +99,11 @@ class DynamicSelect extends DynamicElement {
             return this.behavior.updateStatus(this.htmlElement, data, subjectName);
         }
         // Standard
+        if (!this.fetch.makeUrl) {
+            throw new Error("Function fetch.makeUrl not specified");
+        }
         const requestUrl = this.fetch.makeUrl(data);
-        let fetchConfig = null;
+        let fetchConfig: RequestInit = {};
         if (this.fetch.fullFetchConfig) {
             fetchConfig = this.fetch.fullFetchConfig;
         } else {
@@ -145,7 +148,7 @@ class DynamicSelect extends DynamicElement {
     *
     * @see postProcessData
     */
-    protected saveData(data: object[]): void {
+    protected saveData(data: any[]): void {
         // Custom
         if (this.select.saveData) {
             return this.select.saveData(this.htmlElement, data);
