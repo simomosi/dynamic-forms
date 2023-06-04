@@ -1,7 +1,7 @@
 # Contribute
 Help me develop DynamicForms!
 
-Remember to work on `dist/dynamicforms.js` file to access source code (or import the `src/index.js` file as a module if you prefer).
+Remember to work on `src/*.ts` files and test them building the bundle and importing `dist/dynamicforms.js` (of course you can import individual files manually if you prefer so).
 
 Useful commands:
 
@@ -10,22 +10,22 @@ Useful commands:
 - `yarn build` - Build both dev file and prod file
 - `yarn build:diagrams` - Updates *classdiagram.svg* from *classdiagram.mmd* <!-- TODO remove if gh-deploy succeeds -->
 
-Please, update also the documentation if you can.
+Please, update also the documentation if you change anything.
 
 **Thank you very much for your support ❤**
 
 ## Disclaimer
 DynamicForms is build considered some use-cases I faced in my career.
 
-If you can offer me other *real* use cases to test it on please let me know.
+It is a very generic library but there may be other use cases which I didn't account for. In this case please let me know, we can work together in implementing new features.
 
 ## Issues/Suggestions
-If you have trouble using it open an issue, I'll be glad to help you. Suggestions are also welcome!
+If you have trouble using DynamicForms open an issue, I'll be glad to help you. Suggestions are also welcome!
 
 It will be useful if you pass me some code to try: you can use tools like CodePen, PasteBin etc.
 
 # Project Structure
-Here is the UML Class Diagram to help you understand the project structure.
+Here is the UML Class Diagram to help you understand the project structure. Types are not specified for space reasons: the diagram is created using Mermaid which places elements automatically.
 
 <!-- ![Class Diagram](./imgs/classdiagram.svg) -->
 <!-- TODO: remove from assets if gh-deploy succeeds -->
@@ -64,11 +64,9 @@ classDiagram
         +fix(formHtmlElement, formConfiguration) FormConfiguration
     }
 
-
     class FieldBuilder {
-
+        +createFieldsMap(fieldsCollection, htmlForm)
     }
-
 
     class DynamicElement {
         -FieldConfiguration config
@@ -91,9 +89,11 @@ classDiagram
     }
 
     dynamicForms --> ConfigurationFixer
-    DynamicForm --> FieldBuilder
+    dynamicForms --> FieldBuilder
+
     DynamicForm <-- dynamicForms
     DynamicForm o-- DynamicElement
+
     DynamicElement <|-- DynamicSelect
     DynamicElement <|-- DynamicCheckbox
     DynamicElement <|-- DynamicRadio
