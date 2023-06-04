@@ -1,21 +1,20 @@
 import DynamicCheckbox from "./DynamicCheckbox";
 import DynamicElement from "./DynamicElement";
-import DynamicForm from "./DynamicForm";
 import DynamicRadio from "./DynamicRadio";
 import DynamicSelect from "./DynamicSelect";
 import { FieldConfiguration } from "./FieldConfigurationTypes";
 
 export class FieldBuilder {
-    public createFieldsMap(fieldsCollection: FieldConfiguration[], dynamicForm: DynamicForm): Map<string, DynamicElement> {
+    public createFieldsMap(fieldsCollection: FieldConfiguration[], htmlForm: HTMLFormElement): Map<string, DynamicElement> {
         const fieldsMap = new Map<string, DynamicElement>();
         fieldsCollection
-        .map((fieldConfiguration) => this.factoryField(fieldConfiguration, dynamicForm))
+        .map((fieldConfiguration) => this.factoryField(fieldConfiguration, htmlForm))
         .forEach((dynamicElement) => fieldsMap.set(dynamicElement.name, dynamicElement));
         return fieldsMap;
     }
     
-    private factoryField(fieldConfiguration: FieldConfiguration, dynamicForm: DynamicForm): DynamicElement {
-        const queryResult = dynamicForm.htmlElement.querySelectorAll(`[name="${fieldConfiguration.name}"]`);
+    private factoryField(fieldConfiguration: FieldConfiguration, htmlForm: HTMLFormElement): DynamicElement {
+        const queryResult = htmlForm.querySelectorAll(`[name="${fieldConfiguration.name}"]`);
         let type: string;
         
         if (queryResult.length === 0) {
@@ -25,17 +24,17 @@ export class FieldBuilder {
         let instance: DynamicElement;
         switch(type) {
             case 'checkbox':
-                instance = new DynamicCheckbox(fieldConfiguration, dynamicForm, queryResult);
+                instance = new DynamicCheckbox(fieldConfiguration, queryResult);
                 break;
             case 'radio':
-                instance = new DynamicRadio(fieldConfiguration, dynamicForm, queryResult);
+                instance = new DynamicRadio(fieldConfiguration, queryResult);
                 break;
             case 'select-one':
             case 'select-multiple':
-                instance = new DynamicSelect(fieldConfiguration, dynamicForm, queryResult);
+                instance = new DynamicSelect(fieldConfiguration, queryResult);
                 break;
             default:
-                instance = new DynamicElement(fieldConfiguration, dynamicForm, queryResult);
+                instance = new DynamicElement(fieldConfiguration, queryResult);
         }
         return instance;
     }

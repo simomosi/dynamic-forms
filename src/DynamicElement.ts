@@ -41,7 +41,7 @@ class DynamicElement implements Observer {
     * @param {NodeList} htmlElement the html element(s) returned by querySelectorAll
     * @async
     */
-    constructor(config: FieldConfiguration, subject: Subject, htmlElement: NodeList) {
+    constructor(config: FieldConfiguration, htmlElement: NodeList) {
         this.config = config;
         // Repairing config file if parameters are missing (to write code easily)
         this.io = config.io ?? {};

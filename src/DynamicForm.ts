@@ -2,7 +2,6 @@ import DynamicElement from './DynamicElement';
 import { FormConfiguration, FormBehavior, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
 import { FieldConfiguration } from './FieldConfigurationTypes';
 import { Observer, Subject } from './ObserverPatternTypes';
-import { FieldBuilder } from './FieldBuilder';
 
 /**
 * This class represents a form with dynamic content, e.g. select with variable options, updating rules and visibility depending on fields' state...
@@ -39,7 +38,7 @@ class DynamicForm implements Subject {
     * Class constructor.
     * @param {object} formConfiguration the form configuration in JSON format
     */
-    constructor(formHtmlElement: HTMLFormElement, formConfiguration: FormConfiguration) {
+    constructor(formHtmlElement: HTMLFormElement, formConfiguration: FormConfiguration, fieldsMap: Map<string, DynamicElement>) {
         this.id = formConfiguration.id;
         this.config = formConfiguration;
         const form = document.forms.namedItem(formConfiguration.id);
@@ -51,7 +50,7 @@ class DynamicForm implements Subject {
         this.enabled = true;
         this.behavior = formConfiguration.behavior;
         
-        this.fieldsMap = (new FieldBuilder()).createFieldsMap(formConfiguration.fields, this);
+        this.fieldsMap = fieldsMap;
         this.fieldUpdateRulesMap = this.createFieldUpdateRulesMap(formConfiguration.fields, formConfiguration.rules);
         
         this.fieldsMap.forEach((field) => {

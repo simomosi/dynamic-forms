@@ -1,6 +1,7 @@
 /** Module to easily manage dynamic forms */
 import { ConfigurationFixer } from './ConfigurationFixer';
 import DynamicForm from './DynamicForm';
+import { FieldBuilder } from './FieldBuilder';
 import { FormConfiguration } from './FormConfigurationTypes';
 
 const formCollection: Map<string, DynamicForm> = new Map();
@@ -14,7 +15,9 @@ export function makeForm(formConfiguration: FormConfiguration): DynamicForm {
     const htmlFormElement = document.forms.namedItem(formConfiguration.id) as HTMLFormElement;
     const configurationFixer = new ConfigurationFixer();
     const completeFormConfiguration = configurationFixer.fix(htmlFormElement, formConfiguration);
-    const form = new DynamicForm(htmlFormElement, completeFormConfiguration);
+    const fieldsMap = (new FieldBuilder()).createFieldsMap(formConfiguration.fields, htmlFormElement);
+
+    const form = new DynamicForm(htmlFormElement, completeFormConfiguration, fieldsMap);
     formCollection.set(form.getId(), form);
     return form;
 }

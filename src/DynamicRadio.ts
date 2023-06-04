@@ -8,8 +8,8 @@ import { FieldConfiguration } from './FieldConfigurationTypes';
 class DynamicRadio extends DynamicElement {
 
     /** @inheritdoc */
-    constructor(config: FieldConfiguration, dynamicForm: DynamicForm, htmlElement: NodeList) {
-        super(config, dynamicForm, htmlElement);
+    constructor(config: FieldConfiguration, htmlElement: NodeList) {
+        super(config, htmlElement);
     }
 
     /** @inheritdoc */
