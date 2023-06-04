@@ -60,6 +60,16 @@ classDiagram
 
     note for dynamicForms "Library entrypoint"
 
+    class ConfigurationFixer {
+        +fix(formHtmlElement, formConfiguration) FormConfiguration
+    }
+
+
+    class FieldBuilder {
+
+    }
+
+
     class DynamicElement {
         -FieldConfiguration config
         -NodeList htmlElement
@@ -80,7 +90,9 @@ classDiagram
         +saveData(data) void
     }
 
-    DynamicForm <.. dynamicForms
+    dynamicForms --> ConfigurationFixer
+    DynamicForm --> FieldBuilder
+    DynamicForm <-- dynamicForms
     DynamicForm o-- DynamicElement
     DynamicElement <|-- DynamicSelect
     DynamicElement <|-- DynamicCheckbox
