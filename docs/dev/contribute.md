@@ -27,9 +27,6 @@ It will be useful if you pass me some code to try: you can use tools like CodePe
 # Project Structure
 Here is the UML Class Diagram to help you understand the project structure. Types are not specified for space reasons: the diagram is created using Mermaid which places elements automatically.
 
-<!-- ![Class Diagram](./imgs/classdiagram.svg) -->
-<!-- TODO: remove from assets if gh-deploy succeeds -->
-
 ```mermaid
 classDiagram
 
