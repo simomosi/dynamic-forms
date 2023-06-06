@@ -21,7 +21,7 @@ Here's some examples.
 
 ![Dynamic Form initialisation gif](./imgs/initialisation.gif){ loading=lazy }
 
-All the available options are fetched according to other fields values.
+The progressive filtering status is restored: all the available options are automatically fetched.
 
 ### Visibility changes depending on fields' state
 
@@ -41,7 +41,7 @@ Dynamic Forms is released as a **single file**. You can also find an already fun
 - [x] **Modern javascript and backward compatible**: works on all browsers!
 - [x] **Lightweight**: having no dependencies, you can integrate it everywhere!
 - [x] **Automate repetitive and boring operations**: read values, fetch data making async remote calls, update fields' status, clear other fields, hide/show sections... even listing them is BORING!
-- [x] **Highly customizable**: are you using an external library with custom html elements? Don't worry: you can specify your own functions to read/write data
+- [x] **Highly customizable**: are you using an external library with custom html elements? Don't worry as you can specify your own functions to read/write data
 
 ## Support
 If you want to support me just star the project on [github](https://github.com/simomosi/dynamic-forms) and share it with your collegues. If you have questions or suggestions open an issue on github.

@@ -11,9 +11,9 @@ nav:
   - Start:
     - Installation: start/installation.md
     - Loading: start/loading.md
-  - TL;DR show me the code:
-    - Form creation: tldr/create_instance.md
-    - Initial status: tldr/initial_status.md
+  - Tutorial with code:
+    - Form creation: tutorial/create_instance.md
+    - Initial status: tutorial/initial_status.md
   - Documentation:
     - How to use it: dynamic-forms-module.md
     - Form configuration: configurations/form-configuration.md
