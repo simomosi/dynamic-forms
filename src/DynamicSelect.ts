@@ -166,6 +166,9 @@ class DynamicSelect extends DynamicElement {
             }
             // Add other options
             data.forEach((item: {text: string, value: string}) => {
+                if (!item.hasOwnProperty('text') || !item.hasOwnProperty('value')) {
+                    console.error("Retrieved data does not have default property 'text' or 'value'", item);
+                }
                 const option = this.createOption(item.text, item.value);
                 firstElement.add(option);
             });
