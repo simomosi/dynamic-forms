@@ -66,7 +66,7 @@ const form = dynamicForms.makeForm(formConfiguration);
 
 ## Done!
 
-Look at the network tab in developer console while you play with your form!
+Look at the network tab in developer console/tools while you play with your form!
 
 Of course you need a real api-endpoint to load your values. For a working example open files in the [example folder](https://github.com/simomosi/dynamic-forms/blob/main/examples) in your browser. 
 
