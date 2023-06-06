@@ -5,6 +5,12 @@
 ## Changelog
 Dynamic-forms follows the [semver](https://semver.org) standard.
 
+#### 2.0.0
+
+- Library has been rewritten in typescript
+- FieldConfiguration.dropdown renamed to FieldConfiguration.select
+- Better documentation
+
 #### 1.3.0
 
 - Added automatic field discovery: you don't need to specify fields with standard behavior anymore
