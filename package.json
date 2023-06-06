@@ -69,7 +69,6 @@
   "scripts": {
     "build": "yarn build:dev && yarn build:prod",
     "build:dev": "webpack --env this_env=development",
-    "build:prod": "webpack --env this_env=production",
-    "build:diagrams": "mmdc -i docs/classdiagram.mmd -o docs/imgs/classdiagram.svg"
+    "build:prod": "webpack --env this_env=production"
   }
 }
