@@ -2,6 +2,9 @@ import DynamicElement from './DynamicElement';
 import DynamicForm from './DynamicForm';
 import { CheckboxCheckboxConfiguration, CheckboxConfiguration } from './FieldConfigurationTypes';
 
+/**
+ * This class represents a Checkbox in a form.
+ */
 class DynamicCheckbox extends DynamicElement {
 
     /** @param {object} checkbox - property with checkbox related properties */
@@ -18,8 +21,8 @@ class DynamicCheckbox extends DynamicElement {
     }
 
     /** @inheritdoc */
-    constructor(config: CheckboxConfiguration, dynamicForm: DynamicForm, htmlElement: NodeList) {
-        super(config, dynamicForm, htmlElement);
+    constructor(config: CheckboxConfiguration, htmlElement: NodeList) {
+        super(config, htmlElement);
         this.checkbox = config.checkbox ?? {};
     }
 

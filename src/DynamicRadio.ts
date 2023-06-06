@@ -2,11 +2,14 @@ import DynamicElement from './DynamicElement';
 import DynamicForm from './DynamicForm';
 import { FieldConfiguration } from './FieldConfigurationTypes';
 
+/**
+ * This class represents a Radio button group in a form.
+ */
 class DynamicRadio extends DynamicElement {
 
     /** @inheritdoc */
-    constructor(config: FieldConfiguration, dynamicForm: DynamicForm, htmlElement: NodeList) {
-        super(config, dynamicForm, htmlElement);
+    constructor(config: FieldConfiguration, htmlElement: NodeList) {
+        super(config, htmlElement);
     }
 
     /** @inheritdoc */

@@ -2,18 +2,18 @@ import { FieldConfiguration } from './FieldConfigurationTypes';
 
 export interface FormConfiguration {
     id: string,
-    debug?: boolean,
-    behavior?: FormBehavior,
-    fields?: FieldConfiguration[],
-    rules?: UpdateRule[],
-    init?: InitialisationRule[]
+    debug: boolean,
+    behavior: FormBehavior,
+    fields: FieldConfiguration[],
+    rules: UpdateRule[],
+    init: InitialisationRule[]
 }
 
 export interface FormBehavior {
-    beforeUpdate?: (subjectName: string) => boolean,
-    afterUpdate?: (subjectName: string) => void
-    beforeInit?: () => void,
-    afterInit?: () => void
+    beforeUpdate: (subjectName: string) => boolean,
+    afterUpdate: (subjectName: string) => void
+    beforeInit: () => void,
+    afterInit: () => void
 }
 
 export interface UpdateRule {

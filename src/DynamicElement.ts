@@ -1,19 +1,19 @@
-import DynamicForm from './DynamicForm';
 import { FieldBehaviorConfiguration, FieldConfiguration, FieldFetchConfiguration, FieldIoConfiguration } from './FieldConfigurationTypes';
+import { Observer, Subject } from './ObserverPatternTypes';
 
 /**
- * This class represents a Dynamic Element in a form.
+ * This class represents a generic Input in a form.
  * In particular it is a generic input element, whose behavior is based on element.value property
  */
-class DynamicElement {
+class DynamicElement implements Observer {
     /** @param {object} config - the element configuration */
-    config: FieldConfiguration;
+    readonly config: FieldConfiguration;
 
     /** @param {NodeList} htmlElement - the HTML Element returned by querySelectorAll. If more than one exists, the element is a NodeList */
-    htmlElement: NodeList;
+    readonly htmlElement: NodeList;
 
     /** @param {string} name - the element name */
-    name: string;
+    readonly name: string;
 
     /** @param {FieldIoConfiguration} io - object which groups some properties related to field input/output */
     io: FieldIoConfiguration;
@@ -23,6 +23,9 @@ class DynamicElement {
 
     /** @param {FieldBehaviorConfiguration} behavior - object which groups some properties related to field behavior */
     behavior: FieldBehaviorConfiguration;
+
+    /** @param {string} event - the event to listen to */
+    event: string;
 
     /** @param {object} defaultConfig - property with default configuration values */
     static defaultConfig = {
@@ -34,27 +37,22 @@ class DynamicElement {
     /**
     * Class constructor
     * @param {FieldConfiguration} config the element configuration
-    * @param {DynamicForm} dynamicForm the DynamicForm instance
+    * @param {Subject} subject the subject to notify when changes occour (according to Observer pattern)
     * @param {NodeList} htmlElement the html element(s) returned by querySelectorAll
     * @async
     */
-    constructor(config: FieldConfiguration, dynamicForm: DynamicForm, htmlElement: NodeList) {
+    constructor(config: FieldConfiguration, htmlElement: NodeList) {
         this.config = config;
         // Repairing config file if parameters are missing (to write code easily)
         this.io = config.io ?? {};
-        this.fetch = config.fetch ?? {}; // todo remove
+        this.fetch = config.fetch ?? {};
         this.behavior = config.behavior ?? {};
-
-        let event = this.io.event ?? DynamicElement.defaultConfig.io.event;
+        this.event = this.io.event ?? DynamicElement.defaultConfig.io.event;
 
         this.htmlElement = htmlElement;
         this.name = config.name;
         if (this.htmlElement.length === 0) {
             throw new Error(`Element ${config.name} not found`);
-        } else {
-            this.htmlElement.forEach(current => {
-                current.addEventListener(event, (e) => { dynamicForm.notify((e.target as HTMLInputElement).name); });
-            });
         }
     }
 
@@ -63,6 +61,12 @@ class DynamicElement {
             return this.htmlElement[0] as HTMLInputElement;
         }
         return this.htmlElement;
+    }
+
+    public attach(subject: Subject): void {
+        this.htmlElement.forEach(current => {
+            current.addEventListener(this.event, (e) => { subject.notify((e.target as HTMLInputElement).name); });
+        });
     }
 
     /**

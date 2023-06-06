@@ -8,7 +8,7 @@ import { SelectConfiguration, SelectSelectConfiguration } from './FieldConfigura
 class DynamicSelect extends DynamicElement {
 
     /** @param {string} method the http request method for the remote call (async update) */
-    method: string;
+    readonly method: string;
 
     /** @param {object} dropdown - property with select related properties */
     select: SelectSelectConfiguration;
@@ -29,8 +29,8 @@ class DynamicSelect extends DynamicElement {
     /**
     * @inheritdoc
     */
-    constructor(config: SelectConfiguration, dynamicForm: DynamicForm, htmlElement: NodeList) {
-        super(config, dynamicForm, htmlElement);
+    constructor(config: SelectConfiguration, htmlElement: NodeList) {
+        super(config, htmlElement);
         this.method = this.fetch.method ?? DynamicSelect.defaultConfig.fetch.method;
         this.select = config.select ?? {};
     }
@@ -57,7 +57,7 @@ class DynamicSelect extends DynamicElement {
         for (let i = options.length - 1; i >= 0; i--) {
             const value = options[i].value;
             if (value != null && value.trim() != '') { // Leave empty options
-                firstElement.options[i] = null;
+                firstElement.options[i].remove();
             }
         }
     }
@@ -70,7 +70,7 @@ class DynamicSelect extends DynamicElement {
      * @param {string|null} subjectName name of the changed subject
      * @returns false to abort the update, true otherwise
      */
-    protected beforeUpdate(data: object, subjectName: string|null): boolean {
+    protected beforeUpdate(data: any, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.beforeUpdate) {
             return this.behavior.beforeUpdate(this.getHtmlSelectElementOrList(), data, subjectName);
@@ -99,8 +99,11 @@ class DynamicSelect extends DynamicElement {
             return this.behavior.updateStatus(this.htmlElement, data, subjectName);
         }
         // Standard
+        if (!this.fetch.makeUrl) {
+            throw new Error("Function fetch.makeUrl not specified");
+        }
         const requestUrl = this.fetch.makeUrl(data);
-        let fetchConfig = null;
+        let fetchConfig: RequestInit = {};
         if (this.fetch.fullFetchConfig) {
             fetchConfig = this.fetch.fullFetchConfig;
         } else {
@@ -145,7 +148,7 @@ class DynamicSelect extends DynamicElement {
     *
     * @see postProcessData
     */
-    protected saveData(data: object[]): void {
+    protected saveData(data: any[]): void {
         // Custom
         if (this.select.saveData) {
             return this.select.saveData(this.htmlElement, data);
@@ -163,6 +166,9 @@ class DynamicSelect extends DynamicElement {
             }
             // Add other options
             data.forEach((item: {text: string, value: string}) => {
+                if (!item.hasOwnProperty('text') || !item.hasOwnProperty('value')) {
+                    console.error("Retrieved data does not have default property 'text' or 'value'", item);
+                }
                 const option = this.createOption(item.text, item.value);
                 firstElement.add(option);
             });
