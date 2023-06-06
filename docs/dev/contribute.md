@@ -34,53 +34,55 @@ Here is the UML Class Diagram to help you understand the project structure.
 classDiagram
 
     class DynamicForm {
-        JSON config
-        node htmlElement
-        Map~String, DynamicElement~ entities
+        FormConfiguration config
+        HTMLFormElement htmlElement
+        Map❬String DynamicElement❭ entities
         boolean debug
         boolean enabled
         json elementToClassMapping
 
-        ready()
-        notify(subjectName)
-        fetchAllParameters(rule) object
-        clearCascade(currentSubject)
-        manualUpdate(data, subjectName)
-        getField(name) DynamicElement
-        getId() string
-        setEnabled() void
-        isEnabled() boolean
+        +ready() Promise❬void❭
+        +notify(subjectName) Promise❬void❭
+        -fetchAllParameters(rule) object
+        -clearCascade(currentSubject) Promise❬void❭
+        +manualUpdate(data, subjectName) Promise❬void❭
+        -getField(name) DynamicElement
+        +getId() string
+        +setEnabled() void
+        +isEnabled() boolean
     }
 
     class dynamicForms {
-        -Map~String, DynamicForm~ formCollection
+        -Map❬String DynamicForm❭ formCollection
         +makeForm(formConfiguration) DynamicForm
         +getForm(id) DynamicForm
     }
 
+    note for dynamicForms "Library entrypoint"
+
     class DynamicElement {
-        -JSON config
-        -node htmlElement
+        -FieldConfiguration config
+        -NodeList htmlElement
         -string name
         -JSON defaultConfig
         +get() string
         +set(value) string
         +clear()
         +update(data, subjectName)
-        +beforeUpdate(data, subjectName) boolean
-        +updateStatus(data, subjectName)
-        +afterUpdate(data, subjectName)
+        #beforeUpdate(data, subjectName) boolean
+        #updateStatus(data, subjectName) Promise❬void❭
+        #afterUpdate(data, subjectName) boolean
     }
 
-    class DynamicDropdown {
+    class DynamicSelect {
         -string method
         +postProcessData(data) object[]
-        +saveData(data) object[]
+        +saveData(data) void
     }
 
     DynamicForm <.. dynamicForms
     DynamicForm o-- DynamicElement
-    DynamicElement <|-- DynamicDropdown
+    DynamicElement <|-- DynamicSelect
     DynamicElement <|-- DynamicCheckbox
     DynamicElement <|-- DynamicRadio
 

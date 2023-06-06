@@ -1,21 +1,23 @@
-import DynamicElement from './DynamicElement.js';
+import DynamicElement from './DynamicElement';
+import DynamicForm from './DynamicForm';
+import { FieldConfiguration } from './FieldConfigurationTypes';
 
 class DynamicRadio extends DynamicElement {
 
     /** @inheritdoc */
-    constructor(config, dynamicForm) {
-        super(config, dynamicForm);
+    constructor(config: FieldConfiguration, dynamicForm: DynamicForm, htmlElement: NodeList) {
+        super(config, dynamicForm, htmlElement);
     }
 
     /** @inheritdoc */
-    get() {
+    public get(): any {
         // Custom
         if (this.io.get) {
             return this.io.get(this.htmlElement);
         }
         // Standard
         for (let i = 0; i < this.htmlElement.length; i++) {
-            let element = this.htmlElement[i];
+            const element = this.htmlElement[i] as HTMLInputElement;
             if (element.checked === true) {
                 return element.value;
             }
@@ -24,14 +26,14 @@ class DynamicRadio extends DynamicElement {
     }
 
     /** @inheritdoc */
-    set(value) {
+    public set(value: string): void {
         // Custom
         if (this.io.set) {
             return this.io.set(this.htmlElement, value);
         }
         // Standard
         for (let i = 0; i < this.htmlElement.length; i++) {
-            let element = this.htmlElement[i];
+            let element = this.htmlElement[i] as HTMLInputElement;
             if (element.value === value) {
                 element.checked = true;
                 return;
@@ -41,14 +43,15 @@ class DynamicRadio extends DynamicElement {
     }
 
     /** @inheritdoc */
-    clear() {
+    public clear(): void {
         // Custom
         if (this.behavior.clear) {
             return this.behavior.clear(this.htmlElement);
         }
         // Standard
         for (let i = 0; i < this.htmlElement.length; i++) {
-            this.htmlElement[i].checked = false;
+            const element = this.htmlElement[i] as HTMLInputElement;
+            element.checked = false;
         }
     }
 }
