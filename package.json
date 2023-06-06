@@ -32,7 +32,12 @@
     "json",
     "configuration",
     "vanilla",
-    "javascript"
+    "javascript",
+    "progressive",
+    "filtering",
+    "typescript",
+    "webpack",
+    "babel"
   ],
   "devDependencies": {
     "@babel/cli": "^7.21.0",
