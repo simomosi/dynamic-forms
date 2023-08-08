@@ -5,11 +5,11 @@
 ![GitHub User's stars](https://img.shields.io/github/stars/simomosi?style=social)
 
 ## What is it and what can I do with it
-DynamicForms is a client library that handles all the interaction in forms with dynamic content in an easy and fast way.
+DynamicForms is a client library to automate progressive filtering and initialisation of dynamic fields in an easy and fast way.
 
-It was born to automate progressive filtering and initialisation of dynamic fields. Then it evolved to support the developer in managing and centralizing all forms interactions.
+It supports the developer in managing and centralizing all forms interactions.
 
-It's written in *typescript* and compiled in *javascript*. It is later transpiled with *webpack* and *babel* to create a single lightweight bundle which ensure the maximum compatibility with older browsers.
+It's written in *typescript* and compiled in *javascript*. It is later transpiled with *webpack* and *babel* to create a single lightweight bundle to ensure maximum compatibility with older browsers.
 
 Here's some examples.
 
