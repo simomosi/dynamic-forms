@@ -10,3 +10,5 @@ site/
 # Different IDE files
 .idea
 nbproject
+
+stats.html
