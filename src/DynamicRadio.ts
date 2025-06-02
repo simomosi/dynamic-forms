@@ -1,5 +1,4 @@
 import DynamicElement from './DynamicElement';
-import DynamicForm from './DynamicForm';
 import { FieldConfiguration } from './FieldConfigurationTypes';
 
 /**

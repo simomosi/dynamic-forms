@@ -73,7 +73,7 @@ class DynamicForm implements Subject {
         if (!initFields) {
             return Promise.resolve();
         }
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _) => {
             Promise.resolve()
             .then(() => behavior.beforeInit())
             .then(() => {
@@ -167,8 +167,8 @@ class DynamicForm implements Subject {
         if (this.isEnabled() === false) {
             return;
         }
-        const subject = this.getField(subjectName);
-        const subjectValue = subject.get();
+        //const subject = this.getField(subjectName);
+        //const subjectValue = subject.get();
         if (this.debug) {
             console.log(`-\n${new Date()}\n> [${subjectName}] Changed. Notifying observers...\n-`);
         }
