@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-<meta charset="UTF-8">
-
-<head>
+    
+    <head>
+    <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 </head>
 
@@ -145,12 +145,15 @@
     
     <!-- CDN -->
     <!-- <script src='https://unpkg.com/@simomosi/dynamic-forms@latest'></script> -->
+
     <!-- Import sources as script tag -->
-    <script src='../dist/dynamicforms.js'></script>
+    <!-- The library will be available globally as DynamicForms -->
+    <!-- <script src="../dist/dynamic-forms.umd.js"></script> -->
     
-    <script defer>
-        // import '../dist/dynamicforms.js'; // Import sources as module
+    <script type="module">
+        import { makeForm } from '@dist/dynamic-forms.es.js';
         
+        // const makeForm = DynamicForms.makeForm; // Enable when using UMD build
         const formConfiguration = {
             id: 'jsonPlaceholder',
             debug: true,
@@ -309,7 +312,7 @@
         
         // Init
         let start = new Date();
-        let form = dynamicForms.makeForm(formConfiguration);
+        let form = makeForm(formConfiguration);
         form.ready().then(() => {
             let end = new Date();
             console.log('Benchmark init time:', end.getMilliseconds() - start.getMilliseconds(), 'ms');
