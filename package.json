@@ -70,5 +70,6 @@
     "build": "yarn build:dev && yarn build:prod",
     "build:dev": "webpack --env this_env=development",
     "build:prod": "webpack --env this_env=production"
-  }
+  },
+  "packageManager": "yarn@4.9.1"
 }
