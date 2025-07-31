@@ -1,6 +1,8 @@
 # Tutorial - Set the Initial Status
 
-Dynamic-forms can automatically set the form initial status if you don't want to retrieve all values manually. It is useful for restoring the progressive filtering status because you don't need to query for all the available options anymore.
+Sometimes you need to load a prefilled form, and the initial values should trigger actions like *retrieving data*, *hide* or *disable* other fields.
+
+Dynamic-forms can automatically set the form initial status and trigger those operations for you.
 
 You need to list all the fields which requires the initialisation, describing:
 
@@ -43,7 +45,7 @@ If you need to execute code after the initialisation is complete, use the `ready
 
 === "Promise"
     ```javascript
-    const form = dynamicForms.makeForm(formConfiguration);
+    const form = makeForm(formConfiguration);
     form.ready().then(() => {
         /* Your code here */
     });
@@ -51,7 +53,7 @@ If you need to execute code after the initialisation is complete, use the `ready
 === "Async/Await"
     ```javascript
     async function initialiseForm() {
-        let form = dynamicForms.makeForm(formConfiguration);
+        let form = makeForm(formConfiguration);
         await form.ready();
         /* Your code here */
     }

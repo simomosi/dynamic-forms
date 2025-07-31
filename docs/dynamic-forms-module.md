@@ -1,17 +1,19 @@
-# DynamicForms module
+# DynamicForms library
 ## How to use it
-This document describes the **dynamicForms** module properties.
+DynamicForms is designed to be **simple and straightforward**  - no complex setup or configuration required.
 
-This module let you instantiate and work easily with the whole DynamicForms library.
+The library offers 2 main functions that handle all the heavy lifting for you, including automatic configuration fixes and form initialization.
 
-You only need to use properties declared in this module and nothing else.
+**For 90% of use cases, `makeForm` is all you need!**
 
-First import the module (see [first page](./start/loading.md))
+First, import the module (see [loading guide](./start/loading.md))
 
-Module use example:
-```javascript
-const form = dynamicForms.makeForm(formConfiguration);
+```html
+<script type="module">
+    import { makeForm, getForm } '@simomosi/dynamic-forms';
+</script>
 ```
+
 
 ## Properties
 
