@@ -9,7 +9,7 @@ DynamicForms is a client library to automate progressive filtering and initialis
 
 It supports the developer in managing and centralizing all forms interactions.
 
-It's written in *typescript* and compiled in *javascript*. It is later transpiled with *webpack* and *babel* to create a single lightweight bundle to ensure maximum compatibility with older browsers.
+It's written in *typescript* and built with *Vite*
 
 Here's some examples.
 
@@ -33,8 +33,6 @@ The progressive filtering status is restored: all the available options are auto
 
 ### Much much more
 Got your attention? Try it!
-
-Dynamic Forms is released as a **single file**. You can also find an already functioning example!
 
 ## Main features
 - [x] **Easy to use**: DynamicForms works in a declarative way; no code with the default behavior, just a simple configuration!
