@@ -44,7 +44,6 @@
     "@mermaid-js/mermaid-cli": "^10.1.0",
     "mermaid": "^10.1.0",
     "rollup-plugin-visualizer": "^6.0.1",
-    "source-map-loader": "^4.0.1",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vite-plugin-banner": "^0.8.1",
