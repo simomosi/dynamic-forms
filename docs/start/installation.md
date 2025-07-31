@@ -9,6 +9,10 @@
     ```shell
     yarn add @simomosi/dynamic-forms
     ```
+=== "pnpm"
+    ```shell
+    pnpm i @simomosi/dynamic-forms
+    ```
 
 ## Using a CDN
 
