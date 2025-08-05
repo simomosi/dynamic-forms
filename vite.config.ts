@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite';
 import path from 'path';
+import fs from 'fs';
 import dts from 'vite-plugin-dts';
 import { visualizer } from 'rollup-plugin-visualizer';
 import banner from 'vite-plugin-banner';
 
-const packagejson = require('./package.json');
+const packagejson = JSON.parse(fs.readFileSync(path.resolve(__dirname, './package.json'), 'utf-8'));
 const bannerInfo = `
 Author: ${packagejson.author}
 Version: ${packagejson.version}
