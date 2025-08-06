@@ -5,10 +5,15 @@
 ## Changelog
 Dynamic-forms follows the [semver](https://semver.org) standard.
 
+#### 3.0.0
+
+- Webpack has been replaced with Vite
+- Library import does not expose the `dynamicForms` module anymore but `makeform` and `getForm` functions directly
+
 #### 2.0.0
 
 - Library has been rewritten in typescript
-- FieldConfiguration.dropdown renamed to FieldConfiguration.select
+- `FieldConfiguration.dropdown` renamed to `FieldConfiguration.select`
 - Better documentation
 
 #### 1.3.0
