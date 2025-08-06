@@ -8,7 +8,7 @@ on:
       - 'mkdocs.yml'
       - 'docs/**/*.md'
       - 'docs/**/*.mmd'
-  workflow_dispatch: # TODO: remove after testing
+
 permissions:
   contents: write
 
