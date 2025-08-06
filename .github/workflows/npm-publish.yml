@@ -1,0 +1,50 @@
+name: Publish Package to npmjs
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.event.release.target_commitish == 'main'
+    timeout-minutes: 10
+    
+    permissions:
+      contents: read
+      id-token: write  # Required for provenance
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # Only fetch the latest commit
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci --prefer-offline --no-audit
+
+      - name: Verify version matches release tag
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          RELEASE_TAG=${GITHUB_REF#refs/tags/}
+          if [ "v$PACKAGE_VERSION" != "$RELEASE_TAG" ]; then
+            echo "Package version (v$PACKAGE_VERSION) doesn't match release tag ($RELEASE_TAG)"
+            exit 1
+          fi
+
+      - name: Verify package can be packed
+        run: npm pack --dry-run
+
+      - name: Build package
+        run: npm run build
+        
+      - name: Publish to NPM
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
