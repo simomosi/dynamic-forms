@@ -52,5 +52,3 @@ jobs:
       - name: Deploy to GitHub Pages
         run: |
           mkdocs gh-deploy --force --verbose
-
-          mkdocs gh-deploy --force --verbose
