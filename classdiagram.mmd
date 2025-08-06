@@ -1,0 +1,54 @@
+classDiagram
+
+    class DynamicForm {
+        FormConfiguration config
+        HTMLFormElement htmlElement
+        Map❬String DynamicElement❭ entities
+        boolean debug
+        boolean enabled
+        json elementToClassMapping
+
+        +ready() Promise❬void❭
+        +notify(subjectName) Promise❬void❭
+        -fetchAllParameters(rule) object
+        -clearCascade(currentSubject) Promise❬void❭
+        +manualUpdate(data, subjectName) Promise❬void❭
+        -getField(name) DynamicElement
+        +getId() string
+        +setEnabled() void
+        +isEnabled() boolean
+    }
+
+    class dynamicForms {
+        -Map❬String DynamicForm❭ formCollection
+        +makeForm(formConfiguration) DynamicForm
+        +getForm(id) DynamicForm
+    }
+
+    note for dynamicForms "Library entrypoint"
+
+    class DynamicElement {
+        -FieldConfiguration config
+        -NodeList htmlElement
+        -string name
+        -JSON defaultConfig
+        +get() string
+        +set(value) string
+        +clear()
+        +update(data, subjectName)
+        #beforeUpdate(data, subjectName) boolean
+        #updateStatus(data, subjectName) Promise❬void❭
+        #afterUpdate(data, subjectName) boolean
+    }
+
+    class DynamicSelect {
+        -string method
+        +postProcessData(data) object[]
+        +saveData(data) void
+    }
+
+    DynamicForm <.. dynamicForms
+    DynamicForm o-- DynamicElement
+    DynamicElement <|-- DynamicSelect
+    DynamicElement <|-- DynamicCheckbox
+    DynamicElement <|-- DynamicRadio
