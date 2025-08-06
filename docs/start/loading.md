@@ -3,27 +3,17 @@ Choose your favorite import method
 
 ## From installed sources
 
-=== "ES6 Module"
+=== "ES6 Module (recommended)"
     ```html
     <script type="module">
-        import './node_modules/@simomosi/dynamic-forms/dist/dynamicforms.min.js';
+        import { makeForm } '@simomosi/dynamic-forms';
     </script>
     ```
 
-=== "Commonjs require"
+=== "CommonJS"
     ```javascript
-    const dynamicForms = require('@simomosi/dynamic-forms');
+    const { makeForm } = require('@simomosi/dynamic-forms');
     ```
-
-=== "Script tag"
-    ```html
-    <script src='./node_modules/@simomosi/dynamic-forms/dist/dynamicforms.min.js'></script>
-    ```
-
-Note that 2 different sources exist:
-
-- `@simomosi/dynamic-forms/src` is the actual source code
-- `@simomosi/dynamic-forms/dist` (recommended) is built bundle: sources are transpiled with *Webpack* and *Babel* to enhance performance and ensure compatibility with different browsers
 
 ## From CDN
 
@@ -35,7 +25,7 @@ Note that 2 different sources exist:
 === "ES6 Module"
     ```html
     <script type="module">
-        import 'https://unpkg.com/@simomosi/dynamic-forms@latest';
+        import { makeForm } from 'https://unpkg.com/@simomosi/dynamic-forms@latest';
     </script>
     ```
 

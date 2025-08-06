@@ -24,7 +24,9 @@ Let's assume we are working on the following html form:
 
 Let's assume we loaded dynamic-forms using a CDN:
 ```html
-<script src = 'https://unpkg.com/@simomosi/dynamic-forms@latest'></script>
+    <script type="module">
+        import { makeForm } from 'https://unpkg.com/@simomosi/dynamic-forms@latest';
+    </script>
 ```
 
 ## Write form configuration
@@ -54,14 +56,14 @@ const formConfiguration = {
 };
 ```
 
-Note: we didn't specify `field_one`'s configuration.
+Note: we didn't need to specify a configuration for `field_one`.
 
 ## Create the dynamic form
 
 Create an instance and forget about it: dynamic-forms will work by itself!
 
 ```javascript
-const form = dynamicForms.makeForm(formConfiguration);
+const form = makeForm(formConfiguration);
 ```
 
 ## Done!

@@ -1,6 +1,7 @@
 node_modules
 dist
 build
+.yarn
 
 # Doc site deploy
 site/
@@ -9,3 +10,5 @@ site/
 # Different IDE files
 .idea
 nbproject
+
+stats.html
