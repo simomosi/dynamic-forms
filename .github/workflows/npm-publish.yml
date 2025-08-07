@@ -3,6 +3,7 @@ name: Publish Package to npmjs
 on:
   release:
     types: [published]
+  workflow_dispatch: # TODO: remove after first publish
 
 jobs:
   deploy:
