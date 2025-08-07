@@ -1,14 +1,12 @@
 # Contribute
 Help me develop DynamicForms!
 
-Remember to work on `src/*.ts` files and test them building the bundle and importing `dist/dynamicforms.js` (of course you can import individual files manually if you prefer so).
+Remember to work on `src/*.ts` files, and test them building the bundle and importing it (`import { makeForm } from '@dist/dynamic-forms.es.js';` for prod build, `import { makeForm } from '@';` for dev mode).
 
 Useful commands:
 
-- `yarn build:dev` - Build the project in *development mode*: this enables dev tools and keeps references to original source code; you can use it with `--watch` flag
-- `yarn build:prod` - Build the project in *production mode*: this improves performance and security (hide all source code references); you can use it with `--watch` flag
-- `yarn build` - Build both dev file and prod file
-- `yarn build:diagrams` - Updates *classdiagram.svg* from *classdiagram.mmd* <!-- TODO remove if gh-deploy succeeds -->
+- `npm run dev` - Start Vite server for local development
+- `npm run build` - Build DynamicForms library in `dist` folder
 
 Please, update also the documentation if you change anything.
 
