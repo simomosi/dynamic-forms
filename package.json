@@ -16,6 +16,10 @@
     "type": "git",
     "url": "https://github.com/simomosi/dynamic-forms.git"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "homepage": "https://simomosi.github.io/dynamic-forms/",
   "bugs": "https://github.com/simomosi/dynamic-forms/issues",
   "keywords": [
@@ -51,10 +55,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "vite build"
   },
-  "packageManager": "yarn@4.9.1",
   "sideEffects": false,
   "exports": {
     ".": {
