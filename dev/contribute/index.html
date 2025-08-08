@@ -885,13 +885,11 @@
 
 <h1 id="contribute">Contribute<a class="headerlink" href="#contribute" title="Permanent link">#</a></h1>
 <p>Help me develop DynamicForms!</p>
-<p>Remember to work on <code>src/*.ts</code> files and test them building the bundle and importing <code>dist/dynamicforms.js</code> (of course you can import individual files manually if you prefer so).</p>
+<p>Remember to work on <code>src/*.ts</code> files, and test them building the bundle and importing it (<code>import { makeForm } from '@dist/dynamic-forms.es.js';</code> for prod build, <code>import { makeForm } from '@';</code> for dev mode).</p>
 <p>Useful commands:</p>
 <ul>
-<li><code>yarn build:dev</code> - Build the project in <em>development mode</em>: this enables dev tools and keeps references to original source code; you can use it with <code>--watch</code> flag</li>
-<li><code>yarn build:prod</code> - Build the project in <em>production mode</em>: this improves performance and security (hide all source code references); you can use it with <code>--watch</code> flag</li>
-<li><code>yarn build</code> - Build both dev file and prod file</li>
-<li><code>yarn build:diagrams</code> - Updates <em>classdiagram.svg</em> from <em>classdiagram.mmd</em> <!-- TODO remove if gh-deploy succeeds --></li>
+<li><code>npm run dev</code> - Start Vite server for local development</li>
+<li><code>npm run build</code> - Build DynamicForms library in <code>dist</code> folder</li>
 </ul>
 <p>Please, update also the documentation if you change anything.</p>
 <p><strong>Thank you very much for your support ❤</strong></p>
