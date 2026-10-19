@@ -118,6 +118,12 @@ describe('field hooks element type', () => {
         expectTypeOf({ id: 'f', fields: [city, privacy] }).toExtend<FormConfiguration>();
     });
 
+    it('accepts hooks annotated with a narrower element, unchecked against the html', () => {
+        // The price of declaring hooks as methods, which lets FieldConfiguration<HTMLSelectElement> fit in the form fields
+        const field: FieldConfiguration = { name: 'city', behavior: { clear: (el: HTMLSelectElement) => { el.options.length = 0; } } };
+        expectTypeOf({ id: 'f', fields: [field] }).toExtend<FormConfiguration>();
+    });
+
     it('rejects properties the element does not have', () => {
         const field: FieldConfiguration<HTMLInputElement> = {
             name: 'privacy',

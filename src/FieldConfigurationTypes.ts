@@ -8,8 +8,8 @@ export type UpdateData = Record<string, any>;
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 /**
- * What a field hook receives: the field element, or all of them when more elements share the field name.
- * Some hooks always receive the NodeList (see the fields configuration docs): narrow with `instanceof NodeList`.
+ * What a field hook receives: the field element, or all of them when more elements share the field name
+ * (checkbox and radio io hooks and clear always receive them). Narrow with `instanceof NodeList`.
  */
 export type FieldHookElement<E extends FieldElement = FieldElement> = E | NodeListOf<E>;
 
@@ -55,6 +55,7 @@ export interface SelectOption {
     text: string
 }
 
+/** Select hooks always receive all the elements sharing the field name. */
 export interface SelectConfiguration<E extends FieldElement = FieldElement> {
     /** Receives the remote call response as parsed json, and returns the Options to save. */
     postProcessData?(htmlElement: NodeListOf<E>, data: any): SelectOption[],

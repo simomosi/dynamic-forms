@@ -16,9 +16,14 @@ Just specify fields with custom behavior as the standard ones will be discovered
     };
     const tags: FieldConfiguration<HTMLInputElement, string[]> = {
         name: 'tags',
-        io: { get: (htmlElement) => [], set: (htmlElement, value) => { value.join(','); } },
+        io: {
+            get: (htmlElement) => htmlElement instanceof NodeList ? [] : htmlElement.value.split(','),
+            set: (htmlElement, value) => { if (!(htmlElement instanceof NodeList)) htmlElement.value = value.join(','); },
+        },
     };
     ```
+
+    The library does not check these types against the html: `FieldConfiguration<HTMLSelectElement>` on an `<input>`, or a hook that leaves out the `NodeList` case, compiles but fails at runtime.
 
 Here's a complete single field configuration. You just need to specify the attributes you need, the other will have default values.
 
@@ -99,7 +104,7 @@ Function to fetch the html element's value. Useful for custom html elements.
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node
+- {`node | NodeList`} `htmlElement`: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the `NodeList` in `get`, `set` and `clear`)
 
 Returns
 
@@ -110,7 +115,7 @@ Function to set the html element's value. Useful for custom html elements.
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node
+- {`node | NodeList`} `htmlElement`: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the `NodeList` in `get`, `set` and `clear`)
 - {`mixed`} `value`: the field's new value
 
 Returns
@@ -194,7 +199,7 @@ Function to unset the field's current value. Sometimes it is used to clear the f
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node
+- {`node | NodeList`} `htmlElement`: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the `NodeList` in `get`, `set` and `clear`)
 
 Returns
 
@@ -208,7 +213,7 @@ Default behavior: nothing. For **DynamicSelect** elements it clear the field con
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node
+- {`node | NodeList`} `htmlElement`: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the `NodeList` in `get`, `set` and `clear`)
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 - {`string | null`}: `subjectName`: the name of the subject who triggered the update. It is null if the update is triggered manually
 
@@ -223,7 +228,7 @@ Default behavior: nothing. For **DynamicSelect** elements it makes a remote call
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node
+- {`node | NodeList`} `htmlElement`: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the `NodeList` in `get`, `set` and `clear`)
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 - {`string | null`}: `subjectName`: the name of the subject who triggered the update. It is null if the update is triggered manually
 
@@ -236,7 +241,7 @@ Method called after triggering the field's status update.
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node
+- {`node | NodeList`} `htmlElement`: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the `NodeList` in `get`, `set` and `clear`)
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 - {`string | null`}: `subjectName`: the name of the subject who triggered the update. It is null if the update is triggered manually
 

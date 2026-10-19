@@ -92,7 +92,7 @@ classDiagram
 
     class DynamicSelect {
         -string method
-        +postProcessData(data) object[]
+        +postProcessData(data) SelectOption[]
         +saveData(data) void
     }
 
