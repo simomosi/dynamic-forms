@@ -178,7 +178,7 @@ Parameters
 
 - {`node | NodeList`} `htmlElement`: the html node
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
-- {`string`}: `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
+- {`string | null`}: `subjectName`: the name of the subject who triggered the update. It is null if the update is triggered manually
 
 Returns
 
@@ -193,7 +193,7 @@ Parameters
 
 - {`node | NodeList`} `htmlElement`: the html node
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
-- {`string`}: `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
+- {`string | null`}: `subjectName`: the name of the subject who triggered the update. It is null if the update is triggered manually
 
 Returns
 
@@ -206,7 +206,7 @@ Parameters
 
 - {`node | NodeList`} `htmlElement`: the html node
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
-- {`string`}: `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
+- {`string | null`}: `subjectName`: the name of the subject who triggered the update. It is null if the update is triggered manually
 
 Returns
 
