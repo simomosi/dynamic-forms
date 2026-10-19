@@ -158,7 +158,7 @@ class DynamicSelect extends DynamicElement {
             // Add empty option
             const firstElement = this.htmlElement[0] as HTMLSelectElement;
             const emptyOptionInHtml = firstElement.querySelector('option:not([value]), option[value=""]');
-            const emptyOptionInData = data.filter((item: {text: string, value: string}) => !item.value);
+            const emptyOptionInData = data.some((item: {text: string, value: string}) => !item.value);
             if (!emptyOptionInHtml && !emptyOptionInData) {
                 const newEmptyOption = this.createOption('', '');
                 firstElement.add(newEmptyOption);

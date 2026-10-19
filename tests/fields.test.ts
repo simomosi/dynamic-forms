@@ -155,10 +155,22 @@ describe('select', () => {
         expect(optionValues('s')).toEqual(['', '3']);
     });
 
-    // Bug: in saveData `emptyOptionInData` is an array, always truthy, so the empty option is never added.
-    // https://github.com/simomosi/dynamic-forms/issues/26
-    it.fails('adds an empty option when neither the html nor the fetched data have one', async () => {
+    it('adds an empty option when neither the html nor the fetched data have one', async () => {
         stubFetch({ '/s': [{ value: '1', text: 'One' }] });
+        mountForm('f', '<input name="parent" value="x"><select name="s"></select>');
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 's', fetch: { makeUrl: () => '/s' } }],
+            rules: [{ name: 'parent', update: ['s'] }],
+        });
+
+        await form.notify('parent');
+
+        expect(optionValues('s')).toEqual(['', '1']);
+    });
+
+    it('does not add a second empty option when the fetched data has one', async () => {
+        stubFetch({ '/s': [{ value: '', text: 'Pick one' }, { value: '1', text: 'One' }] });
         mountForm('f', '<input name="parent" value="x"><select name="s"></select>');
         const form = createForm({
             id: 'f',
