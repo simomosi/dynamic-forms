@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from 'vitest';
-import { KNOWN_UNHANDLED_ERROR } from './knownBugs';
 import { createForm, field, mountForm, optionValues, probeField, selectHtml, stubFetch, timeout } from './helpers';
 
 /**
@@ -200,16 +199,13 @@ describe('select', () => {
 });
 
 describe('initialisation errors', () => {
-    // Bug: handleInitialisation has no rejection handler, so a throwing beforeInit leaves ready() pending forever.
-    // The error escapes as an unhandled rejection, which vitest.config ignores by its message.
-    // https://github.com/simomosi/dynamic-forms/issues/28
-    it.fails('rejects ready() when beforeInit throws', async () => {
+    it('rejects ready() when beforeInit throws', async () => {
         mountForm('f', '<input name="a">');
         const form = createForm({
             id: 'f',
-            behavior: { beforeInit: () => { throw new Error(KNOWN_UNHANDLED_ERROR); } } as any,
+            behavior: { beforeInit: () => { throw new Error('beforeInit failed'); } } as any,
         });
 
-        await expect(Promise.race([form.ready(), timeout(50)])).rejects.toThrow(KNOWN_UNHANDLED_ERROR);
+        await expect(Promise.race([form.ready(), timeout(50)])).rejects.toThrow('beforeInit failed');
     });
 });
