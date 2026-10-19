@@ -22,7 +22,7 @@ A function to collect other data used in the update function but external to the
 Parameters
 
 - {`object`} `data`: data obtained from the [additional data](#additionalData-optional) function
-- {`string | null`} `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
+- {`string`} `subjectName`: the name of the subject who triggered the update
 
 Returns
 

@@ -48,7 +48,7 @@ Useful to show a loader during the fields update.
 
 Parameters
 
-- {`string | null`} `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
+- {`string`} `subjectName`: the name of the subject who triggered the update. Manual updates (`form.manualUpdate`) don't call this method
 
 Returns
 
@@ -61,7 +61,7 @@ Useful to hide a loader after the fields update.
 
 Parameters
 
-- {`string | null`} `subjectName`: the name of the subject who triggered the update. It can be null if the update is triggered manually
+- {`string`} `subjectName`: the name of the subject who triggered the update. Manual updates (`form.manualUpdate`) don't call this method
 
 Returns
 
