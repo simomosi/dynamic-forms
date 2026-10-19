@@ -123,8 +123,6 @@ class DynamicSelect extends DynamicElement {
                 return this.postProcessData(data);
             }).then(data => { // Save options
                 return this.saveData(data);
-            }).catch(error => {
-                console.error(error); // tmp
             });
     }
 

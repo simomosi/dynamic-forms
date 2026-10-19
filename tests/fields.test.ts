@@ -182,9 +182,7 @@ describe('select', () => {
         expect(optionValues('s')).toEqual(['', '1']);
     });
 
-    // Bug: updateStatus catches the remote call errors and only logs them, so callers can't react.
-    // https://github.com/simomosi/dynamic-forms/issues/27
-    it.fails('rejects notify() when the remote call fails', async () => {
+    it('rejects notify() when the remote call fails', async () => {
         stubFetch({});
         vi.spyOn(console, 'error').mockImplementation(() => {});
         mountForm('f', '<input name="parent" value="x">' + selectHtml('s'));
@@ -195,6 +193,21 @@ describe('select', () => {
         });
 
         await expect(form.notify('parent')).rejects.toBeDefined();
+    });
+
+    it('logs the remote call error when the change comes from the user', async () => {
+        stubFetch({});
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+        mountForm('f', '<input name="parent" value="x">' + selectHtml('s'));
+        createForm({
+            id: 'f',
+            fields: [{ name: 's', fetch: { makeUrl: () => '/s' } }],
+            rules: [{ name: 'parent', update: ['s'] }],
+        });
+
+        field('parent').dispatchEvent(new Event('change'));
+
+        await vi.waitFor(() => expect(consoleError).toHaveBeenCalled());
     });
 });
 
