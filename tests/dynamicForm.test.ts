@@ -281,7 +281,7 @@ describe('remote call configuration', () => {
             fields: [{
                 name: 'post',
                 fetch: { makeUrl: () => '/posts' },
-                select: { postProcessData: (_el, data: any[]) => data.map(p => ({ value: String(p.id), text: p.title })) },
+                select: { postProcessData: (_el, data) => data.map((p: { id: number, title: string }) => ({ value: p.id, text: p.title })) },
             }],
             rules: [{ name: 'user', update: ['post'] }],
         });

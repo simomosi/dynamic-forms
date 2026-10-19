@@ -1,5 +1,5 @@
 import DynamicElement from './DynamicElement';
-import { CheckboxConfiguration, FieldConfiguration } from './FieldConfigurationTypes';
+import { CheckboxConfiguration, FieldConfiguration, FieldElement } from './FieldConfigurationTypes';
 
 /**
  * This class represents a Checkbox in a form.
@@ -20,7 +20,7 @@ class DynamicCheckbox extends DynamicElement {
     }
 
     /** @inheritdoc */
-    constructor(config: FieldConfiguration, htmlElement: NodeList) {
+    constructor(config: FieldConfiguration, htmlElement: NodeListOf<FieldElement>) {
         super(config, htmlElement);
         this.checkbox = config.checkbox ?? {};
     }

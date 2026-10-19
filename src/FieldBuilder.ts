@@ -2,7 +2,7 @@ import DynamicCheckbox from "./DynamicCheckbox";
 import DynamicElement from "./DynamicElement";
 import DynamicRadio from "./DynamicRadio";
 import DynamicSelect from "./DynamicSelect";
-import { FieldConfiguration } from "./FieldConfigurationTypes";
+import { FieldConfiguration, FieldElement } from "./FieldConfigurationTypes";
 
 export class FieldBuilder {
     public createFieldsMap(fieldsCollection: FieldConfiguration[], htmlForm: HTMLFormElement): Map<string, DynamicElement> {
@@ -14,13 +14,13 @@ export class FieldBuilder {
     }
     
     private factoryField(fieldConfiguration: FieldConfiguration, htmlForm: HTMLFormElement): DynamicElement {
-        const queryResult = htmlForm.querySelectorAll(`[name="${fieldConfiguration.name}"]`);
+        const queryResult = htmlForm.querySelectorAll<FieldElement>(`[name="${fieldConfiguration.name}"]`);
         let type: string;
         
         if (queryResult.length === 0) {
             throw new Error(`Element ${fieldConfiguration.name} not found`);
         }
-        type = (queryResult[0] as HTMLInputElement|HTMLSelectElement|HTMLTextAreaElement).type;
+        type = queryResult[0].type;
         let instance: DynamicElement;
         switch(type) {
             case 'checkbox':

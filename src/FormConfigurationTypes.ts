@@ -36,5 +36,5 @@ export interface UpdateRule {
 
 export interface InitialisationRule {
     name: string,
-    value?: any
+    value?: unknown
 }

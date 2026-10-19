@@ -1,5 +1,5 @@
 import DynamicElement from './DynamicElement';
-import { FieldConfiguration } from './FieldConfigurationTypes';
+import { FieldConfiguration, FieldElement } from './FieldConfigurationTypes';
 
 /**
  * This class represents a Radio button group in a form.
@@ -7,7 +7,7 @@ import { FieldConfiguration } from './FieldConfigurationTypes';
 class DynamicRadio extends DynamicElement {
 
     /** @inheritdoc */
-    constructor(config: FieldConfiguration, htmlElement: NodeList) {
+    constructor(config: FieldConfiguration, htmlElement: NodeListOf<FieldElement>) {
         super(config, htmlElement);
     }
 
