@@ -65,7 +65,7 @@ class DynamicElement implements Observer {
 
     public attach(subject: Subject): void {
         this.htmlElement.forEach(current => {
-            current.addEventListener(this.event, (e) => { subject.notify((e.target as HTMLInputElement).name); });
+            current.addEventListener(this.event, (e) => { subject.notify((e.target as HTMLInputElement).name).catch(console.error); });
         });
     }
 

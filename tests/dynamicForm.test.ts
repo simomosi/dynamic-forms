@@ -118,7 +118,7 @@ describe('progressive filtering', () => {
     });
 
     it('clears the observers of the observers on cascade', async () => {
-        stubFetch({ '/posts?userId=1': postsOfUser1, '/comments?postId=10': commentsOfPost10 });
+        stubFetch({ '/posts?userId=1': postsOfUser1, '/comments?postId=10': commentsOfPost10, '/posts?userId=2': [] });
         const form = mountProgressiveForm();
         field<HTMLSelectElement>('user').value = '1';
         await form.notify('user');
@@ -295,7 +295,6 @@ describe('remote call configuration', () => {
 
     it('leaves the select untouched when the remote call fails', async () => {
         stubFetch({});
-        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
         mountForm('f', '<input name="user" value="1">' + selectHtml('post', { '10': 'Old' }));
         const form = createForm({
             id: 'f',
@@ -303,10 +302,9 @@ describe('remote call configuration', () => {
             rules: [{ name: 'user', update: ['post'] }],
         });
 
-        await form.notify('user');
+        await expect(form.notify('user')).rejects.toBeDefined();
 
         expect(optionValues('post')).toEqual(['', '10']);
-        expect(consoleError).toHaveBeenCalled();
     });
 
     it('logs an error for fetched items without text or value', async () => {

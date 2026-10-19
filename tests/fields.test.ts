@@ -1,5 +1,4 @@
 import { describe, expect, it, vi } from 'vitest';
-import { KNOWN_UNHANDLED_ERROR } from './knownBugs';
 import { createForm, field, mountForm, optionValues, probeField, selectHtml, stubFetch, timeout } from './helpers';
 
 /**
@@ -93,9 +92,7 @@ describe('checkbox', () => {
         expect(field('c').checked).toBe(checked);
     });
 
-    // Bug: clear() calls set("0") and the non-empty string "0" is truthy, so the checkbox gets checked.
-    // https://github.com/simomosi/dynamic-forms/issues/25
-    it.fails('is unchecked on cascade clear', async () => {
+    it('is unchecked on cascade clear', async () => {
         await clearViaCascade('c', '<input type="checkbox" name="c">');
 
         expect(field('c').checked).toBe(false);
@@ -157,9 +154,7 @@ describe('select', () => {
         expect(optionValues('s')).toEqual(['', '3']);
     });
 
-    // Bug: in saveData `emptyOptionInData` is an array, always truthy, so the empty option is never added.
-    // https://github.com/simomosi/dynamic-forms/issues/26
-    it.fails('adds an empty option when neither the html nor the fetched data have one', async () => {
+    it('adds an empty option when neither the html nor the fetched data have one', async () => {
         stubFetch({ '/s': [{ value: '1', text: 'One' }] });
         mountForm('f', '<input name="parent" value="x"><select name="s"></select>');
         const form = createForm({
@@ -173,9 +168,21 @@ describe('select', () => {
         expect(optionValues('s')).toEqual(['', '1']);
     });
 
-    // Bug: updateStatus catches the remote call errors and only logs them, so callers can't react.
-    // https://github.com/simomosi/dynamic-forms/issues/27
-    it.fails('rejects notify() when the remote call fails', async () => {
+    it('does not add a second empty option when the fetched data has one', async () => {
+        stubFetch({ '/s': [{ value: '', text: 'Pick one' }, { value: '1', text: 'One' }] });
+        mountForm('f', '<input name="parent" value="x"><select name="s"></select>');
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 's', fetch: { makeUrl: () => '/s' } }],
+            rules: [{ name: 'parent', update: ['s'] }],
+        });
+
+        await form.notify('parent');
+
+        expect(optionValues('s')).toEqual(['', '1']);
+    });
+
+    it('rejects notify() when the remote call fails', async () => {
         stubFetch({});
         vi.spyOn(console, 'error').mockImplementation(() => {});
         mountForm('f', '<input name="parent" value="x">' + selectHtml('s'));
@@ -187,19 +194,31 @@ describe('select', () => {
 
         await expect(form.notify('parent')).rejects.toBeDefined();
     });
+
+    it('logs the remote call error when the change comes from the user', async () => {
+        stubFetch({});
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+        mountForm('f', '<input name="parent" value="x">' + selectHtml('s'));
+        createForm({
+            id: 'f',
+            fields: [{ name: 's', fetch: { makeUrl: () => '/s' } }],
+            rules: [{ name: 'parent', update: ['s'] }],
+        });
+
+        field('parent').dispatchEvent(new Event('change'));
+
+        await vi.waitFor(() => expect(consoleError).toHaveBeenCalled());
+    });
 });
 
 describe('initialisation errors', () => {
-    // Bug: handleInitialisation has no rejection handler, so a throwing beforeInit leaves ready() pending forever.
-    // The error escapes as an unhandled rejection, which vitest.config ignores by its message.
-    // https://github.com/simomosi/dynamic-forms/issues/28
-    it.fails('rejects ready() when beforeInit throws', async () => {
+    it('rejects ready() when beforeInit throws', async () => {
         mountForm('f', '<input name="a">');
         const form = createForm({
             id: 'f',
-            behavior: { beforeInit: () => { throw new Error(KNOWN_UNHANDLED_ERROR); } } as any,
+            behavior: { beforeInit: () => { throw new Error('beforeInit failed'); } } as any,
         });
 
-        await expect(Promise.race([form.ready(), timeout(50)])).rejects.toThrow(KNOWN_UNHANDLED_ERROR);
+        await expect(Promise.race([form.ready(), timeout(50)])).rejects.toThrow('beforeInit failed');
     });
 });
