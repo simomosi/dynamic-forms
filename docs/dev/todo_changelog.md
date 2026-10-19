@@ -1,11 +1,12 @@
 ## ToDo List
 
 - [ ] Use dynamic-forms with dynamically created fields
+- [ ] Release `4.0.0`: bump `version` in `package.json` (still `3.0.0`) before tagging, the publish workflow requires the tag to match it
 
 ## Changelog
 Dynamic-forms follows the [semver](https://semver.org) standard.
 
-#### Unreleased
+#### 4.0.0 (unreleased)
 
 - **Breaking:** `form.notify()` rejects when a select's remote call fails, instead of logging the error and resolving. `form.ready()` rejects too when an initialisation remote call fails ([#27](https://github.com/simomosi/dynamic-forms/issues/27)). Changes triggered by the user still log the error to the console
 - `form.ready()` rejects when initialisation fails (e.g. `beforeInit` throws), instead of never settling ([#28](https://github.com/simomosi/dynamic-forms/issues/28))
