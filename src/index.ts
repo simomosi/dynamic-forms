@@ -6,7 +6,7 @@ import { FormConfiguration } from './FormConfigurationTypes';
 
 export type { DynamicForm };
 export type { FormConfiguration, FormHooks, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
-export type { UpdateData, FieldConfiguration, FieldIoHooks, FieldFetchConfiguration, FieldHooks, SelectConfiguration, CheckboxConfiguration } from './FieldConfigurationTypes';
+export type { UpdateData, FieldElement, FieldHookElement, FieldConfiguration, FieldIoHooks, FieldFetchConfiguration, FieldHooks, SelectConfiguration, SelectOption, CheckboxConfiguration } from './FieldConfigurationTypes';
 
 const formCollection: Map<string, DynamicForm> = new Map();
 

@@ -182,6 +182,20 @@ describe('select', () => {
         expect(optionValues('s')).toEqual(['', '1']);
     });
 
+    it('saves numeric option values, and 0 is not the empty option', async () => {
+        stubFetch({ '/s': [{ value: 0, text: 'Zero' }, { value: 1, text: 'One' }] });
+        mountForm('f', '<input name="parent" value="x"><select name="s"></select>');
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 's', fetch: { makeUrl: () => '/s' } }],
+            rules: [{ name: 'parent', update: ['s'] }],
+        });
+
+        await form.notify('parent');
+
+        expect(optionValues('s')).toEqual(['', '0', '1']);
+    });
+
     it('rejects notify() when the remote call fails', async () => {
         stubFetch({});
         vi.spyOn(console, 'error').mockImplementation(() => {});

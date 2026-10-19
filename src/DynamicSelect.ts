@@ -1,5 +1,5 @@
 import DynamicElement from './DynamicElement';
-import { FieldConfiguration, SelectConfiguration, UpdateData } from './FieldConfigurationTypes';
+import { FieldConfiguration, FieldElement, SelectConfiguration, SelectOption, UpdateData } from './FieldConfigurationTypes';
 
 /**
 * This class represents a select field with dynamic content (like a standard html-select with dynamic options)
@@ -28,19 +28,12 @@ class DynamicSelect extends DynamicElement {
     /**
     * @inheritdoc
     */
-    constructor(config: FieldConfiguration, htmlElement: NodeList) {
+    constructor(config: FieldConfiguration, htmlElement: NodeListOf<FieldElement>) {
         super(config, htmlElement);
         this.method = this.fetch.method ?? DynamicSelect.defaultConfig.fetch.method;
         this.select = config.select ?? {};
     }
 
-
-    private getHtmlSelectElementOrList(): HTMLSelectElement | NodeList {
-        if (this.htmlElement.length === 1) {
-            return this.htmlElement[0] as HTMLSelectElement;
-        }
-        return this.htmlElement as NodeList;
-    }
 
     /**
     * Method to clear the select from all its non-empty options
@@ -48,7 +41,7 @@ class DynamicSelect extends DynamicElement {
     public clear(): void {
         // Custom
         if (this.behavior.clear) {
-            return this.behavior.clear(this.getHtmlSelectElementOrList());
+            return this.behavior.clear(this.getHtmlElementOrList());
         }
         // Standard
         const firstElement = this.htmlElement[0] as HTMLSelectElement;
@@ -72,7 +65,7 @@ class DynamicSelect extends DynamicElement {
     protected beforeUpdate(data: UpdateData, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.beforeUpdate) {
-            return this.behavior.beforeUpdate(this.getHtmlSelectElementOrList(), data, subjectName);
+            return this.behavior.beforeUpdate(this.getHtmlElementOrList(), data, subjectName);
         }
         // Standard
         if (subjectName && !data[subjectName]) { // Clear field on empty subject
@@ -127,10 +120,10 @@ class DynamicSelect extends DynamicElement {
     }
 
     /**
-     * Method to filter data returned by the remote call
-     * @param {object} data data to send with the http request
+     * Method to turn the remote call response into Options
+     * @param {any} data the remote call response, parsed as json
      */
-    protected postProcessData(data: object[]): object[] {
+    protected postProcessData(data: any): SelectOption[] {
         // Custom
         if (this.select.postProcessData) {
             return this.select.postProcessData(this.htmlElement, data);
@@ -141,11 +134,11 @@ class DynamicSelect extends DynamicElement {
 
     /**
     * Method to save data returned by the remote call and filtered with postProcessData method
-    * @param {object} data data to send with the http request
+    * @param {SelectOption[]} data the Options to save
     *
     * @see postProcessData
     */
-    protected saveData(data: any[]): void {
+    protected saveData(data: SelectOption[]): void {
         // Custom
         if (this.select.saveData) {
             return this.select.saveData(this.htmlElement, data);
@@ -156,13 +149,13 @@ class DynamicSelect extends DynamicElement {
             // Add empty option
             const firstElement = this.htmlElement[0] as HTMLSelectElement;
             const emptyOptionInHtml = firstElement.querySelector('option:not([value]), option[value=""]');
-            const emptyOptionInData = data.some((item: {text: string, value: string}) => !item.value);
+            const emptyOptionInData = data.some(item => item.value == null || String(item.value) === '');
             if (!emptyOptionInHtml && !emptyOptionInData) {
                 const newEmptyOption = this.createOption('', '');
                 firstElement.add(newEmptyOption);
             }
             // Add other options
-            data.forEach((item: {text: string, value: string}) => {
+            data.forEach(item => {
                 if (!item.hasOwnProperty('text') || !item.hasOwnProperty('value')) {
                     console.error("Retrieved data does not have default property 'text' or 'value'", item);
                 }
@@ -173,10 +166,10 @@ class DynamicSelect extends DynamicElement {
         return;
     }
 
-    private createOption(text: string, value: string): HTMLOptionElement {
+    private createOption(text: string, value: string | number): HTMLOptionElement {
         const option = document.createElement("option");
         option.text = text;
-        option.value = value;
+        option.value = String(value);
         return option;
     }
 

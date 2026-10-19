@@ -4,23 +4,35 @@
  */
 export type UpdateData = Record<string, any>;
 
+/** The html elements a field can be made of. */
+export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+
+/**
+ * What a field hook receives: the field element, or all of them when more elements share the field name.
+ * Some hooks always receive the NodeList (see the fields configuration docs): narrow with `instanceof NodeList`.
+ */
+export type FieldHookElement<E extends FieldElement = FieldElement> = E | NodeListOf<E>;
+
 /**
  * Field configuration. The field kind comes from the html element, so every field accepts every key:
  * `select` is read only by selects, `checkbox` only by checkboxes.
+ * TypeScript cannot see the html, so `E` states the element type the hooks receive
+ * and `V` the value type io.get returns and io.set receives.
  */
-export interface FieldConfiguration {
+export interface FieldConfiguration<E extends FieldElement = FieldElement, V = any> {
     name: string,
-    io?: FieldIoHooks,
+    io?: FieldIoHooks<E, V>,
     fetch?: FieldFetchConfiguration,
-    behavior?: FieldHooks,
-    select?: SelectConfiguration,
+    behavior?: FieldHooks<E>,
+    select?: SelectConfiguration<E>,
     checkbox?: CheckboxConfiguration
 }
 
-export interface FieldIoHooks {
+// Hooks are declared as methods, so a FieldConfiguration<HTMLSelectElement> is still a FieldConfiguration.
+export interface FieldIoHooks<E extends FieldElement = FieldElement, V = any> {
     event?: string,
-    get?: (htmlElement: HTMLElement | NodeList) => any,
-    set?: (htmlElement: HTMLElement | NodeList, value: any) => void,
+    get?(htmlElement: FieldHookElement<E>): V,
+    set?(htmlElement: FieldHookElement<E>, value: V): void,
 }
 
 export interface FieldFetchConfiguration {
@@ -30,16 +42,24 @@ export interface FieldFetchConfiguration {
     fullFetchConfig?: (data: UpdateData) => RequestInit
 }
 
-export interface FieldHooks {
-    clear?: (htmlElement: HTMLElement | NodeList) => void,
-    beforeUpdate?: (htmlElement: HTMLElement | NodeList, data: UpdateData, subjectName: string|null) => boolean,
-    updateStatus?: (htmlElement: HTMLElement | NodeList, data: UpdateData, subjectName: string|null) => void,
-    afterUpdate?: (htmlElement: HTMLElement | NodeList, data: UpdateData, subjectName: string|null) => boolean,
+export interface FieldHooks<E extends FieldElement = FieldElement> {
+    clear?(htmlElement: FieldHookElement<E>): void,
+    beforeUpdate?(htmlElement: FieldHookElement<E>, data: UpdateData, subjectName: string|null): boolean,
+    updateStatus?(htmlElement: FieldHookElement<E>, data: UpdateData, subjectName: string|null): void,
+    afterUpdate?(htmlElement: FieldHookElement<E>, data: UpdateData, subjectName: string|null): boolean,
 }
 
-export interface SelectConfiguration {
-    postProcessData?: (htmlElement: Element | NodeList, data: object[]) => object[],
-    saveData?: (htmlElement: Element | NodeList, data: object[]) => void,
+/** One of the Options a select shows: the default saveData writes it as `<option value="value">text</option>`. */
+export interface SelectOption {
+    value: string | number,
+    text: string
+}
+
+export interface SelectConfiguration<E extends FieldElement = FieldElement> {
+    /** Receives the remote call response as parsed json, and returns the Options to save. */
+    postProcessData?(htmlElement: NodeListOf<E>, data: any): SelectOption[],
+    /** Receives the Options returned by postProcessData, or the response itself when there is no postProcessData. */
+    saveData?(htmlElement: NodeListOf<E>, data: SelectOption[]): void,
     clearOnParentVoid?: boolean
 }
 

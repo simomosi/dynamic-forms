@@ -16,10 +16,14 @@ Dynamic-forms follows the [semver](https://semver.org) standard.
     - Renamed `FormBehavior` to `FormHooks`, `FieldBehaviorConfiguration` to `FieldHooks`, `FieldIoConfiguration` to `FieldIoHooks`
     - The `data` received by field hooks, `makeUrl`, `makeBody` and `externalData` is `UpdateData` (`Record<string, any>`) instead of `object`, so `data.country` needs no annotation
     - Form hooks and `externalData` receive a `string` subject name, never `null`
+    - Field hooks receive the field element typed as `FieldElement` (`HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement`) or a `NodeListOf` it, instead of `HTMLElement | NodeList`, so `htmlElement.value` needs no cast. `FieldConfiguration<E, V>` states the element and value types of a field (`FieldConfiguration<HTMLSelectElement>`, `FieldConfiguration<HTMLInputElement, string[]>`); the value stays `any` by default
+    - `select.postProcessData` receives the response as `any` and returns `SelectOption[]` (`{ value: string | number, text: string }`), which `select.saveData` receives. Both receive the `NodeList`, as they always did at runtime
+    - `InitialisationRule.value` is `unknown` instead of `any`
+    - Exports `FieldElement`, `FieldHookElement` and `SelectOption` too
 - **Breaking:** `fetch.fullFetchConfig` is a function of the Update Data, `(data) => RequestInit`, instead of a static object, as the documentation already described ([#31](https://github.com/simomosi/dynamic-forms/issues/31)). Wrap an existing object as `fullFetchConfig: () => ({ ... })`
 - `makeForm()` no longer modifies the given configuration: defaults and discovered fields go into an internal copy. Form hooks set to `undefined` fall back to the default instead of throwing
 - Clearing a checkbox unchecks it instead of checking it ([#25](https://github.com/simomosi/dynamic-forms/issues/25))
-- A select filled by a remote call gets an empty option when neither the html nor the data have one ([#26](https://github.com/simomosi/dynamic-forms/issues/26))
+- A select filled by a remote call gets an empty option when neither the html nor the data have one ([#26](https://github.com/simomosi/dynamic-forms/issues/26)). An option with value `0` is not taken for the empty one
 
 #### 3.0.0
 

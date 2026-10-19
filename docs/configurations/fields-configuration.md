@@ -3,6 +3,23 @@ This document describes a single field configuration. The field configuration li
 
 Just specify fields with custom behavior as the standard ones will be discovered and included in the dynamic-form automatically.
 
+!!! tip "TypeScript"
+    TypeScript cannot see the html, so field hooks receive an `HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement` (or a `NodeList` of them) and an `any` value.
+    State the element and value types on the field to use them without casts:
+
+    ```typescript
+    import type { FieldConfiguration } from '@simomosi/dynamic-forms';
+
+    const city: FieldConfiguration<HTMLSelectElement> = {
+        name: 'city',
+        behavior: { clear: (htmlElement) => { if (!(htmlElement instanceof NodeList)) htmlElement.options.length = 0; } },
+    };
+    const tags: FieldConfiguration<HTMLInputElement, string[]> = {
+        name: 'tags',
+        io: { get: (htmlElement) => [], set: (htmlElement, value) => { value.join(','); } },
+    };
+    ```
+
 Here's a complete single field configuration. You just need to specify the attributes you need, the other will have default values.
 
 === "Generic element"
@@ -235,12 +252,12 @@ Function to process data retrieved by remote call. It is useful for filtering/or
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node
-- {`JSON | object[]`} `data`: data retrieved from the remote call
+- {`NodeList`} `htmlElement`: the html nodes
+- {`JSON`} `data`: data retrieved from the remote call
 
 Returns
 
-- {`JSON | object[]`} post-processed data
+- {`{ value: string | number, text: string }[]`} the options to save
 
 ### `saveData (htmlElement, data)`
 Function to phisically save (post-processed) data retrieved by a remote call as html.
@@ -249,8 +266,8 @@ Default behavior: saves data as *option* html elements using *value* and *text* 
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node where data will be saved
-- {`JSON | object[]`} `data`: data retrieved from the remote call
+- {`NodeList`} `htmlElement`: the html nodes where data will be saved
+- {`{ value: string | number, text: string }[]`} `data`: the options returned by `postProcessData`, or the data retrieved from the remote call when there is no `postProcessData`
 
 Returns
 

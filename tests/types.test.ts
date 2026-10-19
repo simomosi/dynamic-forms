@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest';
 import { makeForm } from '@/index';
-import type { CheckboxConfiguration, DynamicForm, FieldConfiguration, FormConfiguration, FormHooks, SelectConfiguration, UpdateData, UpdateRule, FieldHooks } from '@/index';
+import type { CheckboxConfiguration, DynamicForm, InitialisationRule, SelectOption, FieldConfiguration, FormConfiguration, FormHooks, SelectConfiguration, UpdateData, UpdateRule, FieldHooks } from '@/index';
 
 // Type-level specification of the public api: these tests fail `npm run typecheck`, not `npm test`.
 
@@ -90,5 +90,85 @@ describe('package exports', () => {
         // @ts-expect-error renamed to SelectConfiguration
         type Select = import('@/index').SelectSelectConfiguration;
         expectTypeOf<Behavior | Select>().toBeAny();
+    });
+});
+
+describe('field hooks element type', () => {
+    it('gives inline hooks a form control, so value needs no cast', () => {
+        const field: FieldConfiguration = {
+            name: 'title',
+            io: { get: (el) => el instanceof NodeList ? '' : el.value },
+            behavior: { clear: (el) => { if (!(el instanceof NodeList)) el.value = ''; } },
+        };
+        void field;
+        expectTypeOf<Parameters<NonNullable<FieldHooks['clear']>>[0]>()
+            .toEqualTypeOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | NodeListOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>>();
+    });
+
+    it('narrows the hooks to the element type of the field, which still fits in the form fields', () => {
+        const city: FieldConfiguration<HTMLSelectElement> = {
+            name: 'city',
+            behavior: { clear: (el) => { if (!(el instanceof NodeList)) el.options.length = 0; } },
+            select: { saveData: (els) => { els[0].options.length = 0; } },
+        };
+        const privacy: FieldConfiguration<HTMLInputElement> = {
+            name: 'privacy',
+            io: { get: (els) => els instanceof NodeList ? els[0].checked : els.checked },
+        };
+        expectTypeOf({ id: 'f', fields: [city, privacy] }).toExtend<FormConfiguration>();
+    });
+
+    it('rejects properties the element does not have', () => {
+        const field: FieldConfiguration<HTMLInputElement> = {
+            name: 'privacy',
+            // @ts-expect-error inputs have no options
+            behavior: { clear: (el) => { if (!(el instanceof NodeList)) el.options.length = 0; } },
+        };
+        void field;
+    });
+});
+
+describe('field value type', () => {
+    it('lets io hooks use the value without checks by default', () => {
+        const field: FieldConfiguration = {
+            name: 'tags',
+            io: { set: (el, value) => { if (!(el instanceof NodeList)) el.value = value.join(','); } },
+        };
+        void field;
+    });
+
+    it('checks the value against the type the field states', () => {
+        const tags: FieldConfiguration<HTMLInputElement, string[]> = {
+            name: 'tags',
+            io: { get: () => ['a'], set: (_el, value) => { value.join(','); } },
+        };
+        expectTypeOf({ id: 'f', fields: [tags] }).toExtend<FormConfiguration>();
+        // @ts-expect-error get must return the field value type
+        const wrong: FieldConfiguration<HTMLInputElement, string[]> = { name: 'tags', io: { get: () => 'a' } };
+        void wrong;
+    });
+
+    it('accepts any initial value', () => {
+        expectTypeOf<InitialisationRule['value']>().toEqualTypeOf<unknown>();
+        const init: InitialisationRule[] = [{ name: 'tags', value: ['a'] }, { name: 'privacy', value: true }];
+        void init;
+    });
+});
+
+describe('select options type', () => {
+    it('lets postProcessData read the raw response and requires it to return options', () => {
+        const post: FieldConfiguration = {
+            name: 'post',
+            select: { postProcessData: (_els, data) => data.map((p: { id: number, title: string }) => ({ value: p.id, text: p.title })) },
+        };
+        void post;
+        expectTypeOf<SelectOption>().toEqualTypeOf<{ value: string | number, text: string }>();
+        // @ts-expect-error options need a text
+        const wrong: FieldConfiguration = { name: 'post', select: { postProcessData: () => [{ value: 1 }] } };
+        void wrong;
+    });
+
+    it('gives saveData the options', () => {
+        expectTypeOf<NonNullable<SelectConfiguration['saveData']>>().parameter(1).toEqualTypeOf<SelectOption[]>();
     });
 });
