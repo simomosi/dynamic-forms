@@ -253,9 +253,13 @@ describe('remote call configuration', () => {
         expect(fetchMock).toHaveBeenCalledWith('/posts', { method: 'POST', body: '{"user":"1"}' });
     });
 
-    it('uses fullFetchConfig as is, ignoring method and makeBody', async () => {
+    it('sends the RequestInit returned by fullFetchConfig for the Update Data, ignoring method and makeBody', async () => {
         const fetchMock = stubFetch({ '/posts': postsOfUser1 });
-        const fullFetchConfig = { method: 'PUT', headers: { 'X-Test': '1' } };
+        const received: unknown[] = [];
+        const fullFetchConfig = (data: Record<string, any>) => {
+            received.push({ ...data });
+            return { method: 'PUT', headers: { 'X-Test': '1' }, body: JSON.stringify(data) };
+        };
         mountForm('f', '<input name="user" value="1">' + selectHtml('post'));
         const form = createForm({
             id: 'f',
@@ -265,7 +269,8 @@ describe('remote call configuration', () => {
 
         await form.notify('user');
 
-        expect(fetchMock).toHaveBeenCalledWith('/posts', fullFetchConfig);
+        expect(received).toEqual([{ user: '1' }]);
+        expect(fetchMock).toHaveBeenCalledWith('/posts', { method: 'PUT', headers: { 'X-Test': '1' }, body: '{"user":"1"}' });
     });
 
     it('saves the data transformed by select.postProcessData', async () => {

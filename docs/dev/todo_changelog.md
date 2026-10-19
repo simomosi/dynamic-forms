@@ -16,6 +16,7 @@ Dynamic-forms follows the [semver](https://semver.org) standard.
     - Renamed `FormBehavior` to `FormHooks`, `FieldBehaviorConfiguration` to `FieldHooks`, `FieldIoConfiguration` to `FieldIoHooks`
     - The `data` received by field hooks, `makeUrl`, `makeBody` and `externalData` is `UpdateData` (`Record<string, any>`) instead of `object`, so `data.country` needs no annotation
     - Form hooks and `externalData` receive a `string` subject name, never `null`
+- **Breaking:** `fetch.fullFetchConfig` is a function of the Update Data, `(data) => RequestInit`, instead of a static object, as the documentation already described ([#31](https://github.com/simomosi/dynamic-forms/issues/31)). Wrap an existing object as `fullFetchConfig: () => ({ ... })`
 - `makeForm()` no longer modifies the given configuration: defaults and discovered fields go into an internal copy. Form hooks set to `undefined` fall back to the default instead of throwing
 - Clearing a checkbox unchecks it instead of checking it ([#25](https://github.com/simomosi/dynamic-forms/issues/25))
 - A select filled by a remote call gets an empty option when neither the html nor the data have one ([#26](https://github.com/simomosi/dynamic-forms/issues/26))
