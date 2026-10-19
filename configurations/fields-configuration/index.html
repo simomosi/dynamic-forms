@@ -1468,6 +1468,43 @@
 <h1 id="field-configuration">Field configuration<a class="headerlink" href="#field-configuration" title="Permanent link">#</a></h1>
 <p>This document describes a single field configuration. The field configuration list must be included in the <em>fields</em> section in the <a href="../form-configuration/">form configuration</a>.</p>
 <p>Just specify fields with custom behavior as the standard ones will be discovered and included in the dynamic-form automatically.</p>
+<p>!!! tip "TypeScript"
+    TypeScript cannot see the html, so field hooks receive an <code>HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement</code> (or a <code>NodeList</code> of them) and an <code>any</code> value.
+    State the element and value types on the field to use them without casts:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span></pre></div></td><td class="code"><div><pre><span></span><code>```typescript
+import type { FieldConfiguration } from '@simomosi/dynamic-forms';
+
+const city: FieldConfiguration&lt;HTMLSelectElement&gt; = {
+    name: 'city',
+    behavior: { clear: (htmlElement) =&gt; { if (!(htmlElement instanceof NodeList)) htmlElement.options.length = 0; } },
+};
+const tags: FieldConfiguration&lt;HTMLInputElement, string[]&gt; = {
+    name: 'tags',
+    io: {
+        get: (htmlElement) =&gt; htmlElement instanceof NodeList ? [] : htmlElement.value.split(','),
+        set: (htmlElement, value) =&gt; { if (!(htmlElement instanceof NodeList)) htmlElement.value = value.join(','); },
+    },
+};
+```
+
+The library does not check these types against the html: `FieldConfiguration&lt;HTMLSelectElement&gt;` on an `&lt;input&gt;`, or a hook that leaves out the `NodeList` case, compiles but fails at runtime.
+</code></pre></div></td></tr></table></div>
 <p>Here's a complete single field configuration. You just need to specify the attributes you need, the other will have default values.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Generic element</label><label for="__tabbed_1_2">Select element</label><label for="__tabbed_1_3">Checkbox element</label></div>
 <div class="tabbed-content">
@@ -1574,7 +1611,7 @@
 <p>Function to fetch the html element's value. Useful for custom html elements.</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node</li>
+<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the <code>NodeList</code> in <code>get</code>, <code>set</code> and <code>clear</code>)</li>
 </ul>
 <p>Returns</p>
 <ul>
@@ -1584,7 +1621,7 @@
 <p>Function to set the html element's value. Useful for custom html elements.</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node</li>
+<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the <code>NodeList</code> in <code>get</code>, <code>set</code> and <code>clear</code>)</li>
 <li>{<code>mixed</code>} <code>value</code>: the field's new value</li>
 </ul>
 <p>Returns</p>
@@ -1656,7 +1693,7 @@
 <p>Function to unset the field's current value. Sometimes it is used to clear the field from its content (for input and select types).</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node</li>
+<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the <code>NodeList</code> in <code>get</code>, <code>set</code> and <code>clear</code>)</li>
 </ul>
 <p>Returns</p>
 <ul>
@@ -1667,7 +1704,7 @@
 <p>Default behavior: nothing. For <strong>DynamicSelect</strong> elements it clear the field content if <em>clearOnParentVoid</em> conditions are satisfied.</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node</li>
+<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the <code>NodeList</code> in <code>get</code>, <code>set</code> and <code>clear</code>)</li>
 <li>{<code>JSON</code>} <code>data</code>: data obtained from additionalData and externalData functions in Update Rule Config</li>
 <li>{<code>string | null</code>}: <code>subjectName</code>: the name of the subject who triggered the update. It is null if the update is triggered manually</li>
 </ul>
@@ -1680,7 +1717,7 @@
 <p>Default behavior: nothing. For <strong>DynamicSelect</strong> elements it makes a remote call (using <em>fetch</em>), retrieves new date and saves it as <em>select</em> new content (<em>option</em>).</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node</li>
+<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the <code>NodeList</code> in <code>get</code>, <code>set</code> and <code>clear</code>)</li>
 <li>{<code>JSON</code>} <code>data</code>: data obtained from additionalData and externalData functions in Update Rule Config</li>
 <li>{<code>string | null</code>}: <code>subjectName</code>: the name of the subject who triggered the update. It is null if the update is triggered manually</li>
 </ul>
@@ -1692,7 +1729,7 @@
 <p>Method called after triggering the field's status update.</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node</li>
+<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the <code>NodeList</code> in <code>get</code>, <code>set</code> and <code>clear</code>)</li>
 <li>{<code>JSON</code>} <code>data</code>: data obtained from additionalData and externalData functions in Update Rule Config</li>
 <li>{<code>string | null</code>}: <code>subjectName</code>: the name of the subject who triggered the update. It is null if the update is triggered manually</li>
 </ul>
@@ -1706,20 +1743,20 @@
 <p>Function to process data retrieved by remote call. It is useful for filtering/ordering data.</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node</li>
-<li>{<code>JSON | object[]</code>} <code>data</code>: data retrieved from the remote call</li>
+<li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes</li>
+<li>{<code>JSON</code>} <code>data</code>: data retrieved from the remote call</li>
 </ul>
 <p>Returns</p>
 <ul>
-<li>{<code>JSON | object[]</code>} post-processed data</li>
+<li>{<code>{ value: string | number, text: string }[]</code>} the options to save</li>
 </ul>
 <h3 id="savedata-htmlelement-data"><code>saveData (htmlElement, data)</code><a class="headerlink" href="#savedata-htmlelement-data" title="Permanent link">#</a></h3>
 <p>Function to phisically save (post-processed) data retrieved by a remote call as html.</p>
 <p>Default behavior: saves data as <em>option</em> html elements using <em>value</em> and <em>text</em> properties, creating also empty option if they are not present in retrieved data.</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>node | NodeList</code>} <code>htmlElement</code>: the html node where data will be saved</li>
-<li>{<code>JSON | object[]</code>} <code>data</code>: data retrieved from the remote call</li>
+<li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes where data will be saved</li>
+<li>{<code>{ value: string | number, text: string }[]</code>} <code>data</code>: the options returned by <code>postProcessData</code>, or the data retrieved from the remote call when there is no <code>postProcessData</code></li>
 </ul>
 <p>Returns</p>
 <ul>

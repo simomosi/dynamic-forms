@@ -1166,12 +1166,16 @@
 <li>Renamed <code>FormBehavior</code> to <code>FormHooks</code>, <code>FieldBehaviorConfiguration</code> to <code>FieldHooks</code>, <code>FieldIoConfiguration</code> to <code>FieldIoHooks</code></li>
 <li>The <code>data</code> received by field hooks, <code>makeUrl</code>, <code>makeBody</code> and <code>externalData</code> is <code>UpdateData</code> (<code>Record&lt;string, any&gt;</code>) instead of <code>object</code>, so <code>data.country</code> needs no annotation</li>
 <li>Form hooks and <code>externalData</code> receive a <code>string</code> subject name, never <code>null</code></li>
+<li>Field hooks receive the field element typed as <code>FieldElement</code> (<code>HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement</code>) or a <code>NodeListOf</code> it, instead of <code>HTMLElement | NodeList</code>, so <code>htmlElement.value</code> needs no cast. <code>FieldConfiguration&lt;E, V&gt;</code> states the element and value types of a field (<code>FieldConfiguration&lt;HTMLSelectElement&gt;</code>, <code>FieldConfiguration&lt;HTMLInputElement, string[]&gt;</code>); the value stays <code>any</code> by default</li>
+<li><code>select.postProcessData</code> receives the response as <code>any</code> and returns <code>SelectOption[]</code> (<code>{ value: string | number, text: string }</code>), which <code>select.saveData</code> receives. Both receive the <code>NodeList</code>, as they always did at runtime</li>
+<li><code>InitialisationRule.value</code> is <code>unknown</code> instead of <code>any</code></li>
+<li>Exports <code>FieldElement</code>, <code>FieldHookElement</code> and <code>SelectOption</code> too</li>
 </ul>
 </li>
 <li><strong>Breaking:</strong> <code>fetch.fullFetchConfig</code> is a function of the Update Data, <code>(data) =&gt; RequestInit</code>, instead of a static object, as the documentation already described (<a href="https://github.com/simomosi/dynamic-forms/issues/31">#31</a>). Wrap an existing object as <code>fullFetchConfig: () =&gt; ({ ... })</code></li>
 <li><code>makeForm()</code> no longer modifies the given configuration: defaults and discovered fields go into an internal copy. Form hooks set to <code>undefined</code> fall back to the default instead of throwing</li>
 <li>Clearing a checkbox unchecks it instead of checking it (<a href="https://github.com/simomosi/dynamic-forms/issues/25">#25</a>)</li>
-<li>A select filled by a remote call gets an empty option when neither the html nor the data have one (<a href="https://github.com/simomosi/dynamic-forms/issues/26">#26</a>)</li>
+<li>A select filled by a remote call gets an empty option when neither the html nor the data have one (<a href="https://github.com/simomosi/dynamic-forms/issues/26">#26</a>). An option with value <code>0</code> is not taken for the empty one</li>
 </ul>
 <h4 id="300">3.0.0<a class="headerlink" href="#300" title="Permanent link">#</a></h4>
 <ul>
