@@ -42,16 +42,23 @@
   ],
   "devDependencies": {
     "@mermaid-js/mermaid-cli": "^10.1.0",
+    "@vitest/coverage-v8": "^5.0.5",
+    "jsdom": "^29.1.1",
     "mermaid": "^10.1.0",
     "rollup-plugin-visualizer": "^6.0.1",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
     "vite-plugin-banner": "^0.8.1",
-    "vite-plugin-dts": "^4.5.4"
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^5.0.5"
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "coverage": "vitest run --coverage"
   },
   "sideEffects": false,
   "exports": {
