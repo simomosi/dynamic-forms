@@ -1,3 +1,5 @@
+import { UpdateData } from './FieldConfigurationTypes';
+
 export interface Subject {
     notify: (subjectName: string) => Promise<void>,
     attach: (observer: Observer) => void,
@@ -5,7 +7,7 @@ export interface Subject {
 }
 
 export interface Observer {
-    update: (data: object, subjectName: string|null) => Promise<void>,
+    update: (data: UpdateData, subjectName: string|null) => Promise<void>,
     attach: (subject: Subject) => void,
     // detach: (subject: Subject) => void
 }

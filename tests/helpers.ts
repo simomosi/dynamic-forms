@@ -1,10 +1,6 @@
 import { vi } from 'vitest';
 import { makeForm } from '@/index';
-import { FormConfiguration } from '@/FormConfigurationTypes';
-import { FieldConfiguration } from '@/FieldConfigurationTypes';
-
-/** Form configuration as users actually write it: only `id` is required, the rest is completed by the library. */
-export type PartialFormConfiguration = Partial<FormConfiguration> & { id: string };
+import type { FieldConfiguration, FormConfiguration, UpdateData } from '@/index';
 
 /** Mounts `<form id="...">` with the given inner html into the document and returns it. */
 export function mountForm(id: string, innerHtml: string): HTMLFormElement {
@@ -12,8 +8,8 @@ export function mountForm(id: string, innerHtml: string): HTMLFormElement {
     return document.forms.namedItem(id)!;
 }
 
-export function createForm(config: PartialFormConfiguration) {
-    return makeForm(config as FormConfiguration);
+export function createForm(config: FormConfiguration) {
+    return makeForm(config);
 }
 
 /** Html select with an empty option followed by the given `value: text` options. */
@@ -51,8 +47,8 @@ export function stubFetch(responses: Record<string, unknown> = {}) {
 /**
  * A text field which records every update it receives, to observe the data a subject sends to its observers.
  */
-export function probeField(name = 'probe'): { config: FieldConfiguration, html: string, updates: Array<{ data: any, subjectName: string | null }> } {
-    const updates: Array<{ data: any, subjectName: string | null }> = [];
+export function probeField(name = 'probe'): { config: FieldConfiguration, html: string, updates: Array<{ data: UpdateData, subjectName: string | null }> } {
+    const updates: Array<{ data: UpdateData, subjectName: string | null }> = [];
     return {
         html: `<input type="text" name="${name}">`,
         updates,

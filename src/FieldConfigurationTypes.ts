@@ -1,11 +1,23 @@
+/**
+ * Update Data: the values a field hook, makeUrl, makeBody and externalData receive, keyed by field name.
+ * Holds the subject value, the additionalData values and the externalData result.
+ */
+export type UpdateData = Record<string, any>;
+
+/**
+ * Field configuration. The field kind comes from the html element, so every field accepts every key:
+ * `select` is read only by selects, `checkbox` only by checkboxes.
+ */
 export interface FieldConfiguration {
     name: string,
-    io?: FieldIoConfiguration,
+    io?: FieldIoHooks,
     fetch?: FieldFetchConfiguration,
-    behavior?: FieldBehaviorConfiguration
+    behavior?: FieldHooks,
+    select?: SelectConfiguration,
+    checkbox?: CheckboxConfiguration
 }
 
-export interface FieldIoConfiguration {
+export interface FieldIoHooks {
     event?: string,
     get?: (htmlElement: HTMLElement | NodeList) => any,
     set?: (htmlElement: HTMLElement | NodeList, value: any) => void,
@@ -13,36 +25,24 @@ export interface FieldIoConfiguration {
 
 export interface FieldFetchConfiguration {
     method?: string,
-    makeUrl?: (data: object) => string,
-    makeBody?: (data: object) => any,
+    makeUrl?: (data: UpdateData) => string,
+    makeBody?: (data: UpdateData) => any,
     fullFetchConfig?: object
 }
 
-export interface FieldBehaviorConfiguration {
+export interface FieldHooks {
     clear?: (htmlElement: HTMLElement | NodeList) => void,
-    beforeUpdate?: (htmlElement: HTMLElement | NodeList, data: object, subjectName: string|null) => boolean,
-    updateStatus?: (htmlElement: HTMLElement | NodeList, data: object, subjectName: string|null) => void,
-    afterUpdate?: (htmlElement: HTMLElement | NodeList, data: object, subjectName: string|null) => boolean,
+    beforeUpdate?: (htmlElement: HTMLElement | NodeList, data: UpdateData, subjectName: string|null) => boolean,
+    updateStatus?: (htmlElement: HTMLElement | NodeList, data: UpdateData, subjectName: string|null) => void,
+    afterUpdate?: (htmlElement: HTMLElement | NodeList, data: UpdateData, subjectName: string|null) => boolean,
 }
 
-
-
-export interface SelectConfiguration extends FieldConfiguration {
-    select?: SelectSelectConfiguration
-}
-
-export interface SelectSelectConfiguration {
+export interface SelectConfiguration {
     postProcessData?: (htmlElement: Element | NodeList, data: object[]) => object[],
     saveData?: (htmlElement: Element | NodeList, data: object[]) => void,
     clearOnParentVoid?: boolean
 }
 
-
-
-export interface CheckboxConfiguration extends FieldConfiguration{
-    checkbox?: CheckboxCheckboxConfiguration
-}
-
-export interface CheckboxCheckboxConfiguration {
+export interface CheckboxConfiguration {
     booleanValue?: boolean
 }

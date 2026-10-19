@@ -14,6 +14,29 @@ First, import the module (see [loading guide](./start/loading.md))
 </script>
 ```
 
+### TypeScript
+
+The package exports the configuration types, so configurations can be written in their own files without casts. Only the form `id` is required, the library completes the rest.
+
+```ts
+import { makeForm, type FormConfiguration, type FieldConfiguration } from '@simomosi/dynamic-forms';
+
+const city: FieldConfiguration = {
+    name: 'city',
+    fetch: { makeUrl: (data) => `/cities?country=${data.country}` },
+    select: { clearOnParentVoid: false },
+};
+const configuration: FormConfiguration = {
+    id: 'checkout',
+    fields: [city],
+    rules: [{ name: 'country', update: ['city'] }],
+    behavior: { afterInit: () => console.log('ready') },
+};
+makeForm(configuration);
+```
+
+Exported types: `FormConfiguration`, `FormHooks`, `UpdateRule`, `InitialisationRule`, `FieldConfiguration`, `FieldIoHooks`, `FieldFetchConfiguration`, `FieldHooks`, `SelectConfiguration`, `CheckboxConfiguration`, `UpdateData` and `DynamicForm`.
+
 
 ## Properties
 

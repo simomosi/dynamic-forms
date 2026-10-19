@@ -1,5 +1,5 @@
 import DynamicElement from './DynamicElement';
-import { SelectConfiguration, SelectSelectConfiguration } from './FieldConfigurationTypes';
+import { FieldConfiguration, SelectConfiguration, UpdateData } from './FieldConfigurationTypes';
 
 /**
 * This class represents a select field with dynamic content (like a standard html-select with dynamic options)
@@ -10,7 +10,7 @@ class DynamicSelect extends DynamicElement {
     readonly method: string;
 
     /** @param {object} dropdown - property with select related properties */
-    select: SelectSelectConfiguration;
+    select: SelectConfiguration;
 
     /** @param {object} defaultConfig property with default configuration values */
     static defaultConfig = { // Todo: inherit superclass' defaultConfig
@@ -28,7 +28,7 @@ class DynamicSelect extends DynamicElement {
     /**
     * @inheritdoc
     */
-    constructor(config: SelectConfiguration, htmlElement: NodeList) {
+    constructor(config: FieldConfiguration, htmlElement: NodeList) {
         super(config, htmlElement);
         this.method = this.fetch.method ?? DynamicSelect.defaultConfig.fetch.method;
         this.select = config.select ?? {};
@@ -92,7 +92,7 @@ class DynamicSelect extends DynamicElement {
     *
     * @returns a Promise in fulfilled state when data has been updated
     */
-    protected async updateStatus(data: object, subjectName: string|null): Promise<void> {
+    protected async updateStatus(data: UpdateData, subjectName: string|null): Promise<void> {
         // Custom
         if (this.behavior.updateStatus) {
             return this.behavior.updateStatus(this.htmlElement, data, subjectName);

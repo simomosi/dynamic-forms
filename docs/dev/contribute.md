@@ -69,7 +69,7 @@ classDiagram
     note for dynamicForms "Library entrypoint"
 
     class ConfigurationFixer {
-        +fix(formHtmlElement, formConfiguration) FormConfiguration
+        +fix(formHtmlElement, formConfiguration) ResolvedFormConfiguration
     }
 
     class FieldBuilder {

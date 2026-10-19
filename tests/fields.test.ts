@@ -216,7 +216,7 @@ describe('initialisation errors', () => {
         mountForm('f', '<input name="a">');
         const form = createForm({
             id: 'f',
-            behavior: { beforeInit: () => { throw new Error('beforeInit failed'); } } as any,
+            behavior: { beforeInit: () => { throw new Error('beforeInit failed'); } },
         });
 
         await expect(Promise.race([form.ready(), timeout(50)])).rejects.toThrow('beforeInit failed');
