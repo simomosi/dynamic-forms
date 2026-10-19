@@ -1502,7 +1502,7 @@
 <span class="w">        </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">'GET'</span><span class="p">,</span>
 <span class="w">        </span><span class="nx">makeUrl</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span>
 <span class="w">        </span><span class="nx">makeBody</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// JSON.stringify, formData, text...</span>
-<span class="w">        </span><span class="nx">fullFetchConfig</span><span class="o">:</span><span class="w"> </span><span class="p">{},</span><span class="w"> </span><span class="c1">// Fetch complete configuration</span>
+<span class="w">        </span><span class="nx">fullFetchConfig</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Fetch complete configuration (RequestInit)</span>
 <span class="w">    </span><span class="p">},</span>
 <span class="w">    </span><span class="nx">behavior</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="nx">clear</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Clear field from its content</span>
@@ -1623,6 +1623,7 @@
 </ul>
 <h3 id="fullfetchconfig-data"><code>fullFetchConfig (data)</code><a class="headerlink" href="#fullfetchconfig-data" title="Permanent link">#</a></h3>
 <p>A function to generate the complete Fetch configuration for remote calls.</p>
+<p>Use it when the request needs more than a method and a body, e.g. headers that depend on the field values.</p>
 <p>If this function is defined, the updateStatus default function will ignore <em>fetch.method</em> property and <em>fetch.makeBody</em> function.</p>
 <p>Parameters</p>
 <ul>
@@ -1630,8 +1631,25 @@
 </ul>
 <p>Returns</p>
 <ul>
-<li>{<code>object</code>} The complete Fetch configuration</li>
+<li>{<code>RequestInit</code>} The complete Fetch configuration, passed as is to <code>fetch</code> as its second argument</li>
 </ul>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span>
+<span class="normal">8</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nx">fetch</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">makeUrl</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="s1">'/posts'</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">fullFetchConfig</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">({</span>
+<span class="w">        </span><span class="nx">method</span><span class="o">:</span><span class="w"> </span><span class="s1">'POST'</span><span class="p">,</span>
+<span class="w">        </span><span class="nx">headers</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s1">'Content-Type'</span><span class="o">:</span><span class="w"> </span><span class="s1">'application/json'</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nx">body</span><span class="o">:</span><span class="w"> </span><span class="nb">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">data</span><span class="p">),</span>
+<span class="w">    </span><span class="p">}),</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p><em>Until 3.x <code>fullFetchConfig</code> was a static object. Since 4.0.0 it must be a function: wrap an existing object as <code>fullFetchConfig: () =&gt; ({ ... })</code>.</em></p>
 <h2 id="behavior"><code>behavior</code><a class="headerlink" href="#behavior" title="Permanent link">#</a></h2>
 <p>Object which groups properties related to field behavior.</p>
 <h3 id="clear-htmlelement"><code>clear (htmlElement)</code><a class="headerlink" href="#clear-htmlelement" title="Permanent link">#</a></h3>

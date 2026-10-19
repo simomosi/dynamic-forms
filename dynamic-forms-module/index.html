@@ -635,6 +635,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="How to use it">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#typescript" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TypeScript
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -977,6 +994,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="How to use it">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#typescript" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TypeScript
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1055,6 +1089,37 @@
 <span class="w">    </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">makeForm</span><span class="p">,</span><span class="w"> </span><span class="nx">getForm</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="s1">'@simomosi/dynamic-forms'</span><span class="p">;</span>
 <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
 </code></pre></div></td></tr></table></div>
+<h3 id="typescript">TypeScript<a class="headerlink" href="#typescript" title="Permanent link">#</a></h3>
+<p>The package exports the configuration types, so configurations can be written in their own files without casts. Only the form <code>id</code> is required, the library completes the rest.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">makeForm</span><span class="p">,</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">FormConfiguration</span><span class="p">,</span><span class="w"> </span><span class="kr">type</span><span class="w"> </span><span class="nx">FieldConfiguration</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@simomosi/dynamic-forms'</span><span class="p">;</span>
+
+<span class="kd">const</span><span class="w"> </span><span class="nx">city</span><span class="o">:</span><span class="w"> </span><span class="kt">FieldConfiguration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'city'</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">fetch</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">makeUrl</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="sb">`/cities?country=</span><span class="si">${</span><span class="nx">data</span><span class="p">.</span><span class="nx">country</span><span class="si">}</span><span class="sb">`</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="nx">select</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">clearOnParentVoid</span><span class="o">:</span><span class="w"> </span><span class="kt">false</span><span class="w"> </span><span class="p">},</span>
+<span class="p">};</span>
+<span class="kd">const</span><span class="w"> </span><span class="nx">configuration</span><span class="o">:</span><span class="w"> </span><span class="kt">FormConfiguration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="s1">'checkout'</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">fields</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="nx">city</span><span class="p">],</span>
+<span class="w">    </span><span class="nx">rules</span><span class="o">:</span><span class="w"> </span><span class="p">[{</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'country'</span><span class="p">,</span><span class="w"> </span><span class="nx">update</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="s1">'city'</span><span class="p">]</span><span class="w"> </span><span class="p">}],</span>
+<span class="w">    </span><span class="nx">behavior</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">afterInit</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'ready'</span><span class="p">)</span><span class="w"> </span><span class="p">},</span>
+<span class="p">};</span>
+<span class="nx">makeForm</span><span class="p">(</span><span class="nx">configuration</span><span class="p">);</span>
+</code></pre></div></td></tr></table></div>
+<p>Exported types: <code>FormConfiguration</code>, <code>FormHooks</code>, <code>UpdateRule</code>, <code>InitialisationRule</code>, <code>FieldConfiguration</code>, <code>FieldIoHooks</code>, <code>FieldFetchConfiguration</code>, <code>FieldHooks</code>, <code>SelectConfiguration</code>, <code>CheckboxConfiguration</code>, <code>UpdateData</code> and <code>DynamicForm</code>.</p>
 <h2 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">#</a></h2>
 <h3 id="makeform-formconfiguration"><code>makeForm (formConfiguration)</code><a class="headerlink" href="#makeform-formconfiguration" title="Permanent link">#</a></h3>
 <p>Istantiates a DynamicForm.</p>

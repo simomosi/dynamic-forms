@@ -1042,7 +1042,7 @@
 <pre class="mermaid"><code>classDiagram
 
     class DynamicForm {
-        FormConfiguration config
+        ResolvedFormConfiguration config
         HTMLFormElement htmlElement
         Map❬String DynamicElement❭ entities
         boolean debug
@@ -1051,7 +1051,7 @@
 
         +ready() Promise❬void❭
         +notify(subjectName) Promise❬void❭
-        -fetchAllParameters(rule) object
+        -fetchAllParameters(rule) UpdateData
         -clearCascade(currentSubject) Promise❬void❭
         +manualUpdate(data, subjectName) Promise❬void❭
         -getField(name) DynamicElement
@@ -1069,7 +1069,7 @@
     note for dynamicForms "Library entrypoint"
 
     class ConfigurationFixer {
-        +fix(formHtmlElement, formConfiguration) FormConfiguration
+        +fix(formHtmlElement, formConfiguration) ResolvedFormConfiguration
     }
 
     class FieldBuilder {
