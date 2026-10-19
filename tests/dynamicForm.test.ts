@@ -370,6 +370,22 @@ describe('form behavior', () => {
         expect(afterUpdate).toHaveBeenCalledWith('a');
     });
 
+    it('uses the default for form hooks set to undefined', async () => {
+        const probe = probeField();
+        mountForm('f', '<input name="a" value="1">' + probe.html);
+        const form = createForm({
+            id: 'f',
+            fields: [probe.config],
+            rules: [{ name: 'a', update: ['probe'] }],
+            behavior: { beforeInit: undefined, afterInit: undefined, beforeUpdate: undefined, afterUpdate: undefined },
+        });
+
+        await form.ready();
+        await form.notify('a');
+
+        expect(probe.updates).toEqual([{ data: { a: '1' }, subjectName: 'a' }]);
+    });
+
     it('ignores changes while disabled', async () => {
         const probe = probeField();
         mountForm('f', '<input name="a">' + probe.html);

@@ -65,11 +65,11 @@ class DynamicSelect extends DynamicElement {
      * Method executed before the status update. If it returns false, the update is aborted.
      * If select.clearOnParentVoid is true and the subject value is empty, this method calls the clear function and aborts the update.
      *
-     * @param {object} data data useful to the element's status change
+     * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
      * @returns false to abort the update, true otherwise
      */
-    protected beforeUpdate(data: any, subjectName: string|null): boolean {
+    protected beforeUpdate(data: UpdateData, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.beforeUpdate) {
             return this.behavior.beforeUpdate(this.getHtmlSelectElementOrList(), data, subjectName);
@@ -87,7 +87,7 @@ class DynamicSelect extends DynamicElement {
 
     /**
     * Method which execute a pipeline of instructions to update the select content with dynamic options
-    * @param {object} data data to send with the http request
+    * @param {UpdateData} data data to send with the http request
     * @param {string|null} subjectName name of the subject who changed
     *
     * @returns a Promise in fulfilled state when data has been updated

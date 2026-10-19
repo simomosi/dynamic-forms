@@ -243,7 +243,7 @@ class DynamicForm implements Subject {
     
     /**
     * Method to manual trigger the update function of a subject.
-    * @param {object} data data useful to the element's status change
+    * @param {UpdateData} data data useful to the element's status change
     * @param {string} subjectName name of the changed subject
     * @returns a Promise in fulfilled state when element status has been updated
     */

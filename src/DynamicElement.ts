@@ -113,7 +113,7 @@ class DynamicElement implements Observer {
 
     /**
     * Method which updates the element (observer) status after a change on the observed subject
-    * @param {object} data data useful to the element's status change
+    * @param {UpdateData} data data useful to the element's status change
     * @param {string|null} subjectName name of the changed subject
     *
     * @returns a Promise in fulfilled state when element status has been updated
@@ -130,7 +130,7 @@ class DynamicElement implements Observer {
 
     /**
      * Method executed before the status update. If it returns false, the update is aborted.
-     * @param {object} data data useful to the element's status change
+     * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
      * @returns false to abort the update, true otherwise
      */
@@ -145,7 +145,7 @@ class DynamicElement implements Observer {
 
     /**
      * Method to update the DynamicElement status.
-     * @param {object} data data useful to the element's status change
+     * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
      */
     protected async updateStatus(data: UpdateData, subjectName: string|null): Promise<void> {
@@ -157,7 +157,7 @@ class DynamicElement implements Observer {
 
     /**
      * Method executed after the status update. It is executed also if the update is aborted.
-     * @param {object} data data useful to the element's status change
+     * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
      */
     protected afterUpdate(data: UpdateData, subjectName: string|null): boolean {

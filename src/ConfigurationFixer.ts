@@ -15,7 +15,7 @@ export class ConfigurationFixer {
         const resolved: ResolvedFormConfiguration = {
             id: formConfiguration.id,
             debug: formConfiguration.debug ?? false,
-            behavior: this.fixBehavior(formConfiguration.behavior),
+            behavior: this.fixHooks(formConfiguration.behavior),
             fields: this.addMissingFields(formHtmlElement, formConfiguration.fields),
             rules: formConfiguration.rules ?? [],
             init: formConfiguration.init ?? [],
@@ -40,14 +40,14 @@ export class ConfigurationFixer {
         return resolved;
     }
 
-    private fixBehavior(behavior: Partial<FormHooks>|undefined): FormHooks {
-        const voidBehavior: FormHooks = {
-            beforeInit: () => {},
-            afterInit: () => {},
-            beforeUpdate: () => true,
-            afterUpdate: () => {},
-        }
-        return {...voidBehavior, ...behavior};
+    /** Completes the form hooks with no-op defaults, also replacing hooks explicitly set to undefined */
+    private fixHooks(hooks: Partial<FormHooks> = {}): FormHooks {
+        return {
+            beforeInit: hooks.beforeInit ?? (() => {}),
+            afterInit: hooks.afterInit ?? (() => {}),
+            beforeUpdate: hooks.beforeUpdate ?? (() => true),
+            afterUpdate: hooks.afterUpdate ?? (() => {}),
+        };
     }
 
     /**

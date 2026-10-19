@@ -42,7 +42,7 @@ Here is the UML Class Diagram to help you understand the project structure. Type
 classDiagram
 
     class DynamicForm {
-        FormConfiguration config
+        ResolvedFormConfiguration config
         HTMLFormElement htmlElement
         Map❬String DynamicElement❭ entities
         boolean debug
@@ -51,7 +51,7 @@ classDiagram
 
         +ready() Promise❬void❭
         +notify(subjectName) Promise❬void❭
-        -fetchAllParameters(rule) object
+        -fetchAllParameters(rule) UpdateData
         -clearCascade(currentSubject) Promise❬void❭
         +manualUpdate(data, subjectName) Promise❬void❭
         -getField(name) DynamicElement
