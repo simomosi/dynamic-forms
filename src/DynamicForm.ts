@@ -73,17 +73,10 @@ class DynamicForm implements Subject {
         if (!initFields) {
             return Promise.resolve();
         }
-        return new Promise((resolve, _) => {
-            Promise.resolve()
+        return Promise.resolve()
             .then(() => behavior.beforeInit())
-            .then(() => {
-                return this.initialiseFields(fieldsCollection, initFields, fieldUpdateRules);
-            })
-            .then(() => {
-                behavior.afterInit();
-                resolve();
-            });
-        });
+            .then(() => this.initialiseFields(fieldsCollection, initFields, fieldUpdateRules))
+            .then(() => behavior.afterInit());
     }
     
     private async initialiseFields(fieldsMap: Map<string, DynamicElement>, initFields: InitialisationRule[], fieldUpdateRules: Map<string, UpdateRule[]>): Promise<void> {

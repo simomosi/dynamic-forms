@@ -12,3 +12,5 @@ site/
 nbproject
 
 stats.html
+# Test coverage
+coverage/

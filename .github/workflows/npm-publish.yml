@@ -23,7 +23,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: 'lts/*'
           cache: 'npm'
           registry-url: 'https://registry.npmjs.org/'
 
@@ -41,6 +41,9 @@ jobs:
 
       - name: Verify package can be packed
         run: npm pack --dry-run
+
+      - name: Test
+        run: npm test
 
       - name: Build package
         run: npm run build
