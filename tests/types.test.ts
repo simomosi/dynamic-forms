@@ -58,6 +58,14 @@ describe('update data type', () => {
         expectTypeOf<UpdateData>().toEqualTypeOf<Record<string, any>>();
     });
 
+    it('builds the full fetch configuration from the Update Data', () => {
+        expectTypeOf<NonNullable<FieldConfiguration['fetch']>['fullFetchConfig']>()
+            .toEqualTypeOf<((data: UpdateData) => RequestInit) | undefined>();
+        // @ts-expect-error fullFetchConfig is a function of the Update Data since 4.0.0
+        const field: FieldConfiguration = { name: 'post', fetch: { fullFetchConfig: { method: 'POST' } } };
+        void field;
+    });
+
     it('gives externalData the subject name of its update rule', () => {
         expectTypeOf<NonNullable<UpdateRule['externalData']>>().parameter(1).toEqualTypeOf<string>();
     });

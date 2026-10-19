@@ -104,7 +104,7 @@ class DynamicSelect extends DynamicElement {
         const requestUrl = this.fetch.makeUrl(data);
         let fetchConfig: RequestInit = {};
         if (this.fetch.fullFetchConfig) {
-            fetchConfig = this.fetch.fullFetchConfig;
+            fetchConfig = this.fetch.fullFetchConfig(data);
         } else {
             fetchConfig = {};
             fetchConfig.method = this.method;

@@ -18,7 +18,7 @@ Here's a complete single field configuration. You just need to specify the attri
             method: 'GET',
             makeUrl: (data) => { },
             makeBody: (data) => { }, // JSON.stringify, formData, text...
-            fullFetchConfig: {}, // Fetch complete configuration
+            fullFetchConfig: (data) => { }, // Fetch complete configuration (RequestInit)
         },
         behavior: {
             clear: (htmlElement) => { }, // Clear field from its content
@@ -144,6 +144,8 @@ Returns
 ### `fullFetchConfig (data)`
 A function to generate the complete Fetch configuration for remote calls.
 
+Use it when the request needs more than a method and a body, e.g. headers that depend on the field values.
+
 If this function is defined, the updateStatus default function will ignore *fetch.method* property and *fetch.makeBody* function.
 
 Parameters
@@ -152,7 +154,20 @@ Parameters
 
 Returns
 
-- {`object`} The complete Fetch configuration
+- {`RequestInit`} The complete Fetch configuration, passed as is to `fetch` as its second argument
+
+```javascript
+fetch: {
+    makeUrl: (data) => '/posts',
+    fullFetchConfig: (data) => ({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+    }),
+}
+```
+
+*Until 3.x `fullFetchConfig` was a static object. Since 4.0.0 it must be a function: wrap an existing object as `fullFetchConfig: () => ({ ... })`.*
 
 ## `behavior`
 Object which groups properties related to field behavior.

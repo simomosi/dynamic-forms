@@ -1,5 +1,5 @@
 /**
- * Update Data: the values a field hook, makeUrl, makeBody and externalData receive, keyed by field name.
+ * Update Data: the values a field hook, makeUrl, makeBody, fullFetchConfig and externalData receive, keyed by field name.
  * Holds the subject value, the additionalData values and the externalData result.
  */
 export type UpdateData = Record<string, any>;
@@ -27,7 +27,7 @@ export interface FieldFetchConfiguration {
     method?: string,
     makeUrl?: (data: UpdateData) => string,
     makeBody?: (data: UpdateData) => any,
-    fullFetchConfig?: object
+    fullFetchConfig?: (data: UpdateData) => RequestInit
 }
 
 export interface FieldHooks {
