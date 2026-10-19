@@ -239,13 +239,13 @@
                         switch (subjectName) {
                             case 'visibility-checkbox':
                             if (value === true) {
-                                htmlElement.style.display = "block";
+                                htmlElement[0].style.display = "block";
                             } else {
-                                htmlElement.style.display = "none";
+                                htmlElement[0].style.display = "none";
                             }
                             break;
                             case 'readonly-checkbox':
-                            htmlElement.readOnly = value;
+                            htmlElement[0].readOnly = value;
                             break;
                         }
                     },
@@ -256,7 +256,7 @@
                 behavior: {
                     updateStatus: (htmlElement, data, subjectName) => {
                         let value = parseInt(data[subjectName]);
-                        htmlElement.rows = value;
+                        htmlElement[0].rows = value;
                     },
                 },
             }

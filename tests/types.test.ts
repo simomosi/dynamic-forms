@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest';
 import { makeForm } from '@/index';
-import type { CheckboxConfiguration, DynamicForm, InitialisationRule, SelectOption, FieldConfiguration, FormConfiguration, FormHooks, SelectConfiguration, UpdateData, UpdateRule, FieldHooks } from '@/index';
+import type { CheckboxConfiguration, DynamicForm, InitialisationRule, SelectOption, FieldConfiguration, FormConfiguration, FormHooks, SelectConfiguration, UpdateData, UpdateRule, FieldHooks, FieldIoHooks } from '@/index';
 
 // Type-level specification of the public api: these tests fail `npm run typecheck`, not `npm test`.
 
@@ -84,6 +84,12 @@ describe('package exports', () => {
         expectTypeOf<Resolved>().toBeAny();
     });
 
+    it('does not export FieldHookElement, hooks receive a plain NodeListOf', () => {
+        // @ts-expect-error hooks receive NodeListOf<FieldElement>
+        type HookElement = import('@/index').FieldHookElement;
+        expectTypeOf<HookElement>().toBeAny();
+    });
+
     it('no longer exports the 3.x type names', () => {
         // @ts-expect-error renamed to FormHooks
         type Behavior = import('@/index').FormBehavior;
@@ -94,33 +100,54 @@ describe('package exports', () => {
 });
 
 describe('field hooks element type', () => {
-    it('gives inline hooks a form control, so value needs no cast', () => {
+    it('gives every hook the NodeList of form controls, so value needs no narrowing or cast', () => {
         const field: FieldConfiguration = {
             name: 'title',
-            io: { get: (el) => el instanceof NodeList ? '' : el.value },
-            behavior: { clear: (el) => { if (!(el instanceof NodeList)) el.value = ''; } },
+            io: { get: (els) => els[0].value, set: (els, value) => { els[0].value = value; } },
+            behavior: {
+                clear: (els) => { els[0].value = ''; },
+                beforeUpdate: (els) => els[0].value !== '',
+                updateStatus: (els) => { els[0].disabled = false; },
+                afterUpdate: (els) => els.length > 0,
+            },
         };
         void field;
-        expectTypeOf<Parameters<NonNullable<FieldHooks['clear']>>[0]>()
-            .toEqualTypeOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement | NodeListOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>>();
+        type Controls = NodeListOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
+        expectTypeOf<Parameters<NonNullable<FieldIoHooks['get']>>[0]>().toEqualTypeOf<Controls>();
+        expectTypeOf<Parameters<NonNullable<FieldIoHooks['set']>>[0]>().toEqualTypeOf<Controls>();
+        expectTypeOf<Parameters<NonNullable<FieldHooks['clear']>>[0]>().toEqualTypeOf<Controls>();
+        expectTypeOf<Parameters<NonNullable<FieldHooks['beforeUpdate']>>[0]>().toEqualTypeOf<Controls>();
+        expectTypeOf<Parameters<NonNullable<FieldHooks['updateStatus']>>[0]>().toEqualTypeOf<Controls>();
+        expectTypeOf<Parameters<NonNullable<FieldHooks['afterUpdate']>>[0]>().toEqualTypeOf<Controls>();
+        expectTypeOf<Parameters<NonNullable<SelectConfiguration['postProcessData']>>[0]>().toEqualTypeOf<Controls>();
+        expectTypeOf<Parameters<NonNullable<SelectConfiguration['saveData']>>[0]>().toEqualTypeOf<Controls>();
+    });
+
+    it('no longer gives hooks the single element', () => {
+        const field: FieldConfiguration = {
+            name: 'title',
+            // @ts-expect-error hooks receive the NodeList, even for a single element
+            io: { get: (el) => el.value },
+        };
+        void field;
     });
 
     it('narrows the hooks to the element type of the field, which still fits in the form fields', () => {
         const city: FieldConfiguration<HTMLSelectElement> = {
             name: 'city',
-            behavior: { clear: (el) => { if (!(el instanceof NodeList)) el.options.length = 0; } },
+            behavior: { clear: (els) => { els[0].options.length = 0; } },
             select: { saveData: (els) => { els[0].options.length = 0; } },
         };
         const privacy: FieldConfiguration<HTMLInputElement> = {
             name: 'privacy',
-            io: { get: (els) => els instanceof NodeList ? els[0].checked : els.checked },
+            io: { get: (els) => els[0].checked },
         };
         expectTypeOf({ id: 'f', fields: [city, privacy] }).toExtend<FormConfiguration>();
     });
 
     it('accepts hooks annotated with a narrower element, unchecked against the html', () => {
         // The price of declaring hooks as methods, which lets FieldConfiguration<HTMLSelectElement> fit in the form fields
-        const field: FieldConfiguration = { name: 'city', behavior: { clear: (el: HTMLSelectElement) => { el.options.length = 0; } } };
+        const field: FieldConfiguration = { name: 'city', behavior: { clear: (els: NodeListOf<HTMLSelectElement>) => { els[0].options.length = 0; } } };
         expectTypeOf({ id: 'f', fields: [field] }).toExtend<FormConfiguration>();
     });
 
@@ -128,7 +155,7 @@ describe('field hooks element type', () => {
         const field: FieldConfiguration<HTMLInputElement> = {
             name: 'privacy',
             // @ts-expect-error inputs have no options
-            behavior: { clear: (el) => { if (!(el instanceof NodeList)) el.options.length = 0; } },
+            behavior: { clear: (els) => { els[0].options.length = 0; } },
         };
         void field;
     });
@@ -138,7 +165,7 @@ describe('field value type', () => {
     it('lets io hooks use the value without checks by default', () => {
         const field: FieldConfiguration = {
             name: 'tags',
-            io: { set: (el, value) => { if (!(el instanceof NodeList)) el.value = value.join(','); } },
+            io: { set: (els, value) => { els[0].value = value.join(','); } },
         };
         void field;
     });

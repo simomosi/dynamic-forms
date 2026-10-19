@@ -1,4 +1,4 @@
-import { FieldHooks, FieldConfiguration, FieldElement, FieldHookElement, FieldFetchConfiguration, FieldIoHooks, UpdateData } from './FieldConfigurationTypes';
+import { FieldHooks, FieldConfiguration, FieldElement, FieldFetchConfiguration, FieldIoHooks, UpdateData } from './FieldConfigurationTypes';
 import { Observer, Subject } from './ObserverPatternTypes';
 
 /**
@@ -9,7 +9,7 @@ class DynamicElement implements Observer {
     /** @param {object} config - the element configuration */
     readonly config: FieldConfiguration;
 
-    /** @param {NodeList} htmlElement - the HTML Element returned by querySelectorAll. If more than one exists, the element is a NodeList */
+    /** @param {NodeList} htmlElement - the HTML Elements returned by querySelectorAll, which every hook receives */
     readonly htmlElement: NodeListOf<FieldElement>;
 
     /** @param {string} name - the element name */
@@ -56,13 +56,6 @@ class DynamicElement implements Observer {
         }
     }
 
-    protected getHtmlElementOrList(): FieldHookElement {
-        if (this.htmlElement.length === 1) {
-            return this.htmlElement[0];
-        }
-        return this.htmlElement;
-    }
-
     public attach(subject: Subject): void {
         this.htmlElement.forEach(current => {
             current.addEventListener(this.event, (e) => { subject.notify((e.target as HTMLInputElement).name).catch(console.error); });
@@ -76,7 +69,7 @@ class DynamicElement implements Observer {
     public get(): any {
         // Custom
         if (this.io.get) {
-            return this.io.get(this.getHtmlElementOrList());
+            return this.io.get(this.htmlElement);
         }
         // Standard
         const firstElement = this.htmlElement[0] as HTMLInputElement;
@@ -90,7 +83,7 @@ class DynamicElement implements Observer {
     public set(value: string): void {
         // Custom
         if (this.io.set) {
-            return this.io.set(this.getHtmlElementOrList(), value);
+            return this.io.set(this.htmlElement, value);
         }
         // Standard
         const firstElement = this.htmlElement[0] as HTMLInputElement;
@@ -104,7 +97,7 @@ class DynamicElement implements Observer {
     public clear(): void {
         // Custom
         if (this.behavior.clear) {
-            return this.behavior.clear(this.getHtmlElementOrList());
+            return this.behavior.clear(this.htmlElement);
         }
         // Standard
         const firstElement = this.htmlElement[0] as HTMLInputElement;
@@ -137,7 +130,7 @@ class DynamicElement implements Observer {
     protected beforeUpdate(data: UpdateData, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.beforeUpdate) {
-            return this.behavior.beforeUpdate(this.getHtmlElementOrList(), data, subjectName);
+            return this.behavior.beforeUpdate(this.htmlElement, data, subjectName);
         }
         // Standard
         return true; // Does not block field update
@@ -151,7 +144,7 @@ class DynamicElement implements Observer {
     protected async updateStatus(data: UpdateData, subjectName: string|null): Promise<void> {
         // Custom
         if (this.behavior.updateStatus) {
-            return this.behavior.updateStatus(this.getHtmlElementOrList(), data, subjectName);
+            return this.behavior.updateStatus(this.htmlElement, data, subjectName);
         }
     }
 
@@ -163,7 +156,7 @@ class DynamicElement implements Observer {
     protected afterUpdate(data: UpdateData, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.afterUpdate) {
-            return this.behavior.afterUpdate(this.getHtmlElementOrList(), data, subjectName);
+            return this.behavior.afterUpdate(this.htmlElement, data, subjectName);
         }
         // Standard
         return true; // Standard behavior: returns positive value

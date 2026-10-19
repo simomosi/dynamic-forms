@@ -54,16 +54,15 @@ describe('generic input', () => {
     it('uses the custom io.get, io.set and behavior.clear', async () => {
         const get = vi.fn(() => 'custom');
         expect(await valueSentBy('a', '<input name="a">', { io: { get } })).toBe('custom');
-        expect(get).toHaveBeenCalledWith(field('a'));
 
         const set = vi.fn();
         mountForm('f', '<input name="a">');
         await createForm({ id: 'f', fields: [{ name: 'a', io: { set } }], init: [{ name: 'a', value: 'v' }] }).ready();
-        expect(set).toHaveBeenCalledWith(field('a'), 'v');
+        expect(set).toHaveBeenCalledWith(expect.any(NodeList), 'v');
 
         const clear = vi.fn();
         await clearViaCascade('a', '<input name="a" value="hello">', { behavior: { clear } });
-        expect(clear).toHaveBeenCalledWith(field('a'));
+        expect(clear).toHaveBeenCalled();
         expect(field('a').value).toBe('hello');
     });
 });
@@ -119,13 +118,6 @@ describe('radio group', () => {
         await clearViaCascade('r', radios.replace('value="a"', 'value="a" checked'));
 
         expect(document.querySelectorAll('[name=r]:checked')).toHaveLength(0);
-    });
-
-    it('passes the whole NodeList to the custom io.get', async () => {
-        const get = vi.fn(() => 'custom');
-
-        expect(await valueSentBy('r', radios, { io: { get } })).toBe('custom');
-        expect(get).toHaveBeenCalledWith(expect.any(NodeList));
     });
 });
 
@@ -222,6 +214,66 @@ describe('select', () => {
         field('parent').dispatchEvent(new Event('change'));
 
         await vi.waitFor(() => expect(consoleError).toHaveBeenCalled());
+    });
+});
+
+describe('field hooks', () => {
+    /** Calls every hook of field `name`, mounted from `html`, and returns the element argument of each call. */
+    async function hookElements(name: string, html: string) {
+        const received: Record<string, unknown> = {};
+        const record = (hook: string) => (el: unknown) => { received[hook] = el; return true; };
+        const config = {
+            io: { get: record('get'), set: record('set') },
+            behavior: {
+                clear: record('clear'),
+                beforeUpdate: record('beforeUpdate'),
+                updateStatus: record('updateStatus'),
+                afterUpdate: record('afterUpdate'),
+            },
+        };
+        await valueSentBy(name, html, config);
+        mountForm('f', '<input name="parent">' + html);
+        const form = createForm({ id: 'f', fields: [{ name, ...config }], rules: [{ name: 'parent', update: [name] }], init: [{ name, value: 'v' }] });
+        await form.ready();
+        await form.notify('parent');
+        await clearViaCascade(name, html, config);
+        return received;
+    }
+
+    it.each([
+        ['text input', '<input name="x">'],
+        ['textarea', '<textarea name="x"></textarea>'],
+        ['select', selectHtml('x', { '1': 'One' })],
+        ['checkbox', '<input type="checkbox" name="x">'],
+        ['radio', '<input type="radio" name="x" value="a">'],
+        ['radio group', '<input type="radio" name="x" value="a"><input type="radio" name="x" value="b">'],
+    ])('receive the NodeList of every %s element with the field name', async (_kind, html) => {
+        const received = await hookElements('x', html);
+
+        const hooks = ['get', 'set', 'clear', 'beforeUpdate', 'updateStatus', 'afterUpdate'];
+        expect(Object.keys(received).sort()).toEqual([...hooks].sort());
+        for (const hook of hooks) {
+            const el = received[hook];
+            expect(el, hook).toBeInstanceOf(NodeList);
+            expect(Array.from(el as NodeList), hook).toEqual(Array.from(document.getElementsByName('x')));
+        }
+    });
+
+    it('give select postProcessData and saveData the NodeList', async () => {
+        stubFetch({ '/s': [{ value: '1', text: 'One' }] });
+        const postProcessData = vi.fn((_els, data) => data);
+        const saveData = vi.fn();
+        mountForm('f', '<input name="parent" value="x">' + selectHtml('s'));
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 's', fetch: { makeUrl: () => '/s' }, select: { postProcessData, saveData } }],
+            rules: [{ name: 'parent', update: ['s'] }],
+        });
+
+        await form.notify('parent');
+
+        expect(postProcessData).toHaveBeenCalledWith(expect.any(NodeList), [{ value: '1', text: 'One' }]);
+        expect(saveData).toHaveBeenCalledWith(expect.any(NodeList), [{ value: '1', text: 'One' }]);
     });
 });
 
