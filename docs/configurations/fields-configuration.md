@@ -3,8 +3,10 @@ This document describes a single field configuration. The field configuration li
 
 Just specify fields with custom behavior as the standard ones will be discovered and included in the dynamic-form automatically.
 
+Every hook receives `htmlElement` as the `NodeList` of all the html elements with the field name, even when there is only one: read a single input with `htmlElement[0].value`.
+
 !!! tip "TypeScript"
-    TypeScript cannot see the html, so field hooks receive an `HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement` (or a `NodeList` of them) and an `any` value.
+    TypeScript cannot see the html, so field hooks receive a `NodeListOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>` and an `any` value.
     State the element and value types on the field to use them without casts:
 
     ```typescript
@@ -12,18 +14,18 @@ Just specify fields with custom behavior as the standard ones will be discovered
 
     const city: FieldConfiguration<HTMLSelectElement> = {
         name: 'city',
-        behavior: { clear: (htmlElement) => { if (!(htmlElement instanceof NodeList)) htmlElement.options.length = 0; } },
+        behavior: { clear: (htmlElement) => { htmlElement[0].options.length = 0; } },
     };
     const tags: FieldConfiguration<HTMLInputElement, string[]> = {
         name: 'tags',
         io: {
-            get: (htmlElement) => htmlElement instanceof NodeList ? [] : htmlElement.value.split(','),
-            set: (htmlElement, value) => { if (!(htmlElement instanceof NodeList)) htmlElement.value = value.join(','); },
+            get: (htmlElement) => htmlElement[0].value.split(','),
+            set: (htmlElement, value) => { htmlElement[0].value = value.join(','); },
         },
     };
     ```
 
-    The library does not check these types against the html: `FieldConfiguration<HTMLSelectElement>` on an `<input>`, or a hook that leaves out the `NodeList` case, compiles but fails at runtime.
+    The library does not check these types against the html: `FieldConfiguration<HTMLSelectElement>` on an `<input>` compiles but fails at runtime.
 
 Here's a complete single field configuration. You just need to specify the attributes you need, the other will have default values.
 
@@ -104,7 +106,7 @@ Function to fetch the html element's value. Useful for custom html elements.
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the `NodeList` in `get`, `set` and `clear`)
+- {`NodeList`} `htmlElement`: the html nodes with the field name
 
 Returns
 
@@ -115,7 +117,7 @@ Function to set the html element's value. Useful for custom html elements.
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the `NodeList` in `get`, `set` and `clear`)
+- {`NodeList`} `htmlElement`: the html nodes with the field name
 - {`mixed`} `value`: the field's new value
 
 Returns
@@ -199,7 +201,7 @@ Function to unset the field's current value. Sometimes it is used to clear the f
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the `NodeList` in `get`, `set` and `clear`)
+- {`NodeList`} `htmlElement`: the html nodes with the field name
 
 Returns
 
@@ -213,7 +215,7 @@ Default behavior: nothing. For **DynamicSelect** elements it clear the field con
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the `NodeList` in `get`, `set` and `clear`)
+- {`NodeList`} `htmlElement`: the html nodes with the field name
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 - {`string | null`}: `subjectName`: the name of the subject who triggered the update. It is null if the update is triggered manually
 
@@ -228,7 +230,7 @@ Default behavior: nothing. For **DynamicSelect** elements it makes a remote call
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the `NodeList` in `get`, `set` and `clear`)
+- {`NodeList`} `htmlElement`: the html nodes with the field name
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 - {`string | null`}: `subjectName`: the name of the subject who triggered the update. It is null if the update is triggered manually
 
@@ -241,7 +243,7 @@ Method called after triggering the field's status update.
 
 Parameters
 
-- {`node | NodeList`} `htmlElement`: the html node, or all the nodes when more elements share the field name (checkboxes and radios always receive the `NodeList` in `get`, `set` and `clear`)
+- {`NodeList`} `htmlElement`: the html nodes with the field name
 - {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
 - {`string | null`}: `subjectName`: the name of the subject who triggered the update. It is null if the update is triggered manually
 
@@ -257,7 +259,7 @@ Function to process data retrieved by remote call. It is useful for filtering/or
 
 Parameters
 
-- {`NodeList`} `htmlElement`: the html nodes
+- {`NodeList`} `htmlElement`: the html nodes with the field name
 - {`JSON`} `data`: data retrieved from the remote call
 
 Returns
@@ -271,7 +273,7 @@ Default behavior: saves data as *option* html elements using *value* and *text* 
 
 Parameters
 
-- {`NodeList`} `htmlElement`: the html nodes where data will be saved
+- {`NodeList`} `htmlElement`: the html nodes with the field name, where data will be saved
 - {`{ value: string | number, text: string }[]`} `data`: the options returned by `postProcessData`, or the data retrieved from the remote call when there is no `postProcessData`
 
 Returns

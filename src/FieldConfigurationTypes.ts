@@ -8,12 +8,6 @@ export type UpdateData = Record<string, any>;
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 /**
- * What a field hook receives: the field element, or all of them when more elements share the field name
- * (checkbox and radio io hooks and clear always receive them). Narrow with `instanceof NodeList`.
- */
-export type FieldHookElement<E extends FieldElement = FieldElement> = E | NodeListOf<E>;
-
-/**
  * Field configuration. The field kind comes from the html element, so every field accepts every key:
  * `select` is read only by selects, `checkbox` only by checkboxes.
  * TypeScript cannot see the html, so `E` states the element type the hooks receive
@@ -28,11 +22,12 @@ export interface FieldConfiguration<E extends FieldElement = FieldElement, V = a
     checkbox?: CheckboxConfiguration
 }
 
+// Every hook receives all the elements sharing the field name, even when there is only one.
 // Hooks are declared as methods, so a FieldConfiguration<HTMLSelectElement> is still a FieldConfiguration.
 export interface FieldIoHooks<E extends FieldElement = FieldElement, V = any> {
     event?: string,
-    get?(htmlElement: FieldHookElement<E>): V,
-    set?(htmlElement: FieldHookElement<E>, value: V): void,
+    get?(htmlElement: NodeListOf<E>): V,
+    set?(htmlElement: NodeListOf<E>, value: V): void,
 }
 
 export interface FieldFetchConfiguration {
@@ -43,10 +38,10 @@ export interface FieldFetchConfiguration {
 }
 
 export interface FieldHooks<E extends FieldElement = FieldElement> {
-    clear?(htmlElement: FieldHookElement<E>): void,
-    beforeUpdate?(htmlElement: FieldHookElement<E>, data: UpdateData, subjectName: string|null): boolean,
-    updateStatus?(htmlElement: FieldHookElement<E>, data: UpdateData, subjectName: string|null): void,
-    afterUpdate?(htmlElement: FieldHookElement<E>, data: UpdateData, subjectName: string|null): boolean,
+    clear?(htmlElement: NodeListOf<E>): void,
+    beforeUpdate?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null): boolean,
+    updateStatus?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null): void,
+    afterUpdate?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null): boolean,
 }
 
 /** One of the Options a select shows: the default saveData writes it as `<option value="value">text</option>`. */
@@ -55,7 +50,6 @@ export interface SelectOption {
     text: string
 }
 
-/** Select hooks always receive all the elements sharing the field name. */
 export interface SelectConfiguration<E extends FieldElement = FieldElement> {
     /** Receives the remote call response as parsed json, and returns the Options to save. */
     postProcessData?(htmlElement: NodeListOf<E>, data: any): SelectOption[],
