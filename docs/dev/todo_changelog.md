@@ -10,6 +10,13 @@ Dynamic-forms follows the [semver](https://semver.org) standard.
 
 - **Breaking:** `form.notify()` rejects when a select's remote call fails, instead of logging the error and resolving. `form.ready()` rejects too when an initialisation remote call fails ([#27](https://github.com/simomosi/dynamic-forms/issues/27)). Changes triggered by the user still log the error to the console
 - `form.ready()` rejects when initialisation fails (e.g. `beforeInit` throws), instead of never settling ([#28](https://github.com/simomosi/dynamic-forms/issues/28))
+- **Breaking (TypeScript):** public types reworked so configurations need no casts. The package now exports `FormConfiguration`, `FormHooks`, `UpdateRule`, `InitialisationRule`, `FieldConfiguration`, `FieldIoHooks`, `FieldFetchConfiguration`, `FieldHooks`, `SelectConfiguration`, `CheckboxConfiguration`, `UpdateData` and the `DynamicForm` type
+    - `FormConfiguration` requires only `id`, and `behavior` accepts any subset of the form hooks
+    - `FieldConfiguration` has the `select` and `checkbox` keys; the former `SelectConfiguration`/`CheckboxConfiguration` interfaces extending it are gone, and the names now belong to the former `SelectSelectConfiguration`/`CheckboxCheckboxConfiguration`
+    - Renamed `FormBehavior` to `FormHooks`, `FieldBehaviorConfiguration` to `FieldHooks`, `FieldIoConfiguration` to `FieldIoHooks`
+    - The `data` received by field hooks, `makeUrl`, `makeBody` and `externalData` is `UpdateData` (`Record<string, any>`) instead of `object`, so `data.country` needs no annotation
+    - Form hooks and `externalData` receive a `string` subject name, never `null`
+- `makeForm()` no longer modifies the given configuration: defaults and discovered fields go into an internal copy. Form hooks set to `undefined` fall back to the default instead of throwing
 - Clearing a checkbox unchecks it instead of checking it ([#25](https://github.com/simomosi/dynamic-forms/issues/25))
 - A select filled by a remote call gets an empty option when neither the html nor the data have one ([#26](https://github.com/simomosi/dynamic-forms/issues/26))
 

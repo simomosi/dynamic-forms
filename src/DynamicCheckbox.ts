@@ -1,5 +1,5 @@
 import DynamicElement from './DynamicElement';
-import { CheckboxCheckboxConfiguration, CheckboxConfiguration } from './FieldConfigurationTypes';
+import { CheckboxConfiguration, FieldConfiguration } from './FieldConfigurationTypes';
 
 /**
  * This class represents a Checkbox in a form.
@@ -7,7 +7,7 @@ import { CheckboxCheckboxConfiguration, CheckboxConfiguration } from './FieldCon
 class DynamicCheckbox extends DynamicElement {
 
     /** @param {object} checkbox - property with checkbox related properties */
-    checkbox: CheckboxCheckboxConfiguration;
+    checkbox: CheckboxConfiguration;
 
     /** @param {JSON} defaultConfig - property with default configuration values */
     static defaultConfig = { // Todo: inherit superclass' defaultConfig ?
@@ -20,7 +20,7 @@ class DynamicCheckbox extends DynamicElement {
     }
 
     /** @inheritdoc */
-    constructor(config: CheckboxConfiguration, htmlElement: NodeList) {
+    constructor(config: FieldConfiguration, htmlElement: NodeList) {
         super(config, htmlElement);
         this.checkbox = config.checkbox ?? {};
     }

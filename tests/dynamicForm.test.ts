@@ -13,8 +13,8 @@ function mountProgressiveForm(id = 'progressive') {
         id,
         fields: [
             { name: 'user', fetch: { makeUrl: () => '/users' } },
-            { name: 'post', fetch: { makeUrl: (data: any) => `/posts?userId=${data.user}` } },
-            { name: 'comment', fetch: { makeUrl: (data: any) => `/comments?postId=${data.post}` } },
+            { name: 'post', fetch: { makeUrl: (data) => `/posts?userId=${data.user}` } },
+            { name: 'comment', fetch: { makeUrl: (data) => `/comments?postId=${data.post}` } },
         ],
         rules: [
             { name: 'user', update: ['post'] },
@@ -72,6 +72,15 @@ describe('makeForm / getForm', () => {
         await form.notify('discovered');
 
         expect(probe.updates).toEqual([{ data: { discovered: 'hello' }, subjectName: 'discovered' }]);
+    });
+
+    it('does not modify the given configuration', () => {
+        mountForm('f', '<input name="discovered">');
+        const config = { id: 'f', fields: [] };
+
+        createForm(config);
+
+        expect(config).toEqual({ id: 'f', fields: [] });
     });
 });
 
@@ -151,7 +160,7 @@ describe('progressive filtering', () => {
         mountForm('f', selectHtml('user') + selectHtml('post'));
         const form = createForm({
             id: 'f',
-            fields: [{ name: 'post', fetch: { makeUrl: (data: any) => `/posts?userId=${data.user}` }, select: { clearOnParentVoid: false } } as any],
+            fields: [{ name: 'post', fetch: { makeUrl: (data) => `/posts?userId=${data.user}` }, select: { clearOnParentVoid: false } }],
             rules: [{ name: 'user', update: ['post'] }],
         });
 
@@ -235,7 +244,7 @@ describe('remote call configuration', () => {
         mountForm('f', '<input name="user" value="1">' + selectHtml('post'));
         const form = createForm({
             id: 'f',
-            fields: [{ name: 'post', fetch: { method: 'POST', makeUrl: () => '/posts', makeBody: (data: any) => JSON.stringify(data) } }],
+            fields: [{ name: 'post', fetch: { method: 'POST', makeUrl: () => '/posts', makeBody: (data) => JSON.stringify(data) } }],
             rules: [{ name: 'user', update: ['post'] }],
         });
 
@@ -267,8 +276,8 @@ describe('remote call configuration', () => {
             fields: [{
                 name: 'post',
                 fetch: { makeUrl: () => '/posts' },
-                select: { postProcessData: (_el: any, data: any[]) => data.map(p => ({ value: String(p.id), text: p.title })) },
-            } as any],
+                select: { postProcessData: (_el, data: any[]) => data.map(p => ({ value: String(p.id), text: p.title })) },
+            }],
             rules: [{ name: 'user', update: ['post'] }],
         });
 
@@ -283,7 +292,7 @@ describe('remote call configuration', () => {
         mountForm('f', '<input name="user" value="1">' + selectHtml('post'));
         const form = createForm({
             id: 'f',
-            fields: [{ name: 'post', fetch: { makeUrl: () => '/posts' }, select: { saveData } } as any],
+            fields: [{ name: 'post', fetch: { makeUrl: () => '/posts' }, select: { saveData } }],
             rules: [{ name: 'user', update: ['post'] }],
         });
 
@@ -336,7 +345,7 @@ describe('form behavior', () => {
             behavior: {
                 beforeUpdate: (name: string) => { calls.push(`before:${name}`); return true; },
                 afterUpdate: (name: string) => { calls.push(`after:${name}`); },
-            } as any,
+            },
         });
 
         await form.notify('a');
@@ -352,13 +361,29 @@ describe('form behavior', () => {
             id: 'f',
             fields: [probe.config],
             rules: [{ name: 'a', update: ['probe'] }],
-            behavior: { beforeUpdate: () => false, afterUpdate } as any,
+            behavior: { beforeUpdate: () => false, afterUpdate },
         });
 
         await form.notify('a');
 
         expect(probe.updates).toEqual([]);
         expect(afterUpdate).toHaveBeenCalledWith('a');
+    });
+
+    it('uses the default for form hooks set to undefined', async () => {
+        const probe = probeField();
+        mountForm('f', '<input name="a" value="1">' + probe.html);
+        const form = createForm({
+            id: 'f',
+            fields: [probe.config],
+            rules: [{ name: 'a', update: ['probe'] }],
+            behavior: { beforeInit: undefined, afterInit: undefined, beforeUpdate: undefined, afterUpdate: undefined },
+        });
+
+        await form.ready();
+        await form.notify('a');
+
+        expect(probe.updates).toEqual([{ data: { a: '1' }, subjectName: 'a' }]);
     });
 
     it('ignores changes while disabled', async () => {
@@ -431,7 +456,7 @@ describe('initialisation', () => {
         mountForm('f', '<input name="a">');
         const form = createForm({
             id: 'f',
-            behavior: { beforeInit: () => { calls.push('beforeInit'); }, afterInit: () => { calls.push('afterInit'); } } as any,
+            behavior: { beforeInit: () => { calls.push('beforeInit'); }, afterInit: () => { calls.push('afterInit'); } },
         });
 
         await form.ready();
@@ -451,15 +476,15 @@ describe('initialisation', () => {
             id: 'init',
             fields: [
                 { name: 'user', fetch: { makeUrl: () => '/users' } },
-                { name: 'post', fetch: { makeUrl: (data: any) => `/posts?userId=${data.user}` } },
-                { name: 'comment', fetch: { makeUrl: (data: any) => `/comments?postId=${data.post}` } },
+                { name: 'post', fetch: { makeUrl: (data) => `/posts?userId=${data.user}` } },
+                { name: 'comment', fetch: { makeUrl: (data) => `/comments?postId=${data.post}` } },
             ],
             rules: [
                 { name: 'user', update: ['post'] },
                 { name: 'post', update: ['comment'] },
             ],
             init: [{ name: 'user', value: '1' }, { name: 'post', value: '10' }],
-            behavior: { beforeInit: () => { calls.push('beforeInit'); }, afterInit: () => { calls.push('afterInit'); } } as any,
+            behavior: { beforeInit: () => { calls.push('beforeInit'); }, afterInit: () => { calls.push('afterInit'); } },
         });
 
         await form.ready();

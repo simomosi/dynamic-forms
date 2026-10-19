@@ -1,4 +1,4 @@
-import { FieldBehaviorConfiguration, FieldConfiguration, FieldFetchConfiguration, FieldIoConfiguration } from './FieldConfigurationTypes';
+import { FieldHooks, FieldConfiguration, FieldFetchConfiguration, FieldIoHooks, UpdateData } from './FieldConfigurationTypes';
 import { Observer, Subject } from './ObserverPatternTypes';
 
 /**
@@ -15,14 +15,14 @@ class DynamicElement implements Observer {
     /** @param {string} name - the element name */
     readonly name: string;
 
-    /** @param {FieldIoConfiguration} io - object which groups some properties related to field input/output */
-    io: FieldIoConfiguration;
+    /** @param {FieldIoHooks} io - the field io hooks */
+    io: FieldIoHooks;
 
     /** @param {FieldFetchConfiguration} fetch - object which groups some properties related to remote calls */
     fetch: FieldFetchConfiguration;
 
-    /** @param {FieldBehaviorConfiguration} behavior - object which groups some properties related to field behavior */
-    behavior: FieldBehaviorConfiguration;
+    /** @param {FieldHooks} behavior - the field hooks */
+    behavior: FieldHooks;
 
     /** @param {string} event - the event to listen to */
     event: string;
@@ -113,14 +113,14 @@ class DynamicElement implements Observer {
 
     /**
     * Method which updates the element (observer) status after a change on the observed subject
-    * @param {object} data data useful to the element's status change
+    * @param {UpdateData} data data useful to the element's status change
     * @param {string|null} subjectName name of the changed subject
     *
     * @returns a Promise in fulfilled state when element status has been updated
     *
     * @async
     */
-    public async update(data: object, subjectName: string|null): Promise<void> {
+    public async update(data: UpdateData, subjectName: string|null): Promise<void> {
         const beforeUpdateResult = this.beforeUpdate(data, subjectName);
         if (beforeUpdateResult !== false) {
             await this.updateStatus(data, subjectName);
@@ -130,11 +130,11 @@ class DynamicElement implements Observer {
 
     /**
      * Method executed before the status update. If it returns false, the update is aborted.
-     * @param {object} data data useful to the element's status change
+     * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
      * @returns false to abort the update, true otherwise
      */
-    protected beforeUpdate(data: object, subjectName: string|null): boolean {
+    protected beforeUpdate(data: UpdateData, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.beforeUpdate) {
             return this.behavior.beforeUpdate(this.getHtmlInputElementOrList(), data, subjectName);
@@ -145,10 +145,10 @@ class DynamicElement implements Observer {
 
     /**
      * Method to update the DynamicElement status.
-     * @param {object} data data useful to the element's status change
+     * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
      */
-    protected async updateStatus(data: object, subjectName: string|null): Promise<void> {
+    protected async updateStatus(data: UpdateData, subjectName: string|null): Promise<void> {
         // Custom
         if (this.behavior.updateStatus) {
             return this.behavior.updateStatus(this.getHtmlInputElementOrList(), data, subjectName);
@@ -157,10 +157,10 @@ class DynamicElement implements Observer {
 
     /**
      * Method executed after the status update. It is executed also if the update is aborted.
-     * @param {object} data data useful to the element's status change
+     * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
      */
-    protected afterUpdate(data: object, subjectName: string|null): boolean {
+    protected afterUpdate(data: UpdateData, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.afterUpdate) {
             return this.behavior.afterUpdate(this.getHtmlInputElementOrList(), data, subjectName);

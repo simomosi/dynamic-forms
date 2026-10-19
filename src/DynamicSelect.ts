@@ -1,5 +1,5 @@
 import DynamicElement from './DynamicElement';
-import { SelectConfiguration, SelectSelectConfiguration } from './FieldConfigurationTypes';
+import { FieldConfiguration, SelectConfiguration, UpdateData } from './FieldConfigurationTypes';
 
 /**
 * This class represents a select field with dynamic content (like a standard html-select with dynamic options)
@@ -10,7 +10,7 @@ class DynamicSelect extends DynamicElement {
     readonly method: string;
 
     /** @param {object} dropdown - property with select related properties */
-    select: SelectSelectConfiguration;
+    select: SelectConfiguration;
 
     /** @param {object} defaultConfig property with default configuration values */
     static defaultConfig = { // Todo: inherit superclass' defaultConfig
@@ -28,7 +28,7 @@ class DynamicSelect extends DynamicElement {
     /**
     * @inheritdoc
     */
-    constructor(config: SelectConfiguration, htmlElement: NodeList) {
+    constructor(config: FieldConfiguration, htmlElement: NodeList) {
         super(config, htmlElement);
         this.method = this.fetch.method ?? DynamicSelect.defaultConfig.fetch.method;
         this.select = config.select ?? {};
@@ -65,11 +65,11 @@ class DynamicSelect extends DynamicElement {
      * Method executed before the status update. If it returns false, the update is aborted.
      * If select.clearOnParentVoid is true and the subject value is empty, this method calls the clear function and aborts the update.
      *
-     * @param {object} data data useful to the element's status change
+     * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
      * @returns false to abort the update, true otherwise
      */
-    protected beforeUpdate(data: any, subjectName: string|null): boolean {
+    protected beforeUpdate(data: UpdateData, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.beforeUpdate) {
             return this.behavior.beforeUpdate(this.getHtmlSelectElementOrList(), data, subjectName);
@@ -87,12 +87,12 @@ class DynamicSelect extends DynamicElement {
 
     /**
     * Method which execute a pipeline of instructions to update the select content with dynamic options
-    * @param {object} data data to send with the http request
+    * @param {UpdateData} data data to send with the http request
     * @param {string|null} subjectName name of the subject who changed
     *
     * @returns a Promise in fulfilled state when data has been updated
     */
-    protected async updateStatus(data: object, subjectName: string|null): Promise<void> {
+    protected async updateStatus(data: UpdateData, subjectName: string|null): Promise<void> {
         // Custom
         if (this.behavior.updateStatus) {
             return this.behavior.updateStatus(this.htmlElement, data, subjectName);

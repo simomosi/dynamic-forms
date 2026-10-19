@@ -1,6 +1,6 @@
 import DynamicElement from './DynamicElement';
-import { FormConfiguration, FormBehavior, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
-import { FieldConfiguration } from './FieldConfigurationTypes';
+import { ResolvedFormConfiguration, FormHooks, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
+import { FieldConfiguration, UpdateData } from './FieldConfigurationTypes';
 import { Observer, Subject } from './ObserverPatternTypes';
 
 /**
@@ -13,8 +13,8 @@ class DynamicForm implements Subject {
     /** @param {boolean} debug - a flag to enable debug mode */
     debug: boolean;
     
-    /** @param {FormBehavior} behavior - object which groups some properties related to form behavior */
-    behavior: FormBehavior;
+    /** @param {FormHooks} behavior - the form hooks */
+    behavior: FormHooks;
     
     /** @param {Map<String, DynamicElement>} fields - a collection of form's DynamicElements instances */
     fieldsMap: Map<string, DynamicElement>;
@@ -22,8 +22,8 @@ class DynamicForm implements Subject {
     /** @param {Map<string, UpdateRule[]} fieldUpdateRules - a collection of all update rules of the specified field name */
     fieldUpdateRulesMap: Map<string, UpdateRule[]>;
     
-    /** @param {FormConfiguration} config - the original form configuration */
-    config: FormConfiguration;
+    /** @param {ResolvedFormConfiguration} config - the form configuration completed with defaults */
+    config: ResolvedFormConfiguration;
     
     /** @param {HTMLFormElement} HTMLFormElement - the actual html element returned by getElementById */
     readonly htmlElement: HTMLFormElement;
@@ -38,7 +38,7 @@ class DynamicForm implements Subject {
     * Class constructor.
     * @param {object} formConfiguration the form configuration in JSON format
     */
-    constructor(formHtmlElement: HTMLFormElement, formConfiguration: FormConfiguration, fieldsMap: Map<string, DynamicElement>) {
+    constructor(formHtmlElement: HTMLFormElement, formConfiguration: ResolvedFormConfiguration, fieldsMap: Map<string, DynamicElement>) {
         this.id = formConfiguration.id;
         this.config = formConfiguration;
         const form = document.forms.namedItem(formConfiguration.id);
@@ -69,7 +69,7 @@ class DynamicForm implements Subject {
         return fieldUpdateRules;
     }
     
-    private handleInitialisation(fieldsCollection: Map<string, DynamicElement>, initFields: InitialisationRule[] = [], fieldUpdateRules:Map<string, UpdateRule[]>, behavior: FormBehavior): Promise<void> {
+    private handleInitialisation(fieldsCollection: Map<string, DynamicElement>, initFields: InitialisationRule[] = [], fieldUpdateRules:Map<string, UpdateRule[]>, behavior: FormHooks): Promise<void> {
         if (!initFields) {
             return Promise.resolve();
         }
@@ -199,7 +199,7 @@ class DynamicForm implements Subject {
     * @param {UpdateRule} rule a specific form update rule
     * @return an object merging sender data and additional data
     */
-    private fetchAllParameters(rule: UpdateRule): object {
+    private fetchAllParameters(rule: UpdateRule): UpdateData {
         const subjectName = rule.name;
         const subjectValue = this.getField(subjectName).get();
         const params: {[key: string]:any} = {};
@@ -243,11 +243,11 @@ class DynamicForm implements Subject {
     
     /**
     * Method to manual trigger the update function of a subject.
-    * @param {object} data data useful to the element's status change
+    * @param {UpdateData} data data useful to the element's status change
     * @param {string} subjectName name of the changed subject
     * @returns a Promise in fulfilled state when element status has been updated
     */
-    public async manualUpdate(data: object, subjectName: string): Promise<void> {
+    public async manualUpdate(data: UpdateData, subjectName: string): Promise<void> {
         const field = this.getField(subjectName);
         if (field) {
             return field.update(data, null);
