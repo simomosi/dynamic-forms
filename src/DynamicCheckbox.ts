@@ -59,7 +59,8 @@ class DynamicCheckbox extends DynamicElement {
             return this.behavior.clear(this.htmlElement);
         }
         // Standard
-        this.set("0");
+        const firstElement = this.htmlElement[0] as HTMLInputElement;
+        firstElement.checked = false;
     }
 }
 

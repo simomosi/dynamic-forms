@@ -93,9 +93,7 @@ describe('checkbox', () => {
         expect(field('c').checked).toBe(checked);
     });
 
-    // Bug: clear() calls set("0") and the non-empty string "0" is truthy, so the checkbox gets checked.
-    // https://github.com/simomosi/dynamic-forms/issues/25
-    it.fails('is unchecked on cascade clear', async () => {
+    it('is unchecked on cascade clear', async () => {
         await clearViaCascade('c', '<input type="checkbox" name="c">');
 
         expect(field('c').checked).toBe(false);
