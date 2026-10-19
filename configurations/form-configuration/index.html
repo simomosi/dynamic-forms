@@ -1224,7 +1224,7 @@
 <p>Useful to show a loader during the fields update.</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>string | null</code>} <code>subjectName</code>: the name of the subject who triggered the update. It can be null if the update is triggered manually</li>
+<li>{<code>string</code>} <code>subjectName</code>: the name of the subject who triggered the update. Manual updates (<code>form.manualUpdate</code>) don't call this method</li>
 </ul>
 <p>Returns</p>
 <ul>
@@ -1235,7 +1235,7 @@
 <p>Useful to hide a loader after the fields update.</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>string | null</code>} <code>subjectName</code>: the name of the subject who triggered the update. It can be null if the update is triggered manually</li>
+<li>{<code>string</code>} <code>subjectName</code>: the name of the subject who triggered the update. Manual updates (<code>form.manualUpdate</code>) don't call this method</li>
 </ul>
 <p>Returns</p>
 <ul>
