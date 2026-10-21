@@ -1085,15 +1085,22 @@
         +set(value) string
         +clear()
         +update(data, subjectName)
-        #beforeUpdate(data, subjectName) boolean
-        #updateStatus(data, subjectName) Promise❬void❭
-        #afterUpdate(data, subjectName) boolean
+        #canUpdate(data, subjectName) boolean
+        #standardGet() string
+        #standardSet(value)
+        #standardClear()
+        #standardUpdateStatus(data, subjectName) Promise❬void❭
     }
+
+    note for DynamicElement "Public methods use the field hook if given, else the standard behaviour; subclasses override only the standard behaviours"
 
     class DynamicSelect {
         -string method
-        +postProcessData(data) SelectOption[]
-        +saveData(data) void
+        #canUpdate(data, subjectName) boolean
+        #standardClear()
+        #standardUpdateStatus(data, subjectName) Promise❬void❭
+        #postProcessData(data) SelectOption[]
+        #saveData(data) void
     }
 
     dynamicForms --&gt; ConfigurationFixer

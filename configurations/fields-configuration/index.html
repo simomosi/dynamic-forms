@@ -1702,7 +1702,7 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 </ul>
 <h3 id="beforeupdate-htmlelement-data-subjectname"><code>beforeUpdate (htmlElement, data, subjectName)</code><a class="headerlink" href="#beforeupdate-htmlelement-data-subjectname" title="Permanent link">#</a></h3>
 <p>Method called before triggering the field's status update. If return value is <em>false</em>, the update is aborted.</p>
-<p>Default behavior: nothing. For <strong>DynamicSelect</strong> elements it clear the field content if <em>clearOnParentVoid</em> conditions are satisfied.</p>
+<p>Default behavior: nothing. It adds to the field's behaviour without replacing any of it: a select whose subject is empty is cleared before this method is called, and this method is not called (see <a href="#clearonparentvoid"><em>clearOnParentVoid</em></a>).</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
@@ -1727,7 +1727,7 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <li>{<code>Promise&lt;void&gt;</code>}</li>
 </ul>
 <h3 id="afterupdate-htmlelement-data-subjectname"><code>afterUpdate (htmlElement, data, subjectName)</code><a class="headerlink" href="#afterupdate-htmlelement-data-subjectname" title="Permanent link">#</a></h3>
-<p>Method called after triggering the field's status update.</p>
+<p>Method called after triggering the field's status update, also when the update was aborted.</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
@@ -1736,7 +1736,7 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 </ul>
 <p>Returns</p>
 <ul>
-<li>{<code>boolean</code>} (currently) unused</li>
+<li>{<code>void</code>}</li>
 </ul>
 <h2 id="select"><code>select</code><a class="headerlink" href="#select" title="Permanent link">#</a></h2>
 <p>Object which groups properties related to select-option elements.</p>
@@ -1765,6 +1765,7 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 </ul>
 <h3 id="clearonparentvoid"><code>clearOnParentVoid</code><a class="headerlink" href="#clearonparentvoid" title="Permanent link">#</a></h3>
 <p>Property which (when <code>true</code>) tells to clear field content when subject value is empty instead of triggering a remote call (when <code>false</code>).</p>
+<p>The clear happens before the <a href="#beforeupdate-htmlelement-data-subjectname"><em>beforeUpdate</em></a> field hook, which is then not called: set this property to <code>false</code> to handle an empty subject in the hook.</p>
 <p>Type: <code>boolean</code>.</p>
 <p>Default value: <code>true</code>.</p>
 <h2 id="checkbox"><code>checkbox</code><a class="headerlink" href="#checkbox" title="Permanent link">#</a></h2>
