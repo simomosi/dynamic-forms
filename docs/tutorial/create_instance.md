@@ -29,12 +29,12 @@ Let's assume we loaded dynamic-forms using a CDN:
     </script>
 ```
 
-## Write form configuration
+## Write the Form Configuration
 
-For the form configuration we need to write 2 lists:
+For the Form Configuration we need to write 2 lists:
 
-1. **fields**: a list of form fields with custom behavior (using the [field configuration](../configurations/fields-configuration.md) format); a field with a remote url for fetching its values is a custom behavior field;
-2. **rules**: a list which indicates when a field related event (usually a `change`) should notify other fields (using the [update rule](../configurations/update-rules.md) format)
+1. **fields**: a list of the fields you want to customise (using the [Field Configuration](../configurations/fields-configuration.md) format); a field which loads its options from a remote url needs a Field Configuration;
+2. **rules**: a list of Update Rules, which tell the Observers to update when a Subject changes, usually on a `change` event (using the [Update Rule](../configurations/update-rules.md) format)
 
 ```javascript
 const formConfiguration = {
@@ -56,11 +56,11 @@ const formConfiguration = {
 };
 ```
 
-Note: we didn't need to specify a configuration for `field_one`.
+Note: we didn't need to specify a Field Configuration for `field_one`: it is discovered automatically.
 
-## Create the dynamic form
+## Create the form
 
-Create an instance and forget about it: dynamic-forms will work by itself!
+Create the form and forget about it: dynamic-forms will work by itself!
 
 ```javascript
 const form = makeForm(formConfiguration);

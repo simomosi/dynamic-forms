@@ -2,7 +2,7 @@
 ## How to use it
 DynamicForms is designed to be **simple and straightforward**  - no complex setup or configuration required.
 
-The library offers 2 main functions that handle all the heavy lifting for you, including automatic configuration fixes and form initialization.
+The library offers 2 main functions that handle all the heavy lifting for you, including completing the Form Configuration with defaults and the form initialisation.
 
 **For 90% of use cases, `makeForm` is all you need!**
 
@@ -16,7 +16,7 @@ First, import the module (see [loading guide](./start/loading.md))
 
 ### TypeScript
 
-The package exports the configuration types, so configurations can be written in their own files without casts. Only the form `id` is required, the library completes the rest.
+The package exports the configuration types, so Form and Field Configurations can be written in their own files without casts. Only the form `id` is required, the library completes the rest.
 
 ```ts
 import { makeForm, type FormConfiguration, type FieldConfiguration } from '@simomosi/dynamic-forms';
@@ -41,18 +41,18 @@ Exported types: `FormConfiguration`, `FormHooks`, `UpdateRule`, `InitialisationR
 ## Properties
 
 ### `makeForm (formConfiguration)`
-Istantiates a DynamicForm.
+Creates a form.
 
 Parameters
 
-- {`object`} `formConfiguration`: the form configuration
+- {`object`} `formConfiguration`: the Form Configuration
 
 Returns
 
-- {`DynamicForm`} a DynamicForm instance
+- {`DynamicForm`} the form
 
 ### `getForm (id)`
-Returns a DynamicForm instance corresponding to the form id, if it exists.
+Returns the form with the given id, if it exists.
 
 Parameters
 
@@ -60,4 +60,4 @@ Parameters
 
 Returns
 
-- {`DynamicForm | null`} the DynamicForm instance or null if it does not exists
+- {`DynamicForm | null`} the form, or null if it does not exist
