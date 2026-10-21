@@ -3,6 +3,27 @@ import { RemoteCallError } from './RemoteCallError';
 import { FieldElement, ResolvedFieldConfiguration, SelectOption, UpdateData } from './FieldConfigurationTypes';
 
 /**
+ * A signal aborted when any of the given signals aborts, with its reason: AbortSignal.any, or the same by hand on
+ * browsers without it (Safari < 17.4, Chrome < 116, Firefox < 124)
+ * @returns the signal, and a release function that stops listening to the given signals once the signal is no longer needed
+ */
+function anySignal(signals: AbortSignal[]): { signal: AbortSignal, release: () => void } {
+    if (typeof AbortSignal.any === 'function') {
+        return { signal: AbortSignal.any(signals), release: () => {} };
+    }
+    const controller = new AbortController();
+    const listening = new AbortController();
+    for (const signal of signals) {
+        if (signal.aborted) {
+            controller.abort(signal.reason);
+            break;
+        }
+        signal.addEventListener('abort', () => controller.abort(signal.reason), { once: true, signal: listening.signal });
+    }
+    return { signal: controller.signal, release: () => listening.abort() };
+}
+
+/**
 * This class represents a select field with dynamic content (like a standard html-select with dynamic options)
 */
 class DynamicSelect extends DynamicElement {
@@ -92,12 +113,16 @@ class DynamicSelect extends DynamicElement {
         }
 
         // Abort with the form destruction, or with the signal of fullFetchConfig if any
-        const fetchSignal = fetchConfig.signal ? AbortSignal.any([fetchConfig.signal, signal]) : signal;
-        const response = await fetch(requestUrl, { ...fetchConfig, signal: fetchSignal });
-        if (!response.ok) {
-            throw new RemoteCallError(requestUrl, response);
+        const fetchSignal = fetchConfig.signal ? anySignal([fetchConfig.signal, signal]) : { signal, release: () => {} };
+        try {
+            const response = await fetch(requestUrl, { ...fetchConfig, signal: fetchSignal.signal });
+            if (!response.ok) {
+                throw new RemoteCallError(requestUrl, response);
+            }
+            return await response.json();
+        } finally {
+            fetchSignal.release();
         }
-        return response.json();
     }
 
     /**
