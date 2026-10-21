@@ -1,34 +1,39 @@
 # Single Update Rule configuration
-These rules are used to manage fields update.
+These rules declare which Observers to update when a Subject changes.
 
 ```javascript
 const updateRuleConfiguration = {
     name: 'fieldName',
-    update: [],  // Array of form fields names to notify when events occour
-    additionalData: [], // Array of other form field names to send to server
-    externalData: (data, subjectName) => { } // Function which returns a json of data
+    update: [],  // Names of the Observers to update when the Subject changes
+    additionalData: [], // Names of other fields whose values go in the Update Data
+    externalData: (data, subjectName) => { } // Function which returns external data to add to the Update Data
 };
 ```
 
 ## `name`*
-The field name inside the form.
+The name of the Subject.
 
 ## `update`
-The names of the fields to update when this field changes. Their own observers are cleared, since their value is no longer valid.
+The names of the Observers to update when the Subject changes. Their own Observers are cleared on cascade, since their value is no longer valid.
 
-Update rules can't form a cycle: a field can't observe itself, directly or through other fields. `makeForm` throws `Update rules form a cycle: a → b → a` when they do.
+Update Rules can't form a cycle: a field can't be an Observer of itself, directly or through other fields. `makeForm` throws `Update rules form a cycle: a → b → a` when they do.
 
 ## `additionalData`
-A collection of other fields name whose value will be automatically fetched and used in the field's update function.
+The names of other fields whose values are read and added to the Update Data.
 
 ## `externalData (data, subjectName)`
-A function to collect other data used in the update function but external to the form (e.g. a timestamp).
+A function to add to the Update Data other data, external to the form (e.g. a timestamp).
 
 Parameters
 
-- {`object`} `data`: data obtained from the [additional data](#additionalData-optional) function
-- {`string`} `subjectName`: the name of the subject who triggered the update
+- {`object`} `data`: the Update Data collected so far, with the Subject's value and the [additionalData](#additionaldata) values
+- {`string`} `subjectName`: the name of the Subject
 
 Returns
 
 - {`object`} An object with external data values (*key-value* format)
+
+## Update Data
+The data an Observer receives for an update, keyed by field name: the Subject's value, plus the values of the `additionalData` fields and the object returned by `externalData`.
+
+Field Hooks, `fetch.makeUrl`, `fetch.makeBody` and `fetch.fullFetchConfig` receive it as `data`.

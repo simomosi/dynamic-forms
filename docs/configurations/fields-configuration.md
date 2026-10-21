@@ -1,12 +1,12 @@
-# Field configuration
-This document describes a single field configuration. The field configuration list must be included in the *fields* section in the [form configuration](./form-configuration.md).
+# Field Configuration
+This document describes a single Field Configuration. The list of Field Configurations goes in the *fields* section of the [Form Configuration](./form-configuration.md).
 
-Just specify fields with custom behavior as the standard ones will be discovered and included in the dynamic-form automatically.
+Just specify the fields you want to customise: the other ones are discovered and added to the form automatically, with the standard behaviour.
 
-Every hook receives `htmlElement` as the `NodeList` of all the html elements with the field name, even when there is only one: read a single input with `htmlElement[0].value`.
+Every Field Hook receives `htmlElement` as the `NodeList` of all the html elements with the field name, even when there is only one: read a single input with `htmlElement[0].value`.
 
 !!! tip "TypeScript"
-    TypeScript cannot see the html, so field hooks receive a `NodeListOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>` and an `any` value.
+    TypeScript cannot see the html, so Field Hooks receive a `NodeListOf<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>` and an `any` value.
     State the element and value types on the field to use them without casts:
 
     ```typescript
@@ -27,9 +27,9 @@ Every hook receives `htmlElement` as the `NodeList` of all the html elements wit
 
     The library does not check these types against the html: `FieldConfiguration<HTMLSelectElement>` on an `<input>` compiles but fails at runtime.
 
-Here's a complete single field configuration. You just need to specify the attributes you need, the other will have default values.
+Here's a complete Field Configuration. You just need to specify the attributes you need, the other will have default values.
 
-=== "Generic element"
+=== "Generic field"
     ```javascript
     const fieldConfiguration = {
         name: 'fieldName',
@@ -44,8 +44,8 @@ Here's a complete single field configuration. You just need to specify the attri
             makeBody: (data) => { }, // JSON.stringify, formData, text...
             fullFetchConfig: (data) => { }, // Fetch complete configuration (RequestInit)
         },
-        behavior: {
-            clear: (htmlElement) => { }, // Clear field from its content
+        behavior: { // Field Hooks
+            clear: (htmlElement) => { }, // Clear the field's value
             beforeUpdate: (htmlElement, data, subjectName) => { return true; }, // Executed before the remote call. Return false to block the update
             updateStatus: (htmlElement, data, subjectName) => { },
             afterUpdate: (htmlElement, data, subjectName) => { } // Executed after the remote call
@@ -53,56 +53,56 @@ Here's a complete single field configuration. You just need to specify the attri
     };
     ```
 
-=== "Select element"
+=== "Select field"
     ```javascript
     const fieldConfiguration = {
         name: 'fieldName',
         io: /* ... */,
         fetch: /* ... */,
         behavior: /* ... */,
-        select: { // Only for select elements
+        select: { // Only for select fields
             postProcessData: (htmlElement, data) => { }, // Process data retrieved by remote call
             saveData: (htmlElement, data) => { }, // Manually save data in html (e.g. creating `<option value="value">'text'</option>` nodes)
-            clearOnParentVoid: true, // True (default) to clear field content when subject is empty; false to trigger a remote call
+            clearOnParentVoid: true, // True (default) to clear the field when the Subject's value is empty; false to trigger a remote call
         }
     };
     ```
 
-=== "Checkbox element"
+=== "Checkbox field"
     ```javascript
     const fieldConfiguration = {
         name: 'fieldName',
         io: /* ... */,
         fetch: /* ... */,
         behavior: /* ... */,
-        checkbox: { // Only for checkbox elements
-            booleanValue: true // True (default) to get element's value as boolean, based on the checked property; false to get the value property
+        checkbox: { // Only for checkbox fields
+            booleanValue: true // True (default) to get the field's value as boolean, based on the checked property; false to get the value property
         }
     };
     ```
 
 ## `name`*
-The html element name.
+The field name: the `name` attribute of its html elements.
 
 Type: `string`.
 
 *required*
 
 ## `io`
-Object which groups properties related to field input and output.
+Object which groups the properties to read and write the field's value.
 
 
 ### `event`
-The html event which symbolize the Subject's status change (e.g. *change* for a select, *click* for a checkbox...).
+The html event which signals that the field's value changed (e.g. *change* for a select, *click* for a checkbox...).
 
-It is used to put an event listener which will notify Subject's Observers.
+The library listens to it to update the Observers of the field when it is a Subject.
 
 Type: `string`.
 
 Default value: `change`.
 
 ### `get (htmlElement)`
-Function to fetch the html element's value. Useful for custom html elements.
+Function to read the field's value. Useful for custom html elements.
 
 Parameters
 
@@ -110,10 +110,10 @@ Parameters
 
 Returns
 
-- {`string`} the field content
+- {`string`} the field's value
 
 ### `set (htmlElement)`
-Function to set the html element's value. Useful for custom html elements.
+Function to write the field's value. Useful for custom html elements.
 
 Parameters
 
@@ -127,9 +127,9 @@ Returns
 ## `fetch`*
 Object which groups properties related to remote calls.
 
-**Available only for *DynamicSelect* instances** (select-option like fields).
+**Available only for select fields**.
 
-**Required only if the select element is an observer** (it will be updated for every observed subject change), unless you specify a new *updateStatus* function.
+**Required only if the select field is an Observer** (it is updated on every change of its Subject), unless you specify an *updateStatus* Field Hook.
 
 ### `method`
 It's the *http request method* (or verb).
@@ -146,7 +146,7 @@ A function to generate the url to make the remote call to.
 
 Parameters
 
-- {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
+- {`JSON`} `data`: the [Update Data](./update-rules.md#update-data)
 
 Returns
 
@@ -155,11 +155,11 @@ Returns
 ### `makeBody (data)`
 A function to generate the remote call body in the desired method (e.g. JSON.stringify, FormData...).
 
-It's not necessary if the remote call uses the GET request method (parameters need to be placed in the url).
+It's not necessary if the remote call uses the GET request method (the Update Data needs to be placed in the url).
 
 Parameters
 
-- {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
+- {`JSON`} `data`: the [Update Data](./update-rules.md#update-data)
 
 Returns
 
@@ -170,11 +170,11 @@ A function to generate the complete Fetch configuration for remote calls.
 
 Use it when the request needs more than a method and a body, e.g. headers that depend on the field values.
 
-If this function is defined, the updateStatus default function will ignore *fetch.method* property and *fetch.makeBody* function.
+If this function is defined, the standard update ignores the *fetch.method* property and the *fetch.makeBody* function.
 
 Parameters
 
-- {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
+- {`JSON`} `data`: the [Update Data](./update-rules.md#update-data)
 
 Returns
 
@@ -194,10 +194,10 @@ fetch: {
 *Until 3.x `fullFetchConfig` was a static object. Since 4.0.0 it must be a function: wrap an existing object as `fullFetchConfig: () => ({ ... })`.*
 
 ## `behavior`
-Object which groups properties related to field behavior.
+Object which groups the Field Hooks.
 
 ### `clear (htmlElement)`
-Function to unset the field's current value. Sometimes it is used to clear the field from its content (for input and select types).
+Field Hook which replaces the standard clear: it empties the field of its value (and, for a select, of its options).
 
 Parameters
 
@@ -209,53 +209,53 @@ Returns
 
 
 ### `beforeUpdate (htmlElement, data, subjectName)`
-Method called before triggering the field's status update. If return value is *false*, the update is aborted.
+Field Hook called before the field's update. If it returns *false*, the update is aborted.
 
-Default behavior: nothing. It adds to the field's behaviour without replacing any of it: a select whose subject is empty is cleared before this method is called, and this method is not called (see [*clearOnParentVoid*](#clearonparentvoid)).
+Default: nothing. It adds to the field's standard behaviour without switching any of it off: a select whose Subject's value is empty is cleared, and this hook is not called (see [*clearOnParentVoid*](#clearonparentvoid)).
 
 Parameters
 
 - {`NodeList`} `htmlElement`: the html nodes with the field name
-- {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
-- {`string | null`}: `subjectName`: the name of the subject who triggered the update. It is null if the update is triggered manually
+- {`JSON`} `data`: the [Update Data](./update-rules.md#update-data)
+- {`string | null`}: `subjectName`: the name of the Subject which triggered the update. It is null for a manual update
 
 Returns
 
 - {`boolean`} *false* to abort the update, *true* otherwise
 
 ### `updateStatus (htmlElement, data, subjectName)`
-Method to update the field status. It is useful to update the field's attributes (*display*, *disabled*...) and content.
+Field Hook which replaces the standard update of the field's status: its attributes (*display*, *disabled*...) and, for a select, its options.
 
-Default behavior: nothing. For **DynamicSelect** elements it makes a remote call (using *fetch*), retrieves new date and saves it as *select* new content (*option*).
+Default: nothing. For select fields it makes a remote call (using *fetch*), retrieves the new data and saves it as the select's new options.
 
 Parameters
 
 - {`NodeList`} `htmlElement`: the html nodes with the field name
-- {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
-- {`string | null`}: `subjectName`: the name of the subject who triggered the update. It is null if the update is triggered manually
+- {`JSON`} `data`: the [Update Data](./update-rules.md#update-data)
+- {`string | null`}: `subjectName`: the name of the Subject which triggered the update. It is null for a manual update
 
 Returns
 
 - {`Promise<void>`}
 
 ### `afterUpdate (htmlElement, data, subjectName)`
-Method called after triggering the field's status update, also when the update was aborted.
+Field Hook called after the field's update, also when the update was aborted.
 
 Parameters
 
 - {`NodeList`} `htmlElement`: the html nodes with the field name
-- {`JSON`} `data`: data obtained from additionalData and externalData functions in Update Rule Config
-- {`string | null`}: `subjectName`: the name of the subject who triggered the update. It is null if the update is triggered manually
+- {`JSON`} `data`: the [Update Data](./update-rules.md#update-data)
+- {`string | null`}: `subjectName`: the name of the Subject which triggered the update. It is null for a manual update
 
 Returns
 
 - {`void`}
 
 ## `select`
-Object which groups properties related to select-option elements.
+Object which groups properties related to select fields.
 
 ### `postProcessData (htmlElement, data)`
-Function to process data retrieved by remote call. It is useful for filtering/ordering data.
+Field Hook to process the data retrieved by the remote call. It is useful for filtering/ordering data.
 
 Parameters
 
@@ -267,9 +267,9 @@ Returns
 - {`{ value: string | number, text: string }[]`} the options to save
 
 ### `saveData (htmlElement, data)`
-Function to phisically save (post-processed) data retrieved by a remote call as html.
+Field Hook which replaces the standard saving of the options: it writes the (post-processed) data retrieved by the remote call in the html.
 
-Default behavior: saves data as *option* html elements using *value* and *text* properties, creating also empty option if they are not present in retrieved data.
+Default: saves the data as *option* html elements using *value* and *text* properties, creating also empty option if they are not present in retrieved data.
 
 Parameters
 
@@ -281,16 +281,16 @@ Returns
 - {`void`}
 
 ### `clearOnParentVoid`
-Property which (when `true`) tells to clear field content when subject value is empty instead of triggering a remote call (when `false`).
+Property which (when `true`) tells to clear the field when the Subject's value is empty, instead of triggering a remote call (when `false`).
 
-The clear happens before the [*beforeUpdate*](#beforeupdate-htmlelement-data-subjectname) field hook, which is then not called: set this property to `false` to handle an empty subject in the hook.
+The clear happens before the [*beforeUpdate*](#beforeupdate-htmlelement-data-subjectname) Field Hook, which is then not called: set this property to `false` to handle an empty Subject's value in the hook.
 
 Type: `boolean`.
 
 Default value: `true`.
 
 ## `checkbox`
-Object which groups properties related to select-option elements.
+Object which groups properties related to checkbox fields.
 
 ### `booleanValue`
 Property which tells if the field's value is *boolean*.
