@@ -839,10 +839,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#updatestatus-htmlelement-data-subjectname" class="md-nav__link">
+  <a href="#updatestatus-htmlelement-data-subjectname-signal" class="md-nav__link">
     <span class="md-ellipsis">
       
-        updateStatus (htmlElement, data, subjectName)
+        updateStatus (htmlElement, data, subjectName, signal)
       
     </span>
   </a>
@@ -1336,10 +1336,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#updatestatus-htmlelement-data-subjectname" class="md-nav__link">
+  <a href="#updatestatus-htmlelement-data-subjectname-signal" class="md-nav__link">
     <span class="md-ellipsis">
       
-        updateStatus (htmlElement, data, subjectName)
+        updateStatus (htmlElement, data, subjectName, signal)
       
     </span>
   </a>
@@ -1545,7 +1545,7 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <span class="w">    </span><span class="nx">behavior</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Field Hooks</span>
 <span class="w">        </span><span class="nx">clear</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Clear the field's value</span>
 <span class="w">        </span><span class="nx">beforeUpdate</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">subjectName</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Executed before the remote call. Return false to block the update</span>
-<span class="w">        </span><span class="nx">updateStatus</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">subjectName</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span>
+<span class="w">        </span><span class="nx">updateStatus</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">subjectName</span><span class="p">,</span><span class="w"> </span><span class="nx">signal</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span>
 <span class="w">        </span><span class="nx">afterUpdate</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">subjectName</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// Executed after the remote call</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">};</span>
@@ -1713,7 +1713,7 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <ul>
 <li>{<code>boolean</code>} <em>false</em> to abort the update, <em>true</em> otherwise</li>
 </ul>
-<h3 id="updatestatus-htmlelement-data-subjectname"><code>updateStatus (htmlElement, data, subjectName)</code><a class="headerlink" href="#updatestatus-htmlelement-data-subjectname" title="Permanent link">#</a></h3>
+<h3 id="updatestatus-htmlelement-data-subjectname-signal"><code>updateStatus (htmlElement, data, subjectName, signal)</code><a class="headerlink" href="#updatestatus-htmlelement-data-subjectname-signal" title="Permanent link">#</a></h3>
 <p>Field Hook which replaces the standard update of the field's status: its attributes (<em>display</em>, <em>disabled</em>...) and, for a select, its options.</p>
 <p>Default: nothing. For select fields it makes a remote call (using <em>fetch</em>), retrieves the new data and saves it as the select's new options.</p>
 <p>Parameters</p>
@@ -1721,6 +1721,7 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
 <li>{<code>JSON</code>} <code>data</code>: the <a href="../update-rules/#update-data">Update Data</a></li>
 <li>{<code>string | null</code>}: <code>subjectName</code>: the name of the Subject which triggered the update. It is null for a manual update</li>
+<li>{<code>AbortSignal</code>}: <code>signal</code>: aborted when the Form is <a href="../../dynamic-forms-module/#destroy">destroyed</a>. Pass it to the hook's remote calls (<code>fetch(url, { signal })</code>) so they stop with the Form</li>
 </ul>
 <p>Returns</p>
 <ul>

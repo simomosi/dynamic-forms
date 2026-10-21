@@ -688,6 +688,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#destroy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        destroy ()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fields-added-after-makeform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fields added after makeForm
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1047,6 +1069,28 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#destroy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        destroy ()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fields-added-after-makeform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fields added after makeForm
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1122,7 +1166,7 @@
 <p>Exported types: <code>FormConfiguration</code>, <code>FormHooks</code>, <code>UpdateRule</code>, <code>InitialisationRule</code>, <code>FieldConfiguration</code>, <code>FieldIoHooks</code>, <code>FieldFetchConfiguration</code>, <code>FieldHooks</code>, <code>SelectConfiguration</code>, <code>CheckboxConfiguration</code>, <code>UpdateData</code> and <code>DynamicForm</code>.</p>
 <h2 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">#</a></h2>
 <h3 id="makeform-formconfiguration"><code>makeForm (formConfiguration)</code><a class="headerlink" href="#makeform-formconfiguration" title="Permanent link">#</a></h3>
-<p>Creates a form.</p>
+<p>Creates a form. An html form has at most one Form at a time: <code>makeForm</code> throws <code>Form "id" already exists</code> when the previous Form for that id has not been destroyed (see <a href="#destroy"><code>destroy</code></a>).</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>object</code>} <code>formConfiguration</code>: the Form Configuration</li>
@@ -1141,6 +1185,24 @@
 <ul>
 <li>{<code>DynamicForm | null</code>} the form, or null if it does not exist</li>
 </ul>
+<h3 id="destroy"><code>destroy ()</code><a class="headerlink" href="#destroy" title="Permanent link">#</a></h3>
+<p>A method of the Form returned by <code>makeForm</code>. It removes the Form's listeners, so the fields no longer update each other, unregisters it from <code>getForm</code>, and aborts its remote calls in progress. Destroying it again does nothing.</p>
+<p>A <code>notify()</code>, <code>manualUpdate()</code> or <code>ready()</code> still pending rejects with <code>Form "id" was destroyed</code>, and so do <code>notify()</code> and <code>manualUpdate()</code> called afterwards. A custom <a href="../configurations/fields-configuration/#updatestatus-htmlelement-data-subjectname-signal"><code>updateStatus</code></a> Field Hook receives the abort signal, to stop its own remote calls.</p>
+<h3 id="fields-added-after-makeform">Fields added after <code>makeForm</code><a class="headerlink" href="#fields-added-after-makeform" title="Permanent link">#</a></h3>
+<p>Fields are discovered when the Form is created. To pick up fields added to the html form later, destroy the Form and create it again:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">let</span><span class="w"> </span><span class="nx">form</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">makeForm</span><span class="p">(</span><span class="nx">configuration</span><span class="p">);</span>
+<span class="c1">// ...the page adds &lt;input name="notes"&gt; to the form...</span>
+<span class="nx">form</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+<span class="nx">form</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">makeForm</span><span class="p">(</span><span class="nx">configuration</span><span class="p">);</span>
+</code></pre></div></td></tr></table></div>
+<p>The new Form runs the Initialisation again, so its Initialisation Rules set the initial Values again. To keep the Values the user has changed meanwhile, create it without them:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nx">form</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+<span class="nx">form</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">makeForm</span><span class="p">({</span><span class="w"> </span><span class="p">...</span><span class="nx">configuration</span><span class="p">,</span><span class="w"> </span><span class="nx">init</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">});</span>
+</code></pre></div></td></tr></table></div>
 
 
 
