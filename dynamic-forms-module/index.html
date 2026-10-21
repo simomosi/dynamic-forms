@@ -1127,11 +1127,7 @@
 <p>The library offers 2 main functions that handle all the heavy lifting for you, including completing the Form Configuration with defaults and the form initialisation.</p>
 <p><strong>For 90% of use cases, <code>makeForm</code> is all you need!</strong></p>
 <p>First, import the module (see <a href="../start/loading/">loading guide</a>)</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">"module"</span><span class="p">&gt;</span>
-<span class="w">    </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">makeForm</span><span class="p">,</span><span class="w"> </span><span class="nx">getForm</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="s1">'@simomosi/dynamic-forms'</span><span class="p">;</span>
-<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">makeForm</span><span class="p">,</span><span class="w"> </span><span class="nx">getForm</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@simomosi/dynamic-forms'</span><span class="p">;</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="typescript">TypeScript<a class="headerlink" href="#typescript" title="Permanent link">#</a></h3>
 <p>The package exports the configuration types, so Form and Field Configurations can be written in their own files without casts. Only the form <code>id</code> is required, the library completes the rest.</p>

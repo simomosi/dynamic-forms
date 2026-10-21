@@ -435,10 +435,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#from-installed-sources" class="md-nav__link">
+  <a href="#with-a-bundler" class="md-nav__link">
     <span class="md-ellipsis">
       
-        From installed sources
+        With a bundler
       
     </span>
   </a>
@@ -446,10 +446,71 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#from-cdn" class="md-nav__link">
+  <a href="#from-a-cdn" class="md-nav__link">
     <span class="md-ellipsis">
       
-        From CDN
+        From a CDN
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="From a CDN">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#script-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script tag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#script-tag-with-subresource-integrity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script tag with Subresource Integrity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#es-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ES module
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#without-a-bundler-import-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Without a bundler: import map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#self-hosting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Self-hosting
       
     </span>
   </a>
@@ -941,10 +1002,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#from-installed-sources" class="md-nav__link">
+  <a href="#with-a-bundler" class="md-nav__link">
     <span class="md-ellipsis">
       
-        From installed sources
+        With a bundler
       
     </span>
   </a>
@@ -952,10 +1013,71 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#from-cdn" class="md-nav__link">
+  <a href="#from-a-cdn" class="md-nav__link">
     <span class="md-ellipsis">
       
-        From CDN
+        From a CDN
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="From a CDN">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#script-tag" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script tag
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#script-tag-with-subresource-integrity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Script tag with Subresource Integrity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#es-module" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ES module
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#without-a-bundler-import-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Without a bundler: import map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#self-hosting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Self-hosting
       
     </span>
   </a>
@@ -988,16 +1110,13 @@
 
 
 <h1 id="loading-the-library">Loading the library<a class="headerlink" href="#loading-the-library" title="Permanent link">#</a></h1>
-<p>Choose your favorite import method</p>
-<h2 id="from-installed-sources">From installed sources<a class="headerlink" href="#from-installed-sources" title="Permanent link">#</a></h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">ES6 Module (recommended)</label><label for="__tabbed_1_2">CommonJS</label></div>
+<p>Choose the way that fits your project. Load the library <strong>once</strong> per page: two copies would each keep their own forms, and <code>getForm</code> of one copy doesn't see the forms of the other.</p>
+<h2 id="with-a-bundler">With a bundler<a class="headerlink" href="#with-a-bundler" title="Permanent link">#</a></h2>
+<p>Vite, webpack, Rollup, esbuild and the other bundlers resolve the package installed with a <a href="../installation/">package manager</a>.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">ES module (recommended)</label><label for="__tabbed_1_2">CommonJS</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">"module"</span><span class="p">&gt;</span>
-<span class="w">    </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">makeForm</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="s1">'@simomosi/dynamic-forms'</span><span class="p">;</span>
-<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">makeForm</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@simomosi/dynamic-forms'</span><span class="p">;</span>
 </code></pre></div></td></tr></table></div>
 </div>
 <div class="tabbed-block">
@@ -1006,24 +1125,72 @@
 </div>
 </div>
 </div>
-<h2 id="from-cdn">From CDN<a class="headerlink" href="#from-cdn" title="Permanent link">#</a></h2>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Script tag</label><label for="__tabbed_2_2">ES6 Module</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src </span><span class="o">=</span> <span class="s">'https://unpkg.com/@simomosi/dynamic-forms@latest'</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<p><code>import</code> loads the ES module build and <code>require</code> the UMD build: use one of the two in the whole app, since mixing them loads the library twice.</p>
+<h2 id="from-a-cdn">From a CDN<a class="headerlink" href="#from-a-cdn" title="Permanent link">#</a></h2>
+<p><code>@4</code> follows the 4.x releases without jumping to a future major version, which could break your configuration. To freeze a release, write the exact version (e.g. <code>@4.0.0</code>). Avoid <code>@latest</code>.</p>
+<h3 id="script-tag">Script tag<a class="headerlink" href="#script-tag" title="Permanent link">#</a></h3>
+<p>The script defines the global variable <code>DynamicForms</code>.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">"https://cdn.jsdelivr.net/npm/@simomosi/dynamic-forms@4"</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="kd">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">makeForm</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">DynamicForms</span><span class="p">;</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
 </code></pre></div></td></tr></table></div>
-</div>
-<div class="tabbed-block">
+<p><code>https://unpkg.com/@simomosi/dynamic-forms@4</code> serves the same file.</p>
+<h3 id="script-tag-with-subresource-integrity">Script tag with Subresource Integrity<a class="headerlink" href="#script-tag-with-subresource-integrity" title="Permanent link">#</a></h3>
+<p>With <a href="https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity">Subresource Integrity</a> the browser runs the script only if it is exactly the published file. It needs an exact version and the full file path:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">&lt;</span><span class="nt">script</span>
+    <span class="na">src</span><span class="o">=</span><span class="s">"https://cdn.jsdelivr.net/npm/@simomosi/dynamic-forms@4.0.0/dist/dynamic-forms.umd.js"</span>
+    <span class="na">integrity</span><span class="o">=</span><span class="s">"sha384-REPLACED_AT_THE_4.0.0_RELEASE"</span>
+    <span class="na">crossorigin</span><span class="o">=</span><span class="s">"anonymous"</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</code></pre></div></td></tr></table></div>
+<p>For another version, take the hash from the version's page on <a href="https://www.jsdelivr.com/package/npm/@simomosi/dynamic-forms">jsDelivr</a>, or compute it:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>curl<span class="w"> </span>-s<span class="w"> </span>https://cdn.jsdelivr.net/npm/@simomosi/dynamic-forms@4.0.0/dist/dynamic-forms.umd.js<span class="w"> </span><span class="p">|</span><span class="w"> </span>openssl<span class="w"> </span>dgst<span class="w"> </span>-sha384<span class="w"> </span>-binary<span class="w"> </span><span class="p">|</span><span class="w"> </span>openssl<span class="w"> </span>base64<span class="w"> </span>-A
+</code></pre></div></td></tr></table></div>
+<h3 id="es-module">ES module<a class="headerlink" href="#es-module" title="Permanent link">#</a></h3>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">"module"</span><span class="p">&gt;</span>
-<span class="w">    </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">makeForm</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'https://unpkg.com/@simomosi/dynamic-forms@latest'</span><span class="p">;</span>
+<span class="w">    </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">makeForm</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'https://esm.sh/@simomosi/dynamic-forms@4'</span><span class="p">;</span>
 <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
 </code></pre></div></td></tr></table></div>
-</div>
-</div>
-</div>
-<p>Be careful to not include the library twice!</p>
+<p>esm.sh also sends the TypeScript types (useful with Deno). <code>https://cdn.jsdelivr.net/npm/@simomosi/dynamic-forms@4/+esm</code> works too.</p>
+<h2 id="without-a-bundler-import-map">Without a bundler: import map<a class="headerlink" href="#without-a-bundler-import-map" title="Permanent link">#</a></h2>
+<p>In a plain html page, <code>import ... from '@simomosi/dynamic-forms'</code> works only with an <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/script/type/importmap">import map</a>, which tells the browser where the package is. Without it (or a bundler, or a dev server like Vite's) the browser throws a <code>TypeError</code>.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">"importmap"</span><span class="p">&gt;</span>
+<span class="p">{</span><span class="w"> </span><span class="s2">"imports"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">"@simomosi/dynamic-forms"</span><span class="o">:</span><span class="w"> </span><span class="s2">"https://esm.sh/@simomosi/dynamic-forms@4"</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">"module"</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">makeForm</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@simomosi/dynamic-forms'</span><span class="p">;</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="self-hosting">Self-hosting<a class="headerlink" href="#self-hosting" title="Permanent link">#</a></h2>
+<p>To serve the library from your own site, copy one of these files from the npm package (<code>node_modules/@simomosi/dynamic-forms/dist/</code>):</p>
+<ul>
+<li><code>dynamic-forms.js</code>: the ES module, for <code>&lt;script type="module"&gt;</code> and import maps;</li>
+<li><code>dynamic-forms.umd.js</code>: the UMD build, for a <code>&lt;script&gt;</code> tag (defines <code>DynamicForms</code>).</li>
+</ul>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">"/js/dynamic-forms.umd.js"</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="cm">&lt;!-- or --&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">"importmap"</span><span class="p">&gt;</span>
+<span class="p">{</span><span class="w"> </span><span class="s2">"imports"</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="s2">"@simomosi/dynamic-forms"</span><span class="o">:</span><span class="w"> </span><span class="s2">"/js/dynamic-forms.js"</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</code></pre></div></td></tr></table></div>
+<p>Build scripts and copy plugins can find the files with <code>require.resolve('@simomosi/dynamic-forms/dist/dynamic-forms.umd.js')</code> or <code>import.meta.resolve('@simomosi/dynamic-forms/dist/dynamic-forms.js')</code>.</p>
 
 
 
