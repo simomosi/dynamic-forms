@@ -1,6 +1,5 @@
 ## ToDo List
 
-- [ ] Use dynamic-forms with dynamically created fields
 - [ ] Release `4.0.0`: bump `version` in `package.json` (still `3.0.0`) before tagging, the publish workflow requires the tag to match it
 
 ## Changelog
@@ -27,6 +26,8 @@ Dynamic-forms follows the [semver](https://semver.org) standard.
 - **Breaking:** `makeForm()` throws when the Update Rules form a cycle, including a field listing itself in its own `update`, which used to be ignored ([#38](https://github.com/simomosi/dynamic-forms/issues/38)). A cycle used to clear the field the user had just changed
 - **Breaking:** a custom `behavior.beforeUpdate` on a select no longer switches off `select.clearOnParentVoid`: with an empty Subject's value the select is cleared and its update stops before the hook is called ([#40](https://github.com/simomosi/dynamic-forms/issues/40)). Set `clearOnParentVoid: false` to handle an empty Subject's value in the hook
 - **Breaking:** `makeForm()` throws when the configuration mentions a name which is not a field of the form: in an Update Rule (its `name`, `update` or `additionalData`) or in an Initialisation Rule. These used to fail at the first update with `Unknown element`, or be silently ignored ([#45](https://github.com/simomosi/dynamic-forms/issues/45)). The error lists every unknown name, and every missing `name`; a Field Configuration for a missing field joins the list instead of throwing `Element ... not found`
+- **Breaking:** `makeForm()` throws when a Form for that id already exists, instead of leaving the previous one listening to the fields with its old configuration ([#47](https://github.com/simomosi/dynamic-forms/issues/47)). The new `form.destroy()` removes the Form's listeners, unregisters it from `getForm()` and aborts its remote calls; a pending `notify()`, `manualUpdate()` or `ready()` rejects with `Form "id" was destroyed`, as do later calls. Fields added after `makeForm()` are picked up by destroying the Form and creating it again
+- The `behavior.updateStatus` Field Hook receives a 4th parameter, the `AbortSignal` aborted when the Form is destroyed. A `signal` returned by `fetch.fullFetchConfig` is combined with it
 - Initialisation no longer clears the initial value of a field reached by the Cascade Clear of another initialised field ([#37](https://github.com/simomosi/dynamic-forms/issues/37))
 - An update clears the Observers' Observers before updating the Observers, so the result no longer depends on the order of the names in `update`
 - `form.notify()` and `form.ready()` reject when clearing the Observers' Observers fails (e.g. a `behavior.clear` Field Hook throws), instead of leaving an unhandled rejection

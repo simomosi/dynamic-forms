@@ -1,11 +1,10 @@
 import { FieldHooks, FieldElement, FieldFetchConfiguration, FieldIoHooks, ResolvedFieldConfiguration, UpdateData } from './FieldConfigurationTypes';
-import { Observer, Subject } from './ObserverPatternTypes';
 
 /**
  * This class represents a generic Input in a form.
  * In particular it is a generic input element, whose behavior is based on element.value property
  */
-class DynamicElement implements Observer {
+class DynamicElement {
     /** @param {object} config - the element configuration */
     readonly config: ResolvedFieldConfiguration;
 
@@ -27,10 +26,12 @@ class DynamicElement implements Observer {
     /** @param {string} event - the event to listen to */
     event: string;
 
+    /** @param {EventListener|null} listener - the listener added by attach, removed by detach */
+    private listener: EventListener | null = null;
+
     /**
     * Class constructor
     * @param {ResolvedFieldConfiguration} config the field configuration completed with defaults
-    * @param {Subject} subject the subject to notify when changes occour (according to Observer pattern)
     * @param {NodeList} htmlElement the html element(s) returned by querySelectorAll
     * @async
     */
@@ -44,10 +45,25 @@ class DynamicElement implements Observer {
         this.name = config.name;
     }
 
-    public attach(subject: Subject): void {
-        this.htmlElement.forEach(current => {
-            current.addEventListener(this.event, (e) => { subject.notify((e.target as HTMLInputElement).name).catch(console.error); });
-        });
+    /**
+    * Listens to the field event
+    * @param {(name: string) => Promise<void>} notify called with the field name on each event
+    */
+    public attach(notify: (name: string) => Promise<void>): void {
+        const listener: EventListener = (e) => { notify((e.target as HTMLInputElement).name).catch(console.error); };
+        this.htmlElement.forEach(current => current.addEventListener(this.event, listener));
+        this.listener = listener;
+    }
+
+    /**
+    * Removes the listener added by attach
+    */
+    public detach(): void {
+        const listener = this.listener;
+        if (listener) {
+            this.htmlElement.forEach(current => current.removeEventListener(this.event, listener));
+            this.listener = null;
+        }
     }
 
     /**
@@ -103,14 +119,15 @@ class DynamicElement implements Observer {
     * Method which updates the element (observer) status after a change on the observed subject
     * @param {UpdateData} data data useful to the element's status change
     * @param {string|null} subjectName name of the changed subject
+    * @param {AbortSignal} signal aborted when the form is destroyed
     *
     * @returns a Promise in fulfilled state when element status has been updated
     *
     * @async
     */
-    public async update(data: UpdateData, subjectName: string|null): Promise<void> {
+    public async update(data: UpdateData, subjectName: string|null, signal: AbortSignal): Promise<void> {
         if (this.canUpdate(data, subjectName) && this.beforeUpdate(data, subjectName) !== false) {
-            await this.updateStatus(data, subjectName);
+            await this.updateStatus(data, subjectName, signal);
         }
         this.afterUpdate(data, subjectName);
     }
@@ -139,17 +156,19 @@ class DynamicElement implements Observer {
      * Method to update the field status, through the behavior.updateStatus field hook if given
      * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
+     * @param {AbortSignal} signal aborted when the form is destroyed
      */
-    private async updateStatus(data: UpdateData, subjectName: string|null): Promise<void> {
-        return this.behavior.updateStatus ? this.behavior.updateStatus(this.htmlElement, data, subjectName) : this.standardUpdateStatus(data, subjectName);
+    private async updateStatus(data: UpdateData, subjectName: string|null, signal: AbortSignal): Promise<void> {
+        return this.behavior.updateStatus ? this.behavior.updateStatus(this.htmlElement, data, subjectName, signal) : this.standardUpdateStatus(data, subjectName, signal);
     }
 
     /**
      * Standard update of the field status, replaced by the behavior.updateStatus field hook: nothing
      * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
+     * @param {AbortSignal} signal aborted when the form is destroyed
      */
-    protected async standardUpdateStatus(_data: UpdateData, _subjectName: string|null): Promise<void> {
+    protected async standardUpdateStatus(_data: UpdateData, _subjectName: string|null, _signal: AbortSignal): Promise<void> {
     }
 
     /**

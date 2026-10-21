@@ -47,7 +47,7 @@ Here's a complete Field Configuration. You just need to specify the attributes y
         behavior: { // Field Hooks
             clear: (htmlElement) => { }, // Clear the field's value
             beforeUpdate: (htmlElement, data, subjectName) => { return true; }, // Executed before the remote call. Return false to block the update
-            updateStatus: (htmlElement, data, subjectName) => { },
+            updateStatus: (htmlElement, data, subjectName, signal) => { },
             afterUpdate: (htmlElement, data, subjectName) => { } // Executed after the remote call
         }
     };
@@ -223,7 +223,7 @@ Returns
 
 - {`boolean`} *false* to abort the update, *true* otherwise
 
-### `updateStatus (htmlElement, data, subjectName)`
+### `updateStatus (htmlElement, data, subjectName, signal)`
 Field Hook which replaces the standard update of the field's status: its attributes (*display*, *disabled*...) and, for a select, its options.
 
 Default: nothing. For select fields it makes a remote call (using *fetch*), retrieves the new data and saves it as the select's new options.
@@ -233,6 +233,7 @@ Parameters
 - {`NodeList`} `htmlElement`: the html nodes with the field name
 - {`JSON`} `data`: the [Update Data](./update-rules.md#update-data)
 - {`string | null`}: `subjectName`: the name of the Subject which triggered the update. It is null for a manual update
+- {`AbortSignal`}: `signal`: aborted when the Form is [destroyed](../dynamic-forms-module.md#destroy). Pass it to the hook's remote calls (`fetch(url, { signal })`) so they stop with the Form
 
 Returns
 

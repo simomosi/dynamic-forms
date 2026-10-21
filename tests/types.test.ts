@@ -80,6 +80,10 @@ describe('update data type', () => {
         expectTypeOf<NonNullable<FieldHooks['beforeUpdate']>>().returns.toEqualTypeOf<boolean>();
         expectTypeOf<NonNullable<FieldHooks['afterUpdate']>>().returns.toEqualTypeOf<void>();
     });
+
+    it('gives the updateStatus field hook the signal aborted when the form is destroyed', () => {
+        expectTypeOf<NonNullable<FieldHooks['updateStatus']>>().parameter(3).toEqualTypeOf<AbortSignal>();
+    });
 });
 
 describe('package exports', () => {

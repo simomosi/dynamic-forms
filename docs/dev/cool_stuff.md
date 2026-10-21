@@ -1,4 +1,4 @@
 # Cool computer science stuff
-- DynamicForms is a particular instance of the **Observer Design Pattern** in which Observers and Subjects are all of the same type: form fields
+- DynamicForms is a particular instance of the **Observer Design Pattern** in which Subjects and Observers are all of the same type: form fields. The Observers don't register themselves: the Update Rules declare which fields observe which, and the Form, a **Mediator** between the fields, updates the Observers of each changed field. It works like a spreadsheet, where formulas declare which cells depend on which and the engine recomputes the cells depending on a changed one
 - The function used for the Cascade Clear (clearing fields *on cascade*) is the **Depth-first search (DFS)** used in Graph theory
 - The library entry point (*src/index.js*) implements the **Facade Design Pattern** to improve software usability: it masks more complex underlying code e.g. explicit objects instantiation and configuration fixing

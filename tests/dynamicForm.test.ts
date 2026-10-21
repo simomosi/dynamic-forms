@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getForm } from '@/index';
+import { getForm, makeForm } from '@/index';
 import { createForm, field, mountForm, optionValues, probeField, selectHtml, stubFetch } from './helpers';
 
 const users = [{ value: '1', text: 'Ann' }, { value: '2', text: 'Bob' }];
@@ -30,6 +30,120 @@ describe('makeForm / getForm', () => {
 
         expect(getForm('registered')).toBe(form);
         expect(form.getId()).toBe('registered');
+    });
+
+    it('throws when a form with the same id still exists (#47)', () => {
+        mountForm('twice', '<input name="a">');
+        makeForm({ id: 'twice' });
+
+        expect(() => makeForm({ id: 'twice' })).toThrow('Form "twice" already exists: call destroy() on it first');
+    });
+
+    it('creates a form again once the previous one is destroyed (#47)', () => {
+        mountForm('again', '<input name="a">');
+        makeForm({ id: 'again' }).destroy();
+
+        expect(getForm('again')).toBeUndefined();
+        const form = makeForm({ id: 'again' });
+        expect(getForm('again')).toBe(form);
+    });
+
+    it('ignores a second destroy(), leaving the form created after the first one (#47)', () => {
+        mountForm('twice-destroyed', '<input name="a">');
+        const old = makeForm({ id: 'twice-destroyed' });
+        old.destroy();
+        const current = makeForm({ id: 'twice-destroyed' });
+
+        old.destroy();
+
+        expect(getForm('twice-destroyed')).toBe(current);
+    });
+
+    it('stops listening to the fields once destroyed (#47)', async () => {
+        mountForm('listen', '<input name="a"><input name="b">');
+        const calls: string[] = [];
+        const rules = [{ name: 'a', update: ['b'] }];
+        makeForm({ id: 'listen', rules, behavior: { beforeUpdate: () => { calls.push('first'); return true; } } }).destroy();
+        makeForm({ id: 'listen', rules, behavior: { beforeUpdate: () => { calls.push('second'); return true; } } });
+
+        field('a').dispatchEvent(new Event('change'));
+
+        await vi.waitFor(() => expect(calls).toEqual(['second']));
+    });
+
+    it('rejects notify() and manualUpdate() on a destroyed form (#47)', async () => {
+        mountForm('gone', '<input name="a"><input name="b">');
+        const form = makeForm({ id: 'gone', rules: [{ name: 'a', update: ['b'] }] });
+        form.destroy();
+
+        await expect(form.notify('a')).rejects.toThrow('Form "gone" was destroyed');
+        await expect(form.manualUpdate({}, 'b')).rejects.toThrow('Form "gone" was destroyed');
+    });
+
+    it('aborts the remote calls in progress on destroy, rejecting the pending notify() (#47)', async () => {
+        const fetchMock = vi.fn((_url: string, init?: RequestInit) => new Promise<Response>((_, reject) => {
+            init?.signal?.addEventListener('abort', () => reject(init.signal!.reason));
+        }));
+        vi.stubGlobal('fetch', fetchMock);
+        mountForm('abort', selectHtml('user', { '1': 'Ann' }) + selectHtml('post'));
+        const form = makeForm({ id: 'abort', fields: [{ name: 'post', fetch: { makeUrl: () => '/posts' } }], rules: [{ name: 'user', update: ['post'] }] });
+        field<HTMLSelectElement>('user').value = '1';
+
+        const pending = form.notify('user');
+        form.destroy();
+
+        await expect(pending).rejects.toThrow('Form "abort" was destroyed');
+        expect(fetchMock.mock.calls[0][1]?.signal?.aborted).toBe(true);
+    });
+
+    it('aborts the remote call with either the signal of fullFetchConfig or the form destruction (#47)', async () => {
+        vi.stubGlobal('fetch', vi.fn((_url: string, init?: RequestInit) => new Promise<Response>((_, reject) => {
+            init?.signal?.addEventListener('abort', () => reject(init.signal!.reason));
+        })));
+        let userController = new AbortController();
+        mountForm('signals', selectHtml('user', { '1': 'Ann' }) + selectHtml('post'));
+        const form = makeForm({
+            id: 'signals',
+            fields: [{ name: 'post', fetch: { makeUrl: () => '/posts', fullFetchConfig: () => ({ signal: userController.signal }) } }],
+            rules: [{ name: 'user', update: ['post'] }],
+        });
+        field<HTMLSelectElement>('user').value = '1';
+
+        const abortedByUser = form.notify('user');
+        userController.abort(new Error('timeout'));
+        await expect(abortedByUser).rejects.toThrow('timeout');
+
+        userController = new AbortController();
+        const abortedByDestroy = form.notify('user');
+        form.destroy();
+        await expect(abortedByDestroy).rejects.toThrow('Form "signals" was destroyed');
+    });
+
+    it('passes the abort signal to the updateStatus field hook, and rejects the pending notify() on destroy even if the hook ignores it (#47)', async () => {
+        const signals: AbortSignal[] = [];
+        mountForm('hook', '<input name="a"><input name="b">');
+        const form = makeForm({
+            id: 'hook',
+            fields: [{ name: 'b', behavior: { updateStatus: (_el, _data, _subject, signal) => { signals.push(signal); return new Promise(() => {}); } } }],
+            rules: [{ name: 'a', update: ['b'] }],
+        });
+
+        const pending = form.notify('a');
+        form.destroy();
+
+        await expect(pending).rejects.toThrow('Form "hook" was destroyed');
+        expect(signals).toHaveLength(1);
+        expect(signals[0].aborted).toBe(true);
+    });
+
+    it('rejects a pending ready() on destroy (#47)', async () => {
+        vi.stubGlobal('fetch', vi.fn(() => new Promise<Response>(() => {})));
+        mountForm('init', selectHtml('user'));
+        const form = makeForm({ id: 'init', fields: [{ name: 'user', fetch: { makeUrl: () => '/users' } }], init: [{ name: 'user' }] });
+
+        form.destroy();
+
+        await expect(form.ready()).rejects.toThrow('Form "init" was destroyed');
     });
 
     it('returns undefined for an unknown form id', () => {
@@ -149,7 +263,7 @@ describe('progressive filtering', () => {
         field<HTMLSelectElement>('user').value = '1';
         await form.notify('user');
 
-        expect(fetchMock).toHaveBeenCalledWith('/posts?userId=1', { method: 'GET' });
+        expect(fetchMock).toHaveBeenCalledWith('/posts?userId=1', { method: 'GET', signal: expect.any(AbortSignal) });
         expect(optionValues('post')).toEqual(['', '10', '11']);
         expect(field<HTMLSelectElement>('post').options[1].text).toBe('Post A');
     });
@@ -358,7 +472,7 @@ describe('remote call configuration', () => {
 
         await form.notify('user');
 
-        expect(fetchMock).toHaveBeenCalledWith('/posts', { method: 'POST', body: '{"user":"1"}' });
+        expect(fetchMock).toHaveBeenCalledWith('/posts', { method: 'POST', body: '{"user":"1"}', signal: expect.any(AbortSignal) });
     });
 
     it('sends the RequestInit returned by fullFetchConfig for the Update Data, ignoring method and makeBody', async () => {
@@ -378,7 +492,7 @@ describe('remote call configuration', () => {
         await form.notify('user');
 
         expect(received).toEqual([{ user: '1' }]);
-        expect(fetchMock).toHaveBeenCalledWith('/posts', { method: 'PUT', headers: { 'X-Test': '1' }, body: '{"user":"1"}' });
+        expect(fetchMock).toHaveBeenCalledWith('/posts', { method: 'PUT', headers: { 'X-Test': '1' }, body: '{"user":"1"}', signal: expect.any(AbortSignal) });
     });
 
     it('saves the data transformed by select.postProcessData', async () => {
@@ -546,7 +660,7 @@ describe('field behavior', () => {
         expect(afterUpdate).toHaveBeenCalledWith(expect.any(NodeList), { a: '1' }, 'a');
     });
 
-    it('passes the html elements, the data and the subject name to the field hooks', async () => {
+    it('passes the html elements, the data and the subject name to the field hooks, and the abort signal to updateStatus', async () => {
         const beforeUpdate = vi.fn(() => true);
         const updateStatus = vi.fn();
         mountForm('f', '<input name="a" value="1"><input name="b">');
@@ -559,7 +673,7 @@ describe('field behavior', () => {
         await form.notify('a');
 
         expect(beforeUpdate).toHaveBeenCalledWith(expect.any(NodeList), { a: '1' }, 'a');
-        expect(updateStatus).toHaveBeenCalledWith(expect.any(NodeList), { a: '1' }, 'a');
+        expect(updateStatus).toHaveBeenCalledWith(expect.any(NodeList), { a: '1' }, 'a', expect.any(AbortSignal));
     });
 });
 

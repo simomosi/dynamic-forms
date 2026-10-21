@@ -40,7 +40,8 @@ export interface FieldFetchConfiguration {
 export interface FieldHooks<E extends FieldElement = FieldElement> {
     clear?(htmlElement: NodeListOf<E>): void,
     beforeUpdate?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null): boolean,
-    updateStatus?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null): void,
+    /** `signal` is aborted when the form is destroyed: pass it to the remote calls of the hook. */
+    updateStatus?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null, signal: AbortSignal): void,
     afterUpdate?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null): void,
 }
 

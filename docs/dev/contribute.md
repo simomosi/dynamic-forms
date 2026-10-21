@@ -54,6 +54,7 @@ classDiagram
         -fetchAllParameters(rule) UpdateData
         -clearCascade(currentSubject) Promise❬void❭
         +manualUpdate(data, subjectName) Promise❬void❭
+        +destroy() void
         -getField(name) DynamicElement
         +getId() string
         +setEnabled() void
