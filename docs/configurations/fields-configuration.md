@@ -211,7 +211,7 @@ Returns
 ### `beforeUpdate (htmlElement, data, subjectName)`
 Method called before triggering the field's status update. If return value is *false*, the update is aborted.
 
-Default behavior: nothing. For **DynamicSelect** elements it clear the field content if *clearOnParentVoid* conditions are satisfied.
+Default behavior: nothing. It adds to the field's behaviour without replacing any of it: a select whose subject is empty is cleared before this method is called, and this method is not called (see [*clearOnParentVoid*](#clearonparentvoid)).
 
 Parameters
 
@@ -239,7 +239,7 @@ Returns
 - {`Promise<void>`}
 
 ### `afterUpdate (htmlElement, data, subjectName)`
-Method called after triggering the field's status update.
+Method called after triggering the field's status update, also when the update was aborted.
 
 Parameters
 
@@ -249,7 +249,7 @@ Parameters
 
 Returns
 
-- {`boolean`} (currently) unused
+- {`void`}
 
 ## `select`
 Object which groups properties related to select-option elements.
@@ -282,6 +282,8 @@ Returns
 
 ### `clearOnParentVoid`
 Property which (when `true`) tells to clear field content when subject value is empty instead of triggering a remote call (when `false`).
+
+The clear happens before the [*beforeUpdate*](#beforeupdate-htmlelement-data-subjectname) field hook, which is then not called: set this property to `false` to handle an empty subject in the hook.
 
 Type: `boolean`.
 

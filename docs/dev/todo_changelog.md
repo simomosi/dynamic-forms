@@ -20,10 +20,12 @@ Dynamic-forms follows the [semver](https://semver.org) standard.
     - Field hooks receive `NodeListOf<FieldElement>` (`FieldElement` is `HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement`) instead of `HTMLElement | NodeList`, so `htmlElement[0].value` needs no narrowing or cast. `FieldConfiguration<E, V>` states the element and value types of a field (`FieldConfiguration<HTMLSelectElement>`, `FieldConfiguration<HTMLInputElement, string[]>`); the value stays `any` by default
     - `select.postProcessData` receives the response as `any` and returns `SelectOption[]` (`{ value: string | number, text: string }`), which `select.saveData` receives
     - `InitialisationRule.value` is `unknown` instead of `any`
+    - The `behavior.afterUpdate` field hook returns `void` instead of `boolean`: its result was never used
     - Exports `FieldElement` and `SelectOption` too
 - **Breaking:** `fetch.fullFetchConfig` is a function of the Update Data, `(data) => RequestInit`, instead of a static object, as the documentation already described ([#31](https://github.com/simomosi/dynamic-forms/issues/31)). Wrap an existing object as `fullFetchConfig: () => ({ ... })`
 - `makeForm()` no longer modifies the given configuration: defaults and discovered fields go into an internal copy. Form hooks set to `undefined` fall back to the default instead of throwing
 - **Breaking:** `makeForm()` throws when the update rules form a cycle, including a field listing itself in its own `update`, which used to be ignored ([#38](https://github.com/simomosi/dynamic-forms/issues/38)). A cycle used to clear the field the user had just changed
+- **Breaking:** a custom `behavior.beforeUpdate` on a select no longer switches off `select.clearOnParentVoid`: with an empty subject the select is cleared and its update stops before the hook is called ([#40](https://github.com/simomosi/dynamic-forms/issues/40)). Set `clearOnParentVoid: false` to handle an empty subject in the hook
 - Initialisation no longer clears the init value of a field reached by the cascade clear of another initialised field ([#37](https://github.com/simomosi/dynamic-forms/issues/37))
 - An update clears the observers' observers before updating the observers, so the result no longer depends on the order of the names in `update`
 - `form.notify()` and `form.ready()` reject when clearing the observers' observers fails (e.g. a `behavior.clear` field hook throws), instead of leaving an unhandled rejection
