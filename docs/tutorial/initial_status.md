@@ -4,7 +4,7 @@ Sometimes you need to load a prefilled form, and the initial values should trigg
 
 Dynamic-forms can automatically set the form initial status and trigger those operations for you.
 
-You need to list all the fields which requires the initialisation, describing:
+You need to list in the Initialisation Rules all the fields which require the initialisation, describing:
 
 1. Their **name**
 2. Their initial **value** (optional)
@@ -28,12 +28,12 @@ Note: you need to specify an API-endpoint in `fields` for `field_one` to work.
 
 Dynamic-forms uses:
 
-- the information specified in the `fields` section to retrieve remote data for each field specified in the `init` section
-- the informations specified in the `rules` section to infer what data should be retrieved after the initialisation
+- the Field Configurations in the `fields` section to retrieve remote data for each field listed in the Initialisation Rules (`init` section)
+- the Update Rules in the `rules` section to update the Observers of the initialised fields
 
-In the example above, dynamic-forms will first initialise `field_one` using `fields` and `init` rules, then it will initialise `field_two` using (update) `rules` as specified in the previous page.
+In the example above, dynamic-forms will first initialise `field_one` using its Field Configuration and its Initialisation Rule, then it will update its Observer `field_two` using the Update Rules specified in the previous page.
 
-If you need to specify other data, just list their name and value in the `init` collection just like they were form fields.
+If you need to pass other data to the initialised fields, just list their name and value in the Initialisation Rules (`init` collection) just like they were form fields: they go in the Update Data.
 
 ## Wait for complete initialisation
 

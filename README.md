@@ -1,10 +1,10 @@
 # Table of Contents <!-- omit in toc -->
 - [Dynamic Forms](#dynamic-forms)
   - [What is it and what can I do with it](#what-is-it-and-what-can-i-do-with-it)
-    - [Progressive filtering](#progressive-filtering)
-    - [Automatic fields initialisation with dynamic content](#automatic-fields-initialisation-with-dynamic-content)
-    - [Visibility changes depending on fields' state](#visibility-changes-depending-on-fields-state)
-    - [Updating rules](#updating-rules)
+    - [Progressive Filtering](#progressive-filtering)
+    - [Automatic fields initialisation with remote options](#automatic-fields-initialisation-with-remote-options)
+    - [Visibility changes depending on fields' values](#visibility-changes-depending-on-fields-values)
+    - [Update Rules](#update-rules)
     - [Much much more](#much-much-more)
   - [Documentation, installation and examples of use](#documentation-installation-and-examples-of-use)
   - [Main features](#main-features)
@@ -17,7 +17,7 @@
 ![GitHub User's stars](https://img.shields.io/github/stars/simomosi?style=social)
 
 ## What is it and what can I do with it
-DynamicForms is a client library to automate progressive filtering and initialisation of dynamic fields in an easy and fast way.
+DynamicForms is a client library to automate Progressive Filtering and the initialisation of dynamic fields in an easy and fast way.
 
 It supports the developer in managing and centralizing all forms interactions.
 
@@ -25,21 +25,21 @@ It's written in *typescript* and built with *Vite*
 
 Here's some examples.
 
-### Progressive filtering
+### Progressive Filtering
 
 ![Dynamic Select example gif](./docs/imgs/dynamic-select.gif)
 
-### Automatic fields initialisation with dynamic content
+### Automatic fields initialisation with remote options
 
-![Dynamic Form initialisation gif](./docs/imgs/initialisation.gif)
+![Form initialisation gif](./docs/imgs/initialisation.gif)
 
-The progressive filtering status is restored: all the available options are automatically fetched.
+The Progressive Filtering chain is restored: all the available options are automatically fetched.
 
-### Visibility changes depending on fields' state
+### Visibility changes depending on fields' values
 
 ![Dynamic Checkbox example gif](./docs/imgs/dynamic-checkbox.gif)
 
-### Updating rules
+### Update Rules
 
 ![Dynamic Radio example gif](./docs/imgs/dynamic-radio.gif)
 
@@ -50,7 +50,7 @@ Got your attention? Try it!
 See [**DynamicForms page**](https://simomosi.github.io/dynamic-forms/).
 
 ## Main features
-- [x] **Easy to use**: DynamicForms works in a declarative way; no code with the default behavior, just a simple configuration!
+- [x] **Easy to use**: DynamicForms works in a declarative way; no code for the standard behaviour, just a simple configuration!
 - [x] **Modern javascript and backward compatible**: works on all browsers!
 - [x] **Lightweight**: having no dependencies, you can integrate it everywhere!
 - [x] **Automate repetitive and boring operations**: read values, fetch data making async remote calls, update fields' status, clear other fields, hide/show sections... even listing them is BORING!

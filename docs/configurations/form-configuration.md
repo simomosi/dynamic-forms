@@ -1,12 +1,12 @@
-# Form configuration
-This document describes the complete form configuration with focus on each property.
+# Form Configuration
+This document describes the complete Form Configuration with focus on each property.
 
-The configuration is written *client side* and passed to the correct method of [*dynamicForms module*](../dynamic-forms-module.md) for the form instantiation.
+The Form Configuration is written *client side* and passed to `makeForm` (see [*DynamicForms library*](../dynamic-forms-module.md)) to create the form.
 
 Glossary:
 
-- **Subject**: the subject is the entity who changed
-- **Observer**: the observer is an entity who is notified by the subject change
+- **Subject**: the role of a field whose change triggers an Update Rule
+- **Observer**: the role of a field updated when the Subject of an Update Rule changes. The same field can be Observer in one rule and Subject in another
 
 Here's the complete form configuration:
 
@@ -14,15 +14,15 @@ Here's the complete form configuration:
 const formConfiguration = {
     id: 'form_id',
     debug: true,
-    behavior: {
-        beforeUpdate: (subjectName) => { }, // Executed before the update related events. Return false to block all updates
-        afterUpdate: (subjectName) => { }, // Executed after the update related events
-        beforeInit: () => { }, // Executed before form initialization
-        afterInit: () => { } // Executed after form initialization
+    behavior: { // Form Hooks
+        beforeUpdate: (subjectName) => { }, // Executed before updating the Observers. Return false to block all updates
+        afterUpdate: (subjectName) => { }, // Executed after updating the Observers
+        beforeInit: () => { }, // Executed before the form initialisation
+        afterInit: () => { } // Executed after the form initialisation
     },
-    fields: [], // Collection of fields objects
-    rules: [], // Collection of rules objects
-    init: [] // Collection of init objects
+    fields: [], // Collection of Field Configurations
+    rules: [], // Collection of Update Rules
+    init: [] // Collection of Initialisation Rules
 };
 ```
 
@@ -34,41 +34,41 @@ Type: `string`.
 *required*
 
 ## `debug`
-A flag to activate the debug mode which prints in the console all the rules right before their execution.
+A flag to activate the debug mode which prints in the console every Update Rule and the initialisation right before their execution.
 
 Type: `boolean`.
 
 ## `behavior`
-Object which groups properties related to form behavior (e.g. what to do before or after an update event).
+Object which groups the Form Hooks (e.g. what to do before or after an update).
 
 ### `beforeUpdate (subjectName)`
-Method called after a subject registers an update, but before triggering the update on the whole form.
+Form Hook called after a Subject changes, but before updating its Observers.
 
 Useful to show a loader during the fields update.
 
 Parameters
 
-- {`string`} `subjectName`: the name of the subject who triggered the update. Manual updates (`form.manualUpdate`) don't call this method
+- {`string`} `subjectName`: the name of the Subject which triggered the update. Manual updates (`form.manualUpdate`) don't call this Form Hook
 
 Returns
 
 - {`bool`} *false* to abort the update, *true* otherwise
 
 ### `afterUpdate (subjectName)`
-Method called after the form update, and in particular after all involved form's fields have completed their update.
+Form Hook called after all the updated Observers have completed their update.
 
 Useful to hide a loader after the fields update.
 
 Parameters
 
-- {`string`} `subjectName`: the name of the subject who triggered the update. Manual updates (`form.manualUpdate`) don't call this method
+- {`string`} `subjectName`: the name of the Subject which triggered the update. Manual updates (`form.manualUpdate`) don't call this Form Hook
 
 Returns
 
 - {`void`}
 
 ### `beforeInit () `
-Method executed before the form initialisation.
+Form Hook called before the form initialisation.
 
 Useful to show a loader before all fields are initialised.
 
@@ -77,7 +77,7 @@ Returns
 - {`void`}
 
 ### `afterInit () `
-Method executed after the form initialisation.
+Form Hook called after the form initialisation.
 
 Useful to hide any loader after the form is ready.
 
@@ -86,22 +86,22 @@ Returns
 - {`void`}
 
 ## `fields`
-A collection of Fields configurations.
+A collection of Field Configurations.
 
-Include here fields with custom behavior (get/set/update operations). Standard fields will be discovered automatically.
+Include here the fields you want to customise (get/set/update operations). The other ones are discovered automatically.
 
-See [Fields configuration](fields-configuration.md).
+See [Field Configuration](fields-configuration.md).
 
 ## `rules`
-A collection of Update Rules configurations.
+A collection of Update Rules.
 
-Include here all rules like "if field A changes, trigger the update of fields B and C".
+Include here all the rules like "if field A changes, trigger the update of fields B and C".
 
-See [Update Rules configuration](./update-rules.md).
+See [Update Rule configuration](./update-rules.md).
 
 ## `init`
-A collection of Init Rules configurations.
+A collection of Initialisation Rules.
 
-Include here all fields which will be updated during the DynamicForm instantiation.
+Include here all fields which will be updated when the form is created.
 
-See [Initialisation Rules configuration](./init-rules.md).
+See [Initialisation Rule configuration](./init-rules.md).

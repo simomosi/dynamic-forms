@@ -92,7 +92,7 @@ classDiagram
         #standardUpdateStatus(data, subjectName) Promise❬void❭
     }
 
-    note for DynamicElement "Public methods use the field hook if given, else the standard behaviour; subclasses override only the standard behaviours"
+    note for DynamicElement "Public methods use the Field Hook if given, else the standard behaviour; subclasses override only the standard behaviours"
 
     class DynamicSelect {
         -string method
