@@ -171,6 +171,40 @@ describe('progressive filtering', () => {
         expect(optionValues('post')).toEqual(['']);
     });
 
+    it('clears the observer select on an empty subject before calling a custom beforeUpdate (#40)', async () => {
+        const fetchMock = stubFetch();
+        const beforeUpdate = vi.fn(() => true);
+        mountForm('f', selectHtml('user') + selectHtml('post', { '10': 'Post A' }));
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 'post', fetch: { makeUrl: (data) => `/posts?userId=${data.user}` }, behavior: { beforeUpdate } }],
+            rules: [{ name: 'user', update: ['post'] }],
+        });
+
+        await form.notify('user');
+
+        expect(optionValues('post')).toEqual(['']);
+        expect(fetchMock).not.toHaveBeenCalled();
+        expect(beforeUpdate).not.toHaveBeenCalled();
+    });
+
+    it('calls the custom beforeUpdate of a select when the subject is not empty', async () => {
+        stubFetch({ '/posts?userId=1': postsOfUser1 });
+        const beforeUpdate = vi.fn(() => true);
+        mountForm('f', selectHtml('user', { '1': 'Ann' }) + selectHtml('post'));
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 'post', fetch: { makeUrl: (data) => `/posts?userId=${data.user}` }, behavior: { beforeUpdate } }],
+            rules: [{ name: 'user', update: ['post'] }],
+        });
+        field<HTMLSelectElement>('user').value = '1';
+
+        await form.notify('user');
+
+        expect(beforeUpdate).toHaveBeenCalledWith(expect.any(NodeList), { user: '1' }, 'user');
+        expect(optionValues('post')).toEqual(['', '10', '11']);
+    });
+
     it('still fetches on an empty subject when select.clearOnParentVoid is false', async () => {
         const fetchMock = stubFetch({ '/posts?userId=': [] });
         mountForm('f', selectHtml('user') + selectHtml('post'));

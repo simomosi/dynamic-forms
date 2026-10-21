@@ -75,6 +75,11 @@ describe('update data type', () => {
         expectTypeOf<NonNullable<FieldHooks['updateStatus']>>().parameter(2).toEqualTypeOf<string | null>();
         expectTypeOf<NonNullable<FieldHooks['afterUpdate']>>().parameter(2).toEqualTypeOf<string | null>();
     });
+
+    it('lets beforeUpdate stop the update, while afterUpdate returns nothing', () => {
+        expectTypeOf<NonNullable<FieldHooks['beforeUpdate']>>().returns.toEqualTypeOf<boolean>();
+        expectTypeOf<NonNullable<FieldHooks['afterUpdate']>>().returns.toEqualTypeOf<void>();
+    });
 });
 
 describe('package exports', () => {

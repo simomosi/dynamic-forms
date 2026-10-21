@@ -12,12 +12,7 @@ class DynamicRadio extends DynamicElement {
     }
 
     /** @inheritdoc */
-    public get(): any {
-        // Custom
-        if (this.io.get) {
-            return this.io.get(this.htmlElement);
-        }
-        // Standard
+    protected standardGet(): any {
         for (let i = 0; i < this.htmlElement.length; i++) {
             const element = this.htmlElement[i] as HTMLInputElement;
             if (element.checked === true) {
@@ -28,12 +23,7 @@ class DynamicRadio extends DynamicElement {
     }
 
     /** @inheritdoc */
-    public set(value: string): void {
-        // Custom
-        if (this.io.set) {
-            return this.io.set(this.htmlElement, value);
-        }
-        // Standard
+    protected standardSet(value: string): void {
         for (let i = 0; i < this.htmlElement.length; i++) {
             let element = this.htmlElement[i] as HTMLInputElement;
             if (element.value === value) {
@@ -45,12 +35,7 @@ class DynamicRadio extends DynamicElement {
     }
 
     /** @inheritdoc */
-    public clear(): void {
-        // Custom
-        if (this.behavior.clear) {
-            return this.behavior.clear(this.htmlElement);
-        }
-        // Standard
+    protected standardClear(): void {
         for (let i = 0; i < this.htmlElement.length; i++) {
             const element = this.htmlElement[i] as HTMLInputElement;
             element.checked = false;

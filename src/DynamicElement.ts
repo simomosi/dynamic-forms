@@ -63,43 +63,50 @@ class DynamicElement implements Observer {
     }
 
     /**
-    * Method to get the field value
+    * Method to get the field value, through the io.get field hook if given
     * @returns {string} the value
     */
     public get(): any {
-        // Custom
-        if (this.io.get) {
-            return this.io.get(this.htmlElement);
-        }
-        // Standard
+        return this.io.get ? this.io.get(this.htmlElement) : this.standardGet();
+    }
+
+    /**
+    * Method to set the field value, through the io.set field hook if given
+    * @param {string} value new value to set
+    */
+    public set(value: string): void {
+        return this.io.set ? this.io.set(this.htmlElement, value) : this.standardSet(value);
+    }
+
+    /**
+    * Method to clear this element from its content, through the behavior.clear field hook if given
+    */
+    public clear(): void {
+        return this.behavior.clear ? this.behavior.clear(this.htmlElement) : this.standardClear();
+    }
+
+    /**
+    * Standard reading of the field value, replaced by the io.get field hook
+    * @returns {string} the value
+    */
+    protected standardGet(): any {
         const firstElement = this.htmlElement[0] as HTMLInputElement;
         return firstElement.value;
     }
 
     /**
-    * Method to set the field value
+    * Standard writing of the field value, replaced by the io.set field hook
     * @param {string} value new value to set
     */
-    public set(value: string): void {
-        // Custom
-        if (this.io.set) {
-            return this.io.set(this.htmlElement, value);
-        }
-        // Standard
+    protected standardSet(value: string): void {
         const firstElement = this.htmlElement[0] as HTMLInputElement;
         firstElement.value = value;
-        return;
     }
 
     /**
-    * Method to clear this element from its content
+    * Standard clear of the field, replaced by the behavior.clear field hook
     */
-    public clear(): void {
-        // Custom
-        if (this.behavior.clear) {
-            return this.behavior.clear(this.htmlElement);
-        }
-        // Standard
+    protected standardClear(): void {
         const firstElement = this.htmlElement[0] as HTMLInputElement;
         firstElement.value = "";
     }
@@ -114,52 +121,58 @@ class DynamicElement implements Observer {
     * @async
     */
     public async update(data: UpdateData, subjectName: string|null): Promise<void> {
-        const beforeUpdateResult = this.beforeUpdate(data, subjectName);
-        if (beforeUpdateResult !== false) {
+        if (this.canUpdate(data, subjectName) && this.beforeUpdate(data, subjectName) !== false) {
             await this.updateStatus(data, subjectName);
         }
         this.afterUpdate(data, subjectName);
     }
 
     /**
-     * Method executed before the status update. If it returns false, the update is aborted.
+     * Standard step executed before the beforeUpdate field hook, which no field hook replaces: nothing. If it returns false, the update is aborted.
      * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
      * @returns false to abort the update, true otherwise
      */
-    protected beforeUpdate(data: UpdateData, subjectName: string|null): boolean {
-        // Custom
-        if (this.behavior.beforeUpdate) {
-            return this.behavior.beforeUpdate(this.htmlElement, data, subjectName);
-        }
-        // Standard
-        return true; // Does not block field update
+    protected canUpdate(_data: UpdateData, _subjectName: string|null): boolean {
+        return true;
     }
 
     /**
-     * Method to update the DynamicElement status.
+     * Calls the behavior.beforeUpdate field hook, if given, before the status update. If it returns false, the update is aborted.
      * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
+     * @returns false to abort the update, true otherwise
      */
-    protected async updateStatus(data: UpdateData, subjectName: string|null): Promise<void> {
-        // Custom
-        if (this.behavior.updateStatus) {
-            return this.behavior.updateStatus(this.htmlElement, data, subjectName);
-        }
+    private beforeUpdate(data: UpdateData, subjectName: string|null): boolean {
+        return this.behavior.beforeUpdate ? this.behavior.beforeUpdate(this.htmlElement, data, subjectName) : true;
     }
 
     /**
-     * Method executed after the status update. It is executed also if the update is aborted.
+     * Method to update the field status, through the behavior.updateStatus field hook if given
      * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
      */
-    protected afterUpdate(data: UpdateData, subjectName: string|null): boolean {
-        // Custom
+    private async updateStatus(data: UpdateData, subjectName: string|null): Promise<void> {
+        return this.behavior.updateStatus ? this.behavior.updateStatus(this.htmlElement, data, subjectName) : this.standardUpdateStatus(data, subjectName);
+    }
+
+    /**
+     * Standard update of the field status, replaced by the behavior.updateStatus field hook: nothing
+     * @param {UpdateData} data data useful to the element's status change
+     * @param {string|null} subjectName name of the changed subject
+     */
+    protected async standardUpdateStatus(_data: UpdateData, _subjectName: string|null): Promise<void> {
+    }
+
+    /**
+     * Calls the behavior.afterUpdate field hook, if given, after the status update. It is executed also if the update is aborted.
+     * @param {UpdateData} data data useful to the element's status change
+     * @param {string|null} subjectName name of the changed subject
+     */
+    private afterUpdate(data: UpdateData, subjectName: string|null): void {
         if (this.behavior.afterUpdate) {
-            return this.behavior.afterUpdate(this.htmlElement, data, subjectName);
+            this.behavior.afterUpdate(this.htmlElement, data, subjectName);
         }
-        // Standard
-        return true; // Standard behavior: returns positive value
     }
 }
 
