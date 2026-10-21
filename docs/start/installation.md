@@ -1,5 +1,5 @@
 # Installation
-## Using a package manager (recommeded)
+## Using a package manager (recommended)
 
 === "npm"
     ```shell
@@ -14,11 +14,8 @@
     pnpm i @simomosi/dynamic-forms
     ```
 
-## Using a CDN
+The package includes its TypeScript types, for every `moduleResolution`.
 
-```html
-<script src='https://unpkg.com/@simomosi/dynamic-forms@latest'></script>
-```
+## Using a CDN or your own server
 
-You can set the specific version (e.g. `dynamic-forms@2.0.0`), use tags (e.g. `dynamic-forms@latest`) or semver ranges (e.g. `dynamic-forms@^2.0.0`).
-See [UNPKG page](https://www.unpkg.com/) for more information.
+Nothing to install: load the library in the page from a CDN, or download its files and serve them yourself. See [Loading the library](./loading.md#from-a-cdn).

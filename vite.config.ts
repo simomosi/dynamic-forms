@@ -18,7 +18,9 @@ export default defineConfig({
     lib: {
       entry: path.resolve(__dirname, 'src/index.ts'),
       name: 'DynamicForms',
-      fileName: (format: string) => `dynamic-forms.${format}.js`
+      formats: ['es', 'umd'],
+      // The package is "type": "module": the ES build is .js, the UMD build for require is .cjs
+      fileName: (format: string) => format === 'es' ? 'dynamic-forms.js' : 'dynamic-forms.umd.cjs'
     },
     sourcemap: true,
     outDir: 'dist',
@@ -52,6 +54,9 @@ export default defineConfig({
     // Generate TypeScript declaration files
   dts({
     include: ['src/**/*.ts'],
+    rollupTypes: true,
+    // The same declarations for the UMD build: a .d.cts so that TypeScript reads them as CommonJS
+    afterBuild: () => fs.copyFileSync(path.resolve(__dirname, 'dist/index.d.ts'), path.resolve(__dirname, 'dist/index.d.cts')),
   }),
   // Bundle size visualization
   visualizer({
@@ -60,5 +65,16 @@ export default defineConfig({
   }),
   
   banner(bannerInfo),
+
+  // The same UMD build as .js for browsers: CDNs and web servers may serve .cjs with a non-JavaScript
+  // Content-Type (jsDelivr: application/node with nosniff), which browsers refuse in a <script> tag
+  {
+    name: 'umd-for-browsers',
+    writeBundle(options, bundle) {
+      if ('dynamic-forms.umd.cjs' in bundle) {
+        fs.copyFileSync(path.resolve(options.dir!, 'dynamic-forms.umd.cjs'), path.resolve(options.dir!, 'dynamic-forms.umd.js'));
+      }
+    },
+  },
   ]
 });

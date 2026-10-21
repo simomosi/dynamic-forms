@@ -8,10 +8,8 @@ The library offers 2 main functions that handle all the heavy lifting for you, i
 
 First, import the module (see [loading guide](./start/loading.md))
 
-```html
-<script type="module">
-    import { makeForm, getForm } '@simomosi/dynamic-forms';
-</script>
+```javascript
+import { makeForm, getForm } from '@simomosi/dynamic-forms';
 ```
 
 ### TypeScript

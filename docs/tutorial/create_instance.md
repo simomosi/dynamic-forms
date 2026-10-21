@@ -24,9 +24,9 @@ Let's assume we are working on the following html form:
 
 Let's assume we loaded dynamic-forms using a CDN:
 ```html
-    <script type="module">
-        import { makeForm } from 'https://unpkg.com/@simomosi/dynamic-forms@latest';
-    </script>
+<script type="module">
+    import { makeForm } from 'https://esm.sh/@simomosi/dynamic-forms@4';
+</script>
 ```
 
 ## Write the Form Configuration
