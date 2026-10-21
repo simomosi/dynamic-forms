@@ -41,7 +41,7 @@ class DynamicSelect extends DynamicElement {
     public clear(): void {
         // Custom
         if (this.behavior.clear) {
-            return this.behavior.clear(this.getHtmlElementOrList());
+            return this.behavior.clear(this.htmlElement);
         }
         // Standard
         const firstElement = this.htmlElement[0] as HTMLSelectElement;
@@ -65,7 +65,7 @@ class DynamicSelect extends DynamicElement {
     protected beforeUpdate(data: UpdateData, subjectName: string|null): boolean {
         // Custom
         if (this.behavior.beforeUpdate) {
-            return this.behavior.beforeUpdate(this.getHtmlElementOrList(), data, subjectName);
+            return this.behavior.beforeUpdate(this.htmlElement, data, subjectName);
         }
         // Standard
         if (subjectName && !data[subjectName]) { // Clear field on empty subject

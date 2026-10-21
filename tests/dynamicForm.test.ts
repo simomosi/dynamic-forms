@@ -435,10 +435,10 @@ describe('field behavior', () => {
         await form.notify('a');
 
         expect(updateStatus).not.toHaveBeenCalled();
-        expect(afterUpdate).toHaveBeenCalledWith(field('b'), { a: '1' }, 'a');
+        expect(afterUpdate).toHaveBeenCalledWith(expect.any(NodeList), { a: '1' }, 'a');
     });
 
-    it('passes the html element, the data and the subject name to the field hooks', async () => {
+    it('passes the html elements, the data and the subject name to the field hooks', async () => {
         const beforeUpdate = vi.fn(() => true);
         const updateStatus = vi.fn();
         mountForm('f', '<input name="a" value="1"><input name="b">');
@@ -450,8 +450,8 @@ describe('field behavior', () => {
 
         await form.notify('a');
 
-        expect(beforeUpdate).toHaveBeenCalledWith(field('b'), { a: '1' }, 'a');
-        expect(updateStatus).toHaveBeenCalledWith(field('b'), { a: '1' }, 'a');
+        expect(beforeUpdate).toHaveBeenCalledWith(expect.any(NodeList), { a: '1' }, 'a');
+        expect(updateStatus).toHaveBeenCalledWith(expect.any(NodeList), { a: '1' }, 'a');
     });
 });
 

@@ -10,16 +10,17 @@ Dynamic-forms follows the [semver](https://semver.org) standard.
 
 - **Breaking:** `form.notify()` rejects when a select's remote call fails, instead of logging the error and resolving. `form.ready()` rejects too when an initialisation remote call fails ([#27](https://github.com/simomosi/dynamic-forms/issues/27)). Changes triggered by the user still log the error to the console
 - `form.ready()` rejects when initialisation fails (e.g. `beforeInit` throws), instead of never settling ([#28](https://github.com/simomosi/dynamic-forms/issues/28))
+- **Breaking:** every field hook receives the `NodeList` of the elements with the field name, even when there is only one. Hooks on single elements read `htmlElement[0].value` instead of `htmlElement.value`. Before, checkbox and radio `io.get`, `io.set` and `behavior.clear` and select `behavior.updateStatus`, `postProcessData` and `saveData` always received the `NodeList`, while the other hooks received the element itself when only one had the field name
 - **Breaking (TypeScript):** public types reworked so configurations need no casts. The package now exports `FormConfiguration`, `FormHooks`, `UpdateRule`, `InitialisationRule`, `FieldConfiguration`, `FieldIoHooks`, `FieldFetchConfiguration`, `FieldHooks`, `SelectConfiguration`, `CheckboxConfiguration`, `UpdateData` and the `DynamicForm` type
     - `FormConfiguration` requires only `id`, and `behavior` accepts any subset of the form hooks
     - `FieldConfiguration` has the `select` and `checkbox` keys; the former `SelectConfiguration`/`CheckboxConfiguration` interfaces extending it are gone, and the names now belong to the former `SelectSelectConfiguration`/`CheckboxCheckboxConfiguration`
     - Renamed `FormBehavior` to `FormHooks`, `FieldBehaviorConfiguration` to `FieldHooks`, `FieldIoConfiguration` to `FieldIoHooks`
     - The `data` received by field hooks, `makeUrl`, `makeBody` and `externalData` is `UpdateData` (`Record<string, any>`) instead of `object`, so `data.country` needs no annotation
     - Form hooks and `externalData` receive a `string` subject name, never `null`
-    - Field hooks receive the field element typed as `FieldElement` (`HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement`) or a `NodeListOf` it, instead of `HTMLElement | NodeList`, so `htmlElement.value` needs no cast. `FieldConfiguration<E, V>` states the element and value types of a field (`FieldConfiguration<HTMLSelectElement>`, `FieldConfiguration<HTMLInputElement, string[]>`); the value stays `any` by default
-    - `select.postProcessData` receives the response as `any` and returns `SelectOption[]` (`{ value: string | number, text: string }`), which `select.saveData` receives. Both receive the `NodeList`, as they always did at runtime
+    - Field hooks receive `NodeListOf<FieldElement>` (`FieldElement` is `HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement`) instead of `HTMLElement | NodeList`, so `htmlElement[0].value` needs no narrowing or cast. `FieldConfiguration<E, V>` states the element and value types of a field (`FieldConfiguration<HTMLSelectElement>`, `FieldConfiguration<HTMLInputElement, string[]>`); the value stays `any` by default
+    - `select.postProcessData` receives the response as `any` and returns `SelectOption[]` (`{ value: string | number, text: string }`), which `select.saveData` receives
     - `InitialisationRule.value` is `unknown` instead of `any`
-    - Exports `FieldElement`, `FieldHookElement` and `SelectOption` too
+    - Exports `FieldElement` and `SelectOption` too
 - **Breaking:** `fetch.fullFetchConfig` is a function of the Update Data, `(data) => RequestInit`, instead of a static object, as the documentation already described ([#31](https://github.com/simomosi/dynamic-forms/issues/31)). Wrap an existing object as `fullFetchConfig: () => ({ ... })`
 - `makeForm()` no longer modifies the given configuration: defaults and discovered fields go into an internal copy. Form hooks set to `undefined` fall back to the default instead of throwing
 - Clearing a checkbox unchecks it instead of checking it ([#25](https://github.com/simomosi/dynamic-forms/issues/25))
