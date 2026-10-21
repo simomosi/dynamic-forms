@@ -878,6 +878,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#loadoptions-htmlelement-data-subjectname-signal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        loadOptions (htmlElement, data, subjectName, signal)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#postprocessdata-htmlelement-data" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1375,6 +1386,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#loadoptions-htmlelement-data-subjectname-signal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        loadOptions (htmlElement, data, subjectName, signal)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#postprocessdata-htmlelement-data" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1562,13 +1584,15 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <span class="normal"> 8</span>
 <span class="normal"> 9</span>
 <span class="normal">10</span>
-<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">fieldConfiguration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="normal">11</span>
+<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">fieldConfiguration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'fieldName'</span><span class="p">,</span>
 <span class="w">    </span><span class="nx">io</span><span class="o">:</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">,</span>
 <span class="w">    </span><span class="nx">fetch</span><span class="o">:</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">,</span>
 <span class="w">    </span><span class="nx">behavior</span><span class="o">:</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">,</span>
 <span class="w">    </span><span class="nx">select</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Only for select fields</span>
-<span class="w">        </span><span class="nx">postProcessData</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Process data retrieved by remote call</span>
+<span class="w">        </span><span class="nx">loadOptions</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">subjectName</span><span class="p">,</span><span class="w"> </span><span class="nx">signal</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Load the data instead of the remote call</span>
+<span class="w">        </span><span class="nx">postProcessData</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Process data retrieved by the remote call or loadOptions</span>
 <span class="w">        </span><span class="nx">saveData</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Manually save data in html (e.g. creating `&lt;option value="value"&gt;'text'&lt;/option&gt;` nodes)</span>
 <span class="w">        </span><span class="nx">clearOnParentVoid</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="c1">// True (default) to clear the field when the Subject's value is empty; false to trigger a remote call</span>
 <span class="w">    </span><span class="p">}</span>
@@ -1632,7 +1656,28 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <h2 id="fetch"><code>fetch</code>*<a class="headerlink" href="#fetch" title="Permanent link">#</a></h2>
 <p>Object which groups properties related to remote calls.</p>
 <p><strong>Available only for select fields</strong>.</p>
-<p><strong>Required only if the select field is an Observer</strong> (it is updated on every change of its Subject), unless you specify an <em>updateStatus</em> Field Hook.</p>
+<p><strong>Required only if the select field is an Observer</strong> (it is updated on every change of its Subject), unless you specify a <a href="#loadoptions-htmlelement-data-subjectname-signal"><em>loadOptions</em></a> or an <em>updateStatus</em> Field Hook.</p>
+<p>When the remote call answers with a non-ok status, <code>notify()</code> (or <code>ready()</code>, during the Initialisation) rejects with a <code>RemoteCallError</code>, an <code>Error</code> exported by the package whose <code>response</code> holds the <code>Response</code>:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">RemoteCallError</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'@simomosi/dynamic-forms'</span><span class="p">;</span>
+
+<span class="k">try</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">await</span><span class="w"> </span><span class="nx">form</span><span class="p">.</span><span class="nx">notify</span><span class="p">(</span><span class="s1">'country'</span><span class="p">);</span>
+<span class="p">}</span><span class="w"> </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="nx">error</span><span class="w"> </span><span class="ow">instanceof</span><span class="w"> </span><span class="nx">RemoteCallError</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="p">);</span><span class="w">          </span><span class="c1">// Remote call to "/regions" failed with status 404</span>
+<span class="w">        </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">status</span><span class="p">);</span><span class="w">  </span><span class="c1">// 404</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
 <h3 id="method"><code>method</code><a class="headerlink" href="#method" title="Permanent link">#</a></h3>
 <p>It's the <em>http request method</em> (or verb).</p>
 <p>Type: <code>string</code>.</p>
@@ -1741,24 +1786,50 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 </ul>
 <h2 id="select"><code>select</code><a class="headerlink" href="#select" title="Permanent link">#</a></h2>
 <p>Object which groups properties related to select fields.</p>
+<p>A select updates its options in three steps, each replaceable by a Field Hook:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code>remote call (or loadOptions) → postProcessData → saveData
+</code></pre></div></td></tr></table></div>
+<h3 id="loadoptions-htmlelement-data-subjectname-signal"><code>loadOptions (htmlElement, data, subjectName, signal)</code><a class="headerlink" href="#loadoptions-htmlelement-data-subjectname-signal" title="Permanent link">#</a></h3>
+<p>Field Hook which replaces the remote call: it loads the data another way (another http client, a cache, data already in the page) and the update goes on as usual, through <code>postProcessData</code> and <code>saveData</code>. With it, <code>fetch</code> is not needed.</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nx">select</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">loadOptions</span><span class="o">:</span><span class="w"> </span><span class="k">async</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">subjectName</span><span class="p">,</span><span class="w"> </span><span class="nx">signal</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span>
+<span class="w">        </span><span class="p">(</span><span class="k">await</span><span class="w"> </span><span class="nx">axios</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">'/regions'</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">params</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">country</span><span class="o">:</span><span class="w"> </span><span class="nx">data</span><span class="p">.</span><span class="nx">country</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="nx">signal</span><span class="w"> </span><span class="p">})).</span><span class="nx">data</span><span class="p">,</span>
+<span class="w">    </span><span class="nx">postProcessData</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">regions</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="nx">regions</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">r</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">({</span><span class="w"> </span><span class="nx">value</span><span class="o">:</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span><span class="w"> </span><span class="nx">text</span><span class="o">:</span><span class="w"> </span><span class="nx">r</span><span class="p">.</span><span class="nx">name</span><span class="w"> </span><span class="p">})),</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<p>Parameters (the same as <a href="#updatestatus-htmlelement-data-subjectname-signal"><em>updateStatus</em></a>)</p>
+<ul>
+<li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
+<li>{<code>JSON</code>} <code>data</code>: the <a href="../update-rules/#update-data">Update Data</a></li>
+<li>{<code>string | null</code>}: <code>subjectName</code>: the name of the Subject which triggered the update. It is null for a manual update</li>
+<li>{<code>AbortSignal</code>}: <code>signal</code>: aborted when the Form is <a href="../../dynamic-forms-module/#destroy">destroyed</a></li>
+</ul>
+<p>Returns</p>
+<ul>
+<li>{<code>any | Promise&lt;any&gt;</code>} the data which <code>postProcessData</code> receives, or directly the options when there is no <code>postProcessData</code></li>
+</ul>
 <h3 id="postprocessdata-htmlelement-data"><code>postProcessData (htmlElement, data)</code><a class="headerlink" href="#postprocessdata-htmlelement-data" title="Permanent link">#</a></h3>
-<p>Field Hook to process the data retrieved by the remote call. It is useful for filtering/ordering data.</p>
+<p>Field Hook to process the data retrieved by the remote call or by <code>loadOptions</code>. It is useful for filtering/ordering data.</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
-<li>{<code>JSON</code>} <code>data</code>: data retrieved from the remote call</li>
+<li>{<code>JSON</code>} <code>data</code>: data retrieved from the remote call or returned by <code>loadOptions</code></li>
 </ul>
 <p>Returns</p>
 <ul>
 <li>{<code>{ value: string | number, text: string }[]</code>} the options to save</li>
 </ul>
 <h3 id="savedata-htmlelement-data"><code>saveData (htmlElement, data)</code><a class="headerlink" href="#savedata-htmlelement-data" title="Permanent link">#</a></h3>
-<p>Field Hook which replaces the standard saving of the options: it writes the (post-processed) data retrieved by the remote call in the html.</p>
+<p>Field Hook which replaces the standard saving of the options: it writes the (post-processed) data retrieved by the remote call or by <code>loadOptions</code> in the html.</p>
 <p>Default: saves the data as <em>option</em> html elements using <em>value</em> and <em>text</em> properties, creating also empty option if they are not present in retrieved data.</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name, where data will be saved</li>
-<li>{<code>{ value: string | number, text: string }[]</code>} <code>data</code>: the options returned by <code>postProcessData</code>, or the data retrieved from the remote call when there is no <code>postProcessData</code></li>
+<li>{<code>{ value: string | number, text: string }[]</code>} <code>data</code>: the options returned by <code>postProcessData</code>, or the data retrieved from the remote call or by <code>loadOptions</code> when there is no <code>postProcessData</code></li>
 </ul>
 <p>Returns</p>
 <ul>

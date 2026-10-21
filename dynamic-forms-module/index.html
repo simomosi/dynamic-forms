@@ -1163,7 +1163,7 @@
 <span class="p">};</span>
 <span class="nx">makeForm</span><span class="p">(</span><span class="nx">configuration</span><span class="p">);</span>
 </code></pre></div></td></tr></table></div>
-<p>Exported types: <code>FormConfiguration</code>, <code>FormHooks</code>, <code>UpdateRule</code>, <code>InitialisationRule</code>, <code>FieldConfiguration</code>, <code>FieldIoHooks</code>, <code>FieldFetchConfiguration</code>, <code>FieldHooks</code>, <code>SelectConfiguration</code>, <code>CheckboxConfiguration</code>, <code>UpdateData</code> and <code>DynamicForm</code>.</p>
+<p>Exported types: <code>FormConfiguration</code>, <code>FormHooks</code>, <code>UpdateRule</code>, <code>InitialisationRule</code>, <code>FieldConfiguration</code>, <code>FieldIoHooks</code>, <code>FieldFetchConfiguration</code>, <code>FieldHooks</code>, <code>SelectConfiguration</code>, <code>CheckboxConfiguration</code>, <code>UpdateData</code> and <code>DynamicForm</code>. The package also exports the <code>RemoteCallError</code> class, the error of a <a href="../configurations/fields-configuration/#fetch">failed remote call</a>.</p>
 <h2 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">#</a></h2>
 <h3 id="makeform-formconfiguration"><code>makeForm (formConfiguration)</code><a class="headerlink" href="#makeform-formconfiguration" title="Permanent link">#</a></h3>
 <p>Creates a form. An html form has at most one Form at a time: <code>makeForm</code> throws <code>Form "id" already exists</code> when the previous Form for that id has not been destroyed (see <a href="#destroy"><code>destroy</code></a>).</p>
