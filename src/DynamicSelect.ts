@@ -36,14 +36,10 @@ class DynamicSelect extends DynamicElement {
 
 
     /**
-    * Method to clear the select from all its non-empty options
+    * Clears the select from all its non-empty options
+    * @inheritdoc
     */
-    public clear(): void {
-        // Custom
-        if (this.behavior.clear) {
-            return this.behavior.clear(this.htmlElement);
-        }
-        // Standard
+    protected standardClear(): void {
         const firstElement = this.htmlElement[0] as HTMLSelectElement;
         const options = firstElement.options;
         for (let i = options.length - 1; i >= 0; i--) {
@@ -55,19 +51,10 @@ class DynamicSelect extends DynamicElement {
     }
 
     /**
-     * Method executed before the status update. If it returns false, the update is aborted.
-     * If select.clearOnParentVoid is true and the subject value is empty, this method calls the clear function and aborts the update.
-     *
-     * @param {UpdateData} data data useful to the element's status change
-     * @param {string|null} subjectName name of the changed subject
-     * @returns false to abort the update, true otherwise
+     * If select.clearOnParentVoid is true and the subject value is empty, clears the select and stops the update, before any field hook.
+     * @inheritdoc
      */
-    protected beforeUpdate(data: UpdateData, subjectName: string|null): boolean {
-        // Custom
-        if (this.behavior.beforeUpdate) {
-            return this.behavior.beforeUpdate(this.htmlElement, data, subjectName);
-        }
-        // Standard
+    protected canUpdate(data: UpdateData, subjectName: string|null): boolean {
         if (subjectName && !data[subjectName]) { // Clear field on empty subject
             const clearFieldFlag = (this.select.clearOnParentVoid !== undefined) ? (this.select.clearOnParentVoid) : (DynamicSelect.defaultConfig.select.clearOnParentVoid);
             if (clearFieldFlag === true) {
@@ -79,18 +66,13 @@ class DynamicSelect extends DynamicElement {
     }
 
     /**
-    * Method which execute a pipeline of instructions to update the select content with dynamic options
+    * Standard update of the select status, replaced by the behavior.updateStatus field hook: loads the Options with a remote call and saves them
     * @param {UpdateData} data data to send with the http request
     * @param {string|null} subjectName name of the subject who changed
     *
     * @returns a Promise in fulfilled state when data has been updated
     */
-    protected async updateStatus(data: UpdateData, subjectName: string|null): Promise<void> {
-        // Custom
-        if (this.behavior.updateStatus) {
-            return this.behavior.updateStatus(this.htmlElement, data, subjectName);
-        }
-        // Standard
+    protected async standardUpdateStatus(data: UpdateData, _subjectName: string|null): Promise<void> {
         if (!this.fetch.makeUrl) {
             throw new Error("Function fetch.makeUrl not specified");
         }

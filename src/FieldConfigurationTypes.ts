@@ -41,7 +41,7 @@ export interface FieldHooks<E extends FieldElement = FieldElement> {
     clear?(htmlElement: NodeListOf<E>): void,
     beforeUpdate?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null): boolean,
     updateStatus?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null): void,
-    afterUpdate?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null): boolean,
+    afterUpdate?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null): void,
 }
 
 /** One of the Options a select shows: the default saveData writes it as `<option value="value">text</option>`. */

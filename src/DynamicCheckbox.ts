@@ -26,12 +26,7 @@ class DynamicCheckbox extends DynamicElement {
     }
 
     /** @inheritdoc */
-    public get(): any {
-        // Custom
-        if (this.io.get) {
-            return this.io.get(this.htmlElement);
-        }
-        // Standard
+    protected standardGet(): any {
         const firstElement = this.htmlElement[0] as HTMLInputElement;
         const booleanValueFlag = (this.checkbox.booleanValue !== undefined) ? (this.checkbox.booleanValue) : (DynamicCheckbox.defaultConfig.checkbox.booleanValue);
         if (booleanValueFlag === true) {
@@ -41,24 +36,14 @@ class DynamicCheckbox extends DynamicElement {
     }
 
     /** @inheritdoc */
-    public set(value: string): void {
-        // Custom
-        if (this.io.set) {
-            return this.io.set(this.htmlElement, value);
-        }
-        // Standard
+    protected standardSet(value: string): void {
         const firstElement = this.htmlElement[0] as HTMLInputElement;
         firstElement.checked = (value === 'false' ? false : !!value);
         return;
     }
 
     /** @inheritdoc */
-    public clear(): void {
-        // Custom
-        if (this.behavior.clear) {
-            return this.behavior.clear(this.htmlElement);
-        }
-        // Standard
+    protected standardClear(): void {
         const firstElement = this.htmlElement[0] as HTMLInputElement;
         firstElement.checked = false;
     }
