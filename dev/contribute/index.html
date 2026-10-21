@@ -1012,16 +1012,18 @@
 <h1 id="contribute">Contribute<a class="headerlink" href="#contribute" title="Permanent link">#</a></h1>
 <p>Help me develop DynamicForms!</p>
 <p>Remember to work on <code>src/*.ts</code> files, and test them building the bundle and importing it (<code>import { makeForm } from '@dist/dynamic-forms.js';</code> for prod build, <code>import { makeForm } from '@';</code> for dev mode).</p>
+<p>Building needs Node 22.18 or later (see <code>.nvmrc</code>: <code>nvm use</code>).</p>
 <p>Useful commands:</p>
 <ul>
 <li><code>npm run dev</code> - Start Vite server for local development</li>
-<li><code>npm run build</code> - Build DynamicForms library in <code>dist</code> folder</li>
+<li><code>npm run build</code> - Build DynamicForms library in <code>dist</code> folder with <a href="https://tsdown.dev">tsdown</a> (see <code>tsdown.config.ts</code>)</li>
 <li><code>npm test</code> - Run the test suite once</li>
 <li><code>npm run test:watch</code> - Run the test suite in watch mode</li>
 <li><code>npm run coverage</code> - Run the test suite with a coverage report in <code>coverage</code> folder</li>
 <li><code>npm run typecheck</code> - Check types of sources and tests</li>
-<li><code>npm run test:package</code> - Build, pack and test the package as users load it: <code>import</code> and <code>require</code> in Node, a <code>&lt;script&gt;</code> tag, a Vite bundle</li>
+<li><code>npm run test:package</code> - Build, pack and test the package as users load it: <code>import</code> and <code>require</code> in Node, a <code>&lt;script&gt;</code> tag, a Vite bundle; and that its declarations match its exports, its sourcemaps and declaration maps lead to <code>src</code>, and its JS files start with the banner</li>
 <li><code>npm run lint:package</code> - Check the package metadata and its types with <code>publint</code> and <code>@arethetypeswrong/cli</code> (after a build)</li>
+<li><code>npm run size</code> - Check the bundle sizes and that bundlers tree-shake the ES module build, with <a href="https://github.com/ai/size-limit">size-limit</a> (after a build; budgets in <code>.size-limit.json</code>)</li>
 </ul>
 <h2 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">#</a></h2>
 <p>Tests live in the <code>tests</code> folder and run with <a href="https://vitest.dev">Vitest</a> in a <a href="https://github.com/jsdom/jsdom">jsdom</a> environment, which simulates the browser DOM inside Node.</p>
