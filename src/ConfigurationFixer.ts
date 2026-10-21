@@ -1,5 +1,5 @@
 import { FieldConfiguration } from "./FieldConfigurationTypes";
-import { FormHooks, FormConfiguration, ResolvedFormConfiguration } from "./FormConfigurationTypes";
+import { FormHooks, FormConfiguration, ResolvedFormConfiguration, UpdateRule } from "./FormConfigurationTypes";
 
 export class ConfigurationFixer {
     /**
@@ -37,7 +37,31 @@ export class ConfigurationFixer {
                 throw new Error("Missing required name in initialisation rule #"+i);
             }
         }
+        this.checkNoCycles(resolved.rules);
         return resolved;
+    }
+
+    /**
+     * Throws when the update rules form a cycle (a field observing itself, directly or through other fields), naming its path
+     * @param rules the update rules
+     */
+    private checkNoCycles(rules: UpdateRule[]): void {
+        const observers = new Map<string, string[]>();
+        rules.forEach(rule => observers.set(rule.name, (observers.get(rule.name) ?? []).concat(rule.update)));
+
+        const acyclic = new Set<string>(); // Fields from which no cycle starts
+        const visit = (name: string, path: string[]): void => {
+            if (path.includes(name)) {
+                const cycle = path.slice(path.indexOf(name)).concat(name);
+                throw new Error("Update rules form a cycle: " + cycle.join(' → '));
+            }
+            if (acyclic.has(name)) {
+                return;
+            }
+            (observers.get(name) ?? []).forEach(observer => visit(observer, path.concat(name)));
+            acyclic.add(name);
+        };
+        observers.forEach((_, name) => visit(name, []));
     }
 
     /** Completes the form hooks with no-op defaults, also replacing hooks explicitly set to undefined */

@@ -56,7 +56,7 @@ class DynamicForm implements Subject {
         this.fieldsMap.forEach((field) => {
             this.attach(field);
         });
-        this.initPromise = this.handleInitialisation(this.fieldsMap, formConfiguration.init, this.fieldUpdateRulesMap, this.behavior)
+        this.initPromise = this.handleInitialisation(this.fieldsMap, formConfiguration.init, this.behavior)
     }
     
     private createFieldUpdateRulesMap(fieldsCollection: FieldConfiguration[], rulesCollection: UpdateRule[] = []): Map<string, UpdateRule[]> {
@@ -69,17 +69,17 @@ class DynamicForm implements Subject {
         return fieldUpdateRules;
     }
     
-    private handleInitialisation(fieldsCollection: Map<string, DynamicElement>, initFields: InitialisationRule[] = [], fieldUpdateRules:Map<string, UpdateRule[]>, behavior: FormHooks): Promise<void> {
+    private handleInitialisation(fieldsCollection: Map<string, DynamicElement>, initFields: InitialisationRule[] = [], behavior: FormHooks): Promise<void> {
         if (!initFields) {
             return Promise.resolve();
         }
         return Promise.resolve()
             .then(() => behavior.beforeInit())
-            .then(() => this.initialiseFields(fieldsCollection, initFields, fieldUpdateRules))
+            .then(() => this.initialiseFields(fieldsCollection, initFields))
             .then(() => behavior.afterInit());
     }
     
-    private async initialiseFields(fieldsMap: Map<string, DynamicElement>, initFields: InitialisationRule[], fieldUpdateRules: Map<string, UpdateRule[]>): Promise<void> {
+    private async initialiseFields(fieldsMap: Map<string, DynamicElement>, initFields: InitialisationRule[]): Promise<void> {
         // Create an object which holds the form's initial status
         const initialStatus = new Map<string, any>(); // TODO: use a map for better performance
         initFields
@@ -107,37 +107,9 @@ class DynamicForm implements Subject {
             }
         }
         
-        // For each initialised field notifies the next fields to update
-        const initializedFieldsNames = initFields.map(f => f.name);
-        const nextUpdatePromises: Array<Promise<void>> = [];
-        initializedFieldsNames
-        .filter(fieldName => fieldsMap.get(fieldName) !== undefined)
-        .forEach(fieldName => {
-            const updateRules = fieldUpdateRules.get(fieldName) ?? [];
-            updateRules.forEach(updateRule => {
-                // Update
-                const params = this.fetchAllParameters(updateRule);
-                updateRule.update.forEach(observerName => {
-                    if (observerName === updateRule.name) { // This prevents loops
-                        return;
-                    }
-                    if (initializedFieldsNames.includes(observerName)) { // Field already initialized
-                        return;
-                    }
-                    if (this.debug) {
-                        console.log(`> > [${updateRule.name}] ==update==> [${this.getField(observerName).name}]`);
-                        console.log(`Parameters:`, params);
-                    }
-                    const observer = this.getField(observerName);
-                    const observerPromise = observer.update(params, updateRule.name);
-                    nextUpdatePromises.push(observerPromise);
-                    // Clear
-                    this.clearCascade(observerName);
-                });
-            });
-        });
-        
-        await Promise.all(nextUpdatePromises);
+        // Update the observers of the initialised fields, leaving the initialised fields untouched
+        const initialisedFieldsNames = initFields.map(f => f.name).filter(name => fieldsMap.get(name) !== undefined);
+        await this.propagate(initialisedFieldsNames, new Set(initialisedFieldsNames));
     }
     /**
      * Method used to understand when the dynamic-form initialisation is completed
@@ -166,32 +138,43 @@ class DynamicForm implements Subject {
             console.log(`-\n${new Date()}\n> [${subjectName}] Changed. Notifying observers...\n-`);
         }
         
-        const updatePromises: Promise<void>[] = [];
-        const beforeUpdateResult = this.behavior.beforeUpdate(subjectName);
-        if (beforeUpdateResult) {
+        if (this.behavior.beforeUpdate(subjectName)) {
+            await this.propagate([subjectName], new Set());
+        }
+        this.behavior.afterUpdate(subjectName);
+    }
+
+    /**
+     * Updates the observers of the given subjects and clears on cascade the fields beyond them.
+     * @param {string[]} subjects names of the changed subjects
+     * @param {Set<string>} untouched names of the fields neither updated nor cleared
+     * @returns {Promise<void>} promise resolved when all updates are completed
+     */
+    private async propagate(subjects: string[], untouched: Set<string>): Promise<void> {
+        // Collect the updates first, so that the update data is read before any field is cleared
+        const updates: { observerName: string, params: UpdateData, subjectName: string }[] = [];
+        subjects.forEach(subjectName => {
             const updateRules = this.fieldUpdateRulesMap.get(subjectName) ?? [];
             updateRules.forEach(rule => {
-                // Update
                 const params = this.fetchAllParameters(rule);
                 rule.update.forEach(observerName => {
-                    if (observerName === subjectName) { // This prevents loops
-                        return;
+                    if (!untouched.has(observerName)) {
+                        updates.push({ observerName, params, subjectName });
                     }
-                    if (this.debug) {
-                        console.log(`> > [${subjectName}] ==update==> [${this.getField(observerName).name}]`);
-                        console.log(`Parameters:`, params);
-                    }
-                    const observer = this.getField(observerName);
-                    const observerPromise = observer.update(params, subjectName);
-                    updatePromises.push(observerPromise);
-                    // Clear
-                    this.clearCascade(observerName);
                 });
             });
-        }
-        await Promise.all(updatePromises);
-        this.behavior.afterUpdate(subjectName);
-        return;
+        });
+        // Clear before updating, so that a cascade clear never undoes an update
+        const visited = new Set<string>();
+        updates.forEach(({ observerName }) => this.clearCascade(observerName, untouched, visited));
+        // Update
+        await Promise.all(updates.map(({ observerName, params, subjectName }) => {
+            if (this.debug) {
+                console.log(`> > [${subjectName}] ==update==> [${observerName}]`);
+                console.log(`Parameters:`, params);
+            }
+            return this.getField(observerName).update(params, subjectName);
+        }));
     }
     
     /**
@@ -223,22 +206,26 @@ class DynamicForm implements Subject {
     * The fields cleared are the subjects'observers'observers.
     * This implementation uses the DFS algorithm.
     * @param {string} currentSubject node name whom observers will be cleared
-    * @param {array} visited array of already cleared (visited) nodes
+    * @param {Set<string>} untouched names of the fields not to clear, whose observers are still cleared
+    * @param {Set<string>} visited names of the already visited fields, shared by the cascade clears of one propagation
     */
-    private async clearCascade(currentSubject: string, visited: string[] = []): Promise<void> {
-        visited.push(currentSubject);
+    private clearCascade(currentSubject: string, untouched: Set<string>, visited: Set<string>): void {
         const updateRules = this.fieldUpdateRulesMap.get(currentSubject) ?? [];
         updateRules.forEach(rule => {
             rule.update.forEach(observer => {
-                if (!visited.includes(observer)) {
+                if (visited.has(observer)) {
+                    return;
+                }
+                visited.add(observer);
+                if (!untouched.has(observer)) {
                     if (this.debug){
-                        console.log(`> > > [${currentSubject}] ==x==> [${this.getField(observer).name}]`);
+                        console.log(`> > > [${currentSubject}] ==x==> [${observer}]`);
                     }
                     this.getField(observer).clear();
-                    this.clearCascade(observer, visited);
                 }
-            })
-        })
+                this.clearCascade(observer, untouched, visited);
+            });
+        });
     }
     
     /**

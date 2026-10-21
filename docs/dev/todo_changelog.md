@@ -23,6 +23,10 @@ Dynamic-forms follows the [semver](https://semver.org) standard.
     - Exports `FieldElement` and `SelectOption` too
 - **Breaking:** `fetch.fullFetchConfig` is a function of the Update Data, `(data) => RequestInit`, instead of a static object, as the documentation already described ([#31](https://github.com/simomosi/dynamic-forms/issues/31)). Wrap an existing object as `fullFetchConfig: () => ({ ... })`
 - `makeForm()` no longer modifies the given configuration: defaults and discovered fields go into an internal copy. Form hooks set to `undefined` fall back to the default instead of throwing
+- **Breaking:** `makeForm()` throws when the update rules form a cycle, including a field listing itself in its own `update`, which used to be ignored ([#38](https://github.com/simomosi/dynamic-forms/issues/38)). A cycle used to clear the field the user had just changed
+- Initialisation no longer clears the init value of a field reached by the cascade clear of another initialised field ([#37](https://github.com/simomosi/dynamic-forms/issues/37))
+- An update clears the observers' observers before updating the observers, so the result no longer depends on the order of the names in `update`
+- `form.notify()` and `form.ready()` reject when clearing the observers' observers fails (e.g. a `behavior.clear` field hook throws), instead of leaving an unhandled rejection
 - Clearing a checkbox unchecks it instead of checking it ([#25](https://github.com/simomosi/dynamic-forms/issues/25))
 - A select filled by a remote call gets an empty option when neither the html nor the data have one ([#26](https://github.com/simomosi/dynamic-forms/issues/26)). An option with value `0` is not taken for the empty one
 

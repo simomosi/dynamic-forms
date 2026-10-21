@@ -13,6 +13,11 @@ const updateRuleConfiguration = {
 ## `name`*
 The field name inside the form.
 
+## `update`
+The names of the fields to update when this field changes. Their own observers are cleared, since their value is no longer valid.
+
+Update rules can't form a cycle: a field can't observe itself, directly or through other fields. `makeForm` throws `Update rules form a cycle: a → b → a` when they do.
+
 ## `additionalData`
 A collection of other fields name whose value will be automatically fetched and used in the field's update function.
 
