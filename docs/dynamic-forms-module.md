@@ -41,7 +41,7 @@ Exported types: `FormConfiguration`, `FormHooks`, `UpdateRule`, `InitialisationR
 ## Properties
 
 ### `makeForm (formConfiguration)`
-Creates a form.
+Creates a form. An html form has at most one Form at a time: `makeForm` throws `Form "id" already exists` when the previous Form for that id has not been destroyed (see [`destroy`](#destroy)).
 
 Parameters
 
@@ -61,3 +61,25 @@ Parameters
 Returns
 
 - {`DynamicForm | null`} the form, or null if it does not exist
+
+### `destroy ()`
+A method of the Form returned by `makeForm`. It removes the Form's listeners, so the fields no longer update each other, unregisters it from `getForm`, and aborts its remote calls in progress. Destroying it again does nothing.
+
+A `notify()`, `manualUpdate()` or `ready()` still pending rejects with `Form "id" was destroyed`, and so do `notify()` and `manualUpdate()` called afterwards. A custom [`updateStatus`](./configurations/fields-configuration.md#updatestatus-htmlelement-data-subjectname-signal) Field Hook receives the abort signal, to stop its own remote calls.
+
+### Fields added after `makeForm`
+Fields are discovered when the Form is created. To pick up fields added to the html form later, destroy the Form and create it again:
+
+```js
+let form = makeForm(configuration);
+// ...the page adds <input name="notes"> to the form...
+form.destroy();
+form = makeForm(configuration);
+```
+
+The new Form runs the Initialisation again, so its Initialisation Rules set the initial Values again. To keep the Values the user has changed meanwhile, create it without them:
+
+```js
+form.destroy();
+form = makeForm({ ...configuration, init: [] });
+```

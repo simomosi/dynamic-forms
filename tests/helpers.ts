@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import { makeForm } from '@/index';
+import { getForm, makeForm } from '@/index';
 import type { FieldConfiguration, FormConfiguration, UpdateData } from '@/index';
 
 /** Mounts `<form id="...">` with the given inner html into the document and returns it. */
@@ -8,7 +8,9 @@ export function mountForm(id: string, innerHtml: string): HTMLFormElement {
     return document.forms.namedItem(id)!;
 }
 
+/** Creates the form, destroying the one left with the same id by a previous mount */
 export function createForm(config: FormConfiguration) {
+    getForm(config.id)?.destroy();
     return makeForm(config);
 }
 

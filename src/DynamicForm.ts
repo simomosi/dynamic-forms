@@ -1,12 +1,14 @@
 import DynamicElement from './DynamicElement';
 import { ResolvedFormConfiguration, FormHooks, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
 import { ResolvedFieldConfiguration, UpdateData } from './FieldConfigurationTypes';
-import { Observer, Subject } from './ObserverPatternTypes';
 
 /**
 * This class represents a form with dynamic content, e.g. select with variable options, updating rules and visibility depending on fields' state...
+*
+* It is the Mediator between its fields: the Update Rules declare which fields observe which, the fields never register themselves,
+* and on each change the form updates the observers of the changed field, like a spreadsheet recomputing the cells depending on a changed one.
 */
-class DynamicForm implements Subject {
+class DynamicForm {
     /** @param {string} id - the form id */
     readonly id: string;
     
@@ -34,17 +36,23 @@ class DynamicForm implements Subject {
     /** @param {Promise<void>} initPromise - promise fulfilled when dynamicform initialisation is complete */
     initPromise: Promise<void>;
     
+    /** @param {() => void} unregister - removes the form from the forms returned by getForm */
+    private readonly unregister: () => void;
+
+    /** @param {AbortController} destruction - aborted by destroy, with the error a destroyed form throws */
+    private readonly destruction = new AbortController();
+
     /**
     * Class constructor.
-    * @param {object} formConfiguration the form configuration in JSON format
+    * @param {HTMLFormElement} formHtmlElement the html form
+    * @param {ResolvedFormConfiguration} formConfiguration the form configuration completed with defaults
+    * @param {Map<string, DynamicElement>} fieldsMap the form fields
+    * @param {() => void} unregister removes the form from the forms returned by getForm, called by destroy
     */
-    constructor(formHtmlElement: HTMLFormElement, formConfiguration: ResolvedFormConfiguration, fieldsMap: Map<string, DynamicElement>) {
+    constructor(formHtmlElement: HTMLFormElement, formConfiguration: ResolvedFormConfiguration, fieldsMap: Map<string, DynamicElement>, unregister: () => void) {
+        this.unregister = unregister;
         this.id = formConfiguration.id;
         this.config = formConfiguration;
-        const form = document.forms.namedItem(formConfiguration.id);
-        if (!form) {
-            throw new Error(`Form ${formConfiguration.id} not found`);
-        }
         this.htmlElement = formHtmlElement;
         this.debug = formConfiguration.debug;
         this.enabled = true;
@@ -54,9 +62,9 @@ class DynamicForm implements Subject {
         this.fieldUpdateRulesMap = this.createFieldUpdateRulesMap(formConfiguration.fields, formConfiguration.rules);
         
         this.fieldsMap.forEach((field) => {
-            this.attach(field);
+            field.attach((name) => this.notify(name).catch(error => this.reportUnlessDestroyed(error)));
         });
-        this.initPromise = this.handleInitialisation(this.fieldsMap, formConfiguration.init, this.behavior)
+        this.initPromise = this.untilDestroyed(this.handleInitialisation(this.fieldsMap, formConfiguration.init, this.behavior));
     }
     
     private createFieldUpdateRulesMap(fieldsCollection: ResolvedFieldConfiguration[], rulesCollection: UpdateRule[] = []): Map<string, UpdateRule[]> {
@@ -112,6 +120,53 @@ class DynamicForm implements Subject {
         await this.propagate(initialisedFieldsNames, new Set(initialisedFieldsNames));
     }
     /**
+     * Destroys the form, so that a new one can be created for the same html form: removes its listeners,
+     * unregisters it from getForm and aborts its remote calls in progress. Destroying it again does nothing.
+     */
+    public destroy(): void {
+        if (this.destruction.signal.aborted) {
+            return;
+        }
+        this.fieldsMap.forEach(field => field.detach());
+        this.unregister();
+        // Destroying is no failure: a pending initialisation rejects ready(), but is no unhandled rejection when nobody awaits it
+        this.initPromise.catch(() => {});
+        this.destruction.abort(new Error(`Form "${this.id}" was destroyed`));
+    }
+
+    /**
+     * Logs an error of an update started by a field event, unless it comes from destroying the form
+     * @param {unknown} error the error
+     */
+    private reportUnlessDestroyed(error: unknown): void {
+        if (!this.isDestroyedBy(error)) {
+            console.error(error);
+        }
+    }
+
+    /**
+     * @param {unknown} error an error
+     * @returns {boolean} true if the error is the one destroy() rejects with
+     */
+    private isDestroyedBy(error: unknown): boolean {
+        return this.destruction.signal.aborted && error === this.destruction.signal.reason;
+    }
+
+    /**
+     * Settles like the given work, or rejects as soon as the form is destroyed
+     * @param {Promise<T>} work the work to bound
+     * @returns {Promise<T>} the bounded work
+     */
+    private untilDestroyed<T>(work: Promise<T>): Promise<T> {
+        const signal = this.destruction.signal;
+        return new Promise<T>((resolve, reject) => {
+            const onDestroy = () => reject(signal.reason);
+            signal.addEventListener('abort', onDestroy, { once: true });
+            work.then(resolve, reject).finally(() => signal.removeEventListener('abort', onDestroy));
+        });
+    }
+
+    /**
      * Method used to understand when the dynamic-form initialisation is completed
      * @returns {Promise<void>} promise resolved when initialisation is completed
      */
@@ -119,16 +174,13 @@ class DynamicForm implements Subject {
         return this.initPromise;
     }
 
-    public attach(observer: Observer): void {
-        observer.attach(this);
-    }
-    
     /**
     * Method to notify the change of the subject to all its observers (Observer Design Pattern).
     * @param {string} subjectName the name of the field who changed
     * @returns {Promise<void>} promise resolved when all updates are completed
     */
     public async notify(subjectName: string): Promise<void> {
+        this.destruction.signal.throwIfAborted();
         if (this.isEnabled() === false) {
             return;
         }
@@ -139,7 +191,7 @@ class DynamicForm implements Subject {
         }
         
         if (this.behavior.beforeUpdate(subjectName)) {
-            await this.propagate([subjectName], new Set());
+            await this.untilDestroyed(this.propagate([subjectName], new Set()));
         }
         this.behavior.afterUpdate(subjectName);
     }
@@ -173,7 +225,7 @@ class DynamicForm implements Subject {
                 console.log(`> > [${subjectName}] ==update==> [${observerName}]`);
                 console.log(`Parameters:`, params);
             }
-            return this.getField(observerName).update(params, subjectName);
+            return this.getField(observerName).update(params, subjectName, this.destruction.signal);
         }));
     }
     
@@ -235,9 +287,10 @@ class DynamicForm implements Subject {
     * @returns a Promise in fulfilled state when element status has been updated
     */
     public async manualUpdate(data: UpdateData, subjectName: string): Promise<void> {
+        this.destruction.signal.throwIfAborted();
         const field = this.getField(subjectName);
         if (field) {
-            return field.update(data, null);
+            return this.untilDestroyed(field.update(data, null, this.destruction.signal));
         }
         return;
     }

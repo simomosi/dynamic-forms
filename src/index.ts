@@ -18,10 +18,14 @@ const formCollection: Map<string, DynamicForm> = new Map();
 export function makeForm(formConfiguration: FormConfiguration): DynamicForm {
     const htmlFormElement = document.forms.namedItem(formConfiguration.id) as HTMLFormElement;
     const completeFormConfiguration = resolveConfiguration(htmlFormElement, formConfiguration);
+    const id = completeFormConfiguration.id;
+    if (formCollection.has(id)) {
+        throw new Error(`Form "${id}" already exists: call destroy() on it first`);
+    }
     const fieldsMap = (new FieldBuilder()).createFieldsMap(completeFormConfiguration.fields, htmlFormElement);
 
-    const form = new DynamicForm(htmlFormElement, completeFormConfiguration, fieldsMap);
-    formCollection.set(form.getId(), form);
+    const form = new DynamicForm(htmlFormElement, completeFormConfiguration, fieldsMap, () => formCollection.delete(id));
+    formCollection.set(id, form);
     return form;
 }
 

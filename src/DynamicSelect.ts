@@ -55,10 +55,11 @@ class DynamicSelect extends DynamicElement {
     * Standard update of the select status, replaced by the behavior.updateStatus field hook: loads the Options with a remote call and saves them
     * @param {UpdateData} data data to send with the http request
     * @param {string|null} subjectName name of the subject who changed
+    * @param {AbortSignal} signal aborted when the form is destroyed, which aborts the remote call
     *
     * @returns a Promise in fulfilled state when data has been updated
     */
-    protected async standardUpdateStatus(data: UpdateData, _subjectName: string|null): Promise<void> {
+    protected async standardUpdateStatus(data: UpdateData, _subjectName: string|null, signal: AbortSignal): Promise<void> {
         if (!this.fetch.makeUrl) {
             throw new Error("Function fetch.makeUrl not specified");
         }
@@ -75,7 +76,9 @@ class DynamicSelect extends DynamicElement {
             }
         }
 
-        return fetch(requestUrl, fetchConfig)
+        // Abort with the form destruction, or with the signal of fullFetchConfig if any
+        const fetchSignal = fetchConfig.signal ? AbortSignal.any([fetchConfig.signal, signal]) : signal;
+        return fetch(requestUrl, { ...fetchConfig, signal: fetchSignal })
             .then(response => { // Json
                 if (response.ok)
                     return response.json();
