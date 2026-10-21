@@ -1,5 +1,5 @@
 import DynamicElement from './DynamicElement';
-import { FieldConfiguration, FieldElement, SelectConfiguration, SelectOption, UpdateData } from './FieldConfigurationTypes';
+import { FieldElement, ResolvedFieldConfiguration, SelectOption, UpdateData } from './FieldConfigurationTypes';
 
 /**
 * This class represents a select field with dynamic content (like a standard html-select with dynamic options)
@@ -9,29 +9,16 @@ class DynamicSelect extends DynamicElement {
     /** @param {string} method the http request method for the remote call (async update) */
     readonly method: string;
 
-    /** @param {object} dropdown - property with select related properties */
-    select: SelectConfiguration;
-
-    /** @param {object} defaultConfig property with default configuration values */
-    static defaultConfig = { // Todo: inherit superclass' defaultConfig
-        'io': {
-            'event': 'change',
-        },
-        'fetch': {
-            'method': 'GET',
-        },
-        'select': {
-            'clearOnParentVoid': true
-        },
-    }
+    /** @param {object} select - property with select related properties */
+    select: ResolvedFieldConfiguration['select'];
 
     /**
     * @inheritdoc
     */
-    constructor(config: FieldConfiguration, htmlElement: NodeListOf<FieldElement>) {
+    constructor(config: ResolvedFieldConfiguration, htmlElement: NodeListOf<FieldElement>) {
         super(config, htmlElement);
-        this.method = this.fetch.method ?? DynamicSelect.defaultConfig.fetch.method;
-        this.select = config.select ?? {};
+        this.method = config.fetch.method;
+        this.select = config.select;
     }
 
 
@@ -56,8 +43,7 @@ class DynamicSelect extends DynamicElement {
      */
     protected canUpdate(data: UpdateData, subjectName: string|null): boolean {
         if (subjectName && !data[subjectName]) { // Clear field on empty subject
-            const clearFieldFlag = (this.select.clearOnParentVoid !== undefined) ? (this.select.clearOnParentVoid) : (DynamicSelect.defaultConfig.select.clearOnParentVoid);
-            if (clearFieldFlag === true) {
+            if (this.select.clearOnParentVoid === true) {
                 this.clear();
                 return false;
             }

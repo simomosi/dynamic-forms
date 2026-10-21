@@ -1,4 +1,4 @@
-import { FieldConfiguration, UpdateData } from './FieldConfigurationTypes';
+import { FieldConfiguration, ResolvedFieldConfiguration, UpdateData } from './FieldConfigurationTypes';
 
 /** Form configuration as written by users: only `id` is required, the library completes the rest. */
 export interface FormConfiguration {
@@ -10,12 +10,12 @@ export interface FormConfiguration {
     init?: InitialisationRule[]
 }
 
-/** Form configuration completed with defaults by the ConfigurationFixer. */
+/** Form configuration checked and completed with defaults by resolveConfiguration. */
 export interface ResolvedFormConfiguration {
     id: string,
     debug: boolean,
     behavior: FormHooks,
-    fields: FieldConfiguration[],
+    fields: ResolvedFieldConfiguration[],
     rules: UpdateRule[],
     init: InitialisationRule[]
 }

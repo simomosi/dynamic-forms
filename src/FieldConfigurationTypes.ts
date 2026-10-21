@@ -61,3 +61,13 @@ export interface SelectConfiguration<E extends FieldElement = FieldElement> {
 export interface CheckboxConfiguration {
     booleanValue?: boolean
 }
+
+/** Field configuration completed with defaults by resolveConfiguration: every key is present. */
+export interface ResolvedFieldConfiguration {
+    name: string,
+    io: FieldIoHooks & { event: string },
+    fetch: FieldFetchConfiguration & { method: string },
+    behavior: FieldHooks,
+    select: SelectConfiguration & { clearOnParentVoid: boolean },
+    checkbox: CheckboxConfiguration & { booleanValue: boolean },
+}

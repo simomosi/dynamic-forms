@@ -1,6 +1,6 @@
 import DynamicElement from './DynamicElement';
 import { ResolvedFormConfiguration, FormHooks, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
-import { FieldConfiguration, UpdateData } from './FieldConfigurationTypes';
+import { ResolvedFieldConfiguration, UpdateData } from './FieldConfigurationTypes';
 import { Observer, Subject } from './ObserverPatternTypes';
 
 /**
@@ -59,7 +59,7 @@ class DynamicForm implements Subject {
         this.initPromise = this.handleInitialisation(this.fieldsMap, formConfiguration.init, this.behavior)
     }
     
-    private createFieldUpdateRulesMap(fieldsCollection: FieldConfiguration[], rulesCollection: UpdateRule[] = []): Map<string, UpdateRule[]> {
+    private createFieldUpdateRulesMap(fieldsCollection: ResolvedFieldConfiguration[], rulesCollection: UpdateRule[] = []): Map<string, UpdateRule[]> {
         const fieldUpdateRules = new Map<string, UpdateRule[]>();
         fieldsCollection.forEach(f => fieldUpdateRules.set(f.name, [])); // All fields, even those for which there is no update rule
         rulesCollection.forEach(rule => {

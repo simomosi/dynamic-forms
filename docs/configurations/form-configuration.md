@@ -26,6 +26,14 @@ const formConfiguration = {
 };
 ```
 
+`makeForm` checks the configuration before building the form. Every field name it mentions (in `fields`, `rules` and `init`) must be a field of the form; otherwise it throws an error listing every unknown name:
+
+```text
+Invalid form configuration "form_id":
+- update rule "country": unknown field "regoin" in update
+- initialisation rule "contry": unknown field
+```
+
 ## `id`*
 The form id. Just the plain text, no '#'.
 
