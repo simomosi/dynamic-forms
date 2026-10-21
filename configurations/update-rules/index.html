@@ -754,6 +754,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#update-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update Data
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1006,6 +1017,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#update-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Update Data
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1032,7 +1054,7 @@
 
 
 <h1 id="single-update-rule-configuration">Single Update Rule configuration<a class="headerlink" href="#single-update-rule-configuration" title="Permanent link">#</a></h1>
-<p>These rules are used to manage fields update.</p>
+<p>These rules declare which Observers to update when a Subject changes.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
@@ -1040,29 +1062,32 @@
 <span class="normal">5</span>
 <span class="normal">6</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">updateRuleConfiguration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s1">'fieldName'</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">update</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span><span class="w">  </span><span class="c1">// Array of form fields names to notify when events occour</span>
-<span class="w">    </span><span class="nx">additionalData</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="c1">// Array of other form field names to send to server</span>
-<span class="w">    </span><span class="nx">externalData</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">subjectName</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// Function which returns a json of data</span>
+<span class="w">    </span><span class="nx">update</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span><span class="w">  </span><span class="c1">// Names of the Observers to update when the Subject changes</span>
+<span class="w">    </span><span class="nx">additionalData</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="c1">// Names of other fields whose values go in the Update Data</span>
+<span class="w">    </span><span class="nx">externalData</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">subjectName</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// Function which returns external data to add to the Update Data</span>
 <span class="p">};</span>
 </code></pre></div></td></tr></table></div>
 <h2 id="name"><code>name</code>*<a class="headerlink" href="#name" title="Permanent link">#</a></h2>
-<p>The field name inside the form.</p>
+<p>The name of the Subject.</p>
 <h2 id="update"><code>update</code><a class="headerlink" href="#update" title="Permanent link">#</a></h2>
-<p>The names of the fields to update when this field changes. Their own observers are cleared, since their value is no longer valid.</p>
-<p>Update rules can't form a cycle: a field can't observe itself, directly or through other fields. <code>makeForm</code> throws <code>Update rules form a cycle: a → b → a</code> when they do.</p>
+<p>The names of the Observers to update when the Subject changes. Their own Observers are cleared on cascade, since their value is no longer valid.</p>
+<p>Update Rules can't form a cycle: a field can't be an Observer of itself, directly or through other fields. <code>makeForm</code> throws <code>Update rules form a cycle: a → b → a</code> when they do.</p>
 <h2 id="additionaldata"><code>additionalData</code><a class="headerlink" href="#additionaldata" title="Permanent link">#</a></h2>
-<p>A collection of other fields name whose value will be automatically fetched and used in the field's update function.</p>
+<p>The names of other fields whose values are read and added to the Update Data.</p>
 <h2 id="externaldata-data-subjectname"><code>externalData (data, subjectName)</code><a class="headerlink" href="#externaldata-data-subjectname" title="Permanent link">#</a></h2>
-<p>A function to collect other data used in the update function but external to the form (e.g. a timestamp).</p>
+<p>A function to add to the Update Data other data, external to the form (e.g. a timestamp).</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>object</code>} <code>data</code>: data obtained from the <a href="#additionalData-optional">additional data</a> function</li>
-<li>{<code>string</code>} <code>subjectName</code>: the name of the subject who triggered the update</li>
+<li>{<code>object</code>} <code>data</code>: the Update Data collected so far, with the Subject's value and the <a href="#additionaldata">additionalData</a> values</li>
+<li>{<code>string</code>} <code>subjectName</code>: the name of the Subject</li>
 </ul>
 <p>Returns</p>
 <ul>
 <li>{<code>object</code>} An object with external data values (<em>key-value</em> format)</li>
 </ul>
+<h2 id="update-data">Update Data<a class="headerlink" href="#update-data" title="Permanent link">#</a></h2>
+<p>The data an Observer receives for an update, keyed by field name: the Subject's value, plus the values of the <code>additionalData</code> fields and the object returned by <code>externalData</code>.</p>
+<p>Field Hooks, <code>fetch.makeUrl</code>, <code>fetch.makeBody</code> and <code>fetch.fullFetchConfig</code> receive it as <code>data</code>.</p>
 
 
 

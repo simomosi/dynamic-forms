@@ -1068,19 +1068,20 @@
 
     note for dynamicForms "Library entrypoint"
 
-    class ConfigurationFixer {
-        +fix(formHtmlElement, formConfiguration) ResolvedFormConfiguration
+    class resolveConfiguration {
+        +resolveConfiguration(formHtmlElement, formConfiguration) ResolvedFormConfiguration
     }
+
+    note for resolveConfiguration "Checks the configuration and completes every Form and Field default, Discovered Fields included"
 
     class FieldBuilder {
         +createFieldsMap(fieldsCollection, htmlForm)
     }
 
     class DynamicElement {
-        -FieldConfiguration config
+        -ResolvedFieldConfiguration config
         -NodeList htmlElement
         -string name
-        -JSON defaultConfig
         +get() string
         +set(value) string
         +clear()
@@ -1092,7 +1093,7 @@
         #standardUpdateStatus(data, subjectName) Promise❬void❭
     }
 
-    note for DynamicElement "Public methods use the field hook if given, else the standard behaviour; subclasses override only the standard behaviours"
+    note for DynamicElement "Public methods use the Field Hook if given, else the standard behaviour; subclasses override only the standard behaviours"
 
     class DynamicSelect {
         -string method
@@ -1103,7 +1104,7 @@
         #saveData(data) void
     }
 
-    dynamicForms --&gt; ConfigurationFixer
+    dynamicForms --&gt; resolveConfiguration
     dynamicForms --&gt; FieldBuilder
 
     DynamicForm &lt;-- dynamicForms

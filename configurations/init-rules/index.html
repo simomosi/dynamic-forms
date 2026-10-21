@@ -988,8 +988,8 @@
 
 
 <h1 id="single-initialisation-rule-configuration">Single Initialisation Rule configuration<a class="headerlink" href="#single-initialisation-rule-configuration" title="Permanent link">#</a></h1>
-<p>These rules are used to manage fields initialization.</p>
-<p>Parameters in init rules can reference to form fields and external data.</p>
+<p>These rules declare the fields to bring up to date when the form is created, optionally with their initial value.</p>
+<p>An Initialisation Rule can name a field of the form, or external data which is not a field.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
@@ -1004,8 +1004,8 @@
 <p>The field value. It can be any primitive value.</p>
 <p>This attribute has 2 purposes:</p>
 <ul>
-<li>It's passed to all other fields during initialisation; </li>
-<li>It will be the value automatically selected as the current field value; if the field type is <em>select</em>, the value must be available to be selected.</li>
+<li>It's passed in the Update Data of every field listed in the Initialisation Rules;</li>
+<li>It becomes the field's value; for a select field, the value must be among its options to be selected.</li>
 </ul>
 
 

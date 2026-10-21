@@ -528,10 +528,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#write-form-configuration" class="md-nav__link">
+  <a href="#write-the-form-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Write form configuration
+        Write the Form Configuration
       
     </span>
   </a>
@@ -539,10 +539,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#create-the-dynamic-form" class="md-nav__link">
+  <a href="#create-the-form" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Create the dynamic form
+        Create the form
       
     </span>
   </a>
@@ -974,10 +974,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#write-form-configuration" class="md-nav__link">
+  <a href="#write-the-form-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Write form configuration
+        Write the Form Configuration
       
     </span>
   </a>
@@ -985,10 +985,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#create-the-dynamic-form" class="md-nav__link">
+  <a href="#create-the-form" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Create the dynamic form
+        Create the form
       
     </span>
   </a>
@@ -1068,11 +1068,11 @@
 <span class="w">        </span><span class="k">import</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nx">makeForm</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="kr">from</span><span class="w"> </span><span class="s1">'https://unpkg.com/@simomosi/dynamic-forms@latest'</span><span class="p">;</span>
 <span class="w">    </span><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
 </code></pre></div></td></tr></table></div></p>
-<h2 id="write-form-configuration">Write form configuration<a class="headerlink" href="#write-form-configuration" title="Permanent link">#</a></h2>
-<p>For the form configuration we need to write 2 lists:</p>
+<h2 id="write-the-form-configuration">Write the Form Configuration<a class="headerlink" href="#write-the-form-configuration" title="Permanent link">#</a></h2>
+<p>For the Form Configuration we need to write 2 lists:</p>
 <ol>
-<li><strong>fields</strong>: a list of form fields with custom behavior (using the <a href="../../configurations/fields-configuration/">field configuration</a> format); a field with a remote url for fetching its values is a custom behavior field;</li>
-<li><strong>rules</strong>: a list which indicates when a field related event (usually a <code>change</code>) should notify other fields (using the <a href="../../configurations/update-rules/">update rule</a> format)</li>
+<li><strong>fields</strong>: a list of the fields you want to customise (using the <a href="../../configurations/fields-configuration/">Field Configuration</a> format); a field which loads its options from a remote url needs a Field Configuration;</li>
+<li><strong>rules</strong>: a list of Update Rules, which tell the Observers to update when a Subject changes, usually on a <code>change</code> event (using the <a href="../../configurations/update-rules/">Update Rule</a> format)</li>
 </ol>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
@@ -1108,9 +1108,9 @@
 <span class="w">    </span><span class="p">]</span>
 <span class="p">};</span>
 </code></pre></div></td></tr></table></div>
-<p>Note: we didn't need to specify a configuration for <code>field_one</code>.</p>
-<h2 id="create-the-dynamic-form">Create the dynamic form<a class="headerlink" href="#create-the-dynamic-form" title="Permanent link">#</a></h2>
-<p>Create an instance and forget about it: dynamic-forms will work by itself!</p>
+<p>Note: we didn't need to specify a Field Configuration for <code>field_one</code>: it is discovered automatically.</p>
+<h2 id="create-the-form">Create the form<a class="headerlink" href="#create-the-form" title="Permanent link">#</a></h2>
+<p>Create the form and forget about it: dynamic-forms will work by itself!</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">form</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">makeForm</span><span class="p">(</span><span class="nx">formConfiguration</span><span class="p">);</span>
 </code></pre></div></td></tr></table></div>
 <h2 id="done">Done!<a class="headerlink" href="#done" title="Permanent link">#</a></h2>

@@ -968,7 +968,7 @@
 <h1 id="tutorial-set-the-initial-status">Tutorial - Set the Initial Status<a class="headerlink" href="#tutorial-set-the-initial-status" title="Permanent link">#</a></h1>
 <p>Sometimes you need to load a prefilled form, and the initial values should trigger actions like <em>retrieving data</em>, <em>hide</em> or <em>disable</em> other fields.</p>
 <p>Dynamic-forms can automatically set the form initial status and trigger those operations for you.</p>
-<p>You need to list all the fields which requires the initialisation, describing:</p>
+<p>You need to list in the Initialisation Rules all the fields which require the initialisation, describing:</p>
 <ol>
 <li>Their <strong>name</strong></li>
 <li>Their initial <strong>value</strong> (optional)</li>
@@ -998,11 +998,11 @@
 <p>Note: you need to specify an API-endpoint in <code>fields</code> for <code>field_one</code> to work.</p>
 <p>Dynamic-forms uses:</p>
 <ul>
-<li>the information specified in the <code>fields</code> section to retrieve remote data for each field specified in the <code>init</code> section</li>
-<li>the informations specified in the <code>rules</code> section to infer what data should be retrieved after the initialisation</li>
+<li>the Field Configurations in the <code>fields</code> section to retrieve remote data for each field listed in the Initialisation Rules (<code>init</code> section)</li>
+<li>the Update Rules in the <code>rules</code> section to update the Observers of the initialised fields</li>
 </ul>
-<p>In the example above, dynamic-forms will first initialise <code>field_one</code> using <code>fields</code> and <code>init</code> rules, then it will initialise <code>field_two</code> using (update) <code>rules</code> as specified in the previous page.</p>
-<p>If you need to specify other data, just list their name and value in the <code>init</code> collection just like they were form fields.</p>
+<p>In the example above, dynamic-forms will first initialise <code>field_one</code> using its Field Configuration and its Initialisation Rule, then it will update its Observer <code>field_two</code> using the Update Rules specified in the previous page.</p>
+<p>If you need to pass other data to the initialised fields, just list their name and value in the Initialisation Rules (<code>init</code> collection) just like they were form fields: they go in the Update Data.</p>
 <h2 id="wait-for-complete-initialisation">Wait for complete initialisation<a class="headerlink" href="#wait-for-complete-initialisation" title="Permanent link">#</a></h2>
 <p>The initialisation phase is an asynchronous procedure: your script will continue without waiting for the subroutine to end. </p>
 <p>If you need to execute code after the initialisation is complete, use the <code>ready</code> function as shown below.</p>

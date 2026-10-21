@@ -1175,13 +1175,13 @@
   
 
 
-<h1 id="form-configuration">Form configuration<a class="headerlink" href="#form-configuration" title="Permanent link">#</a></h1>
-<p>This document describes the complete form configuration with focus on each property.</p>
-<p>The configuration is written <em>client side</em> and passed to the correct method of <a href="../../dynamic-forms-module/"><em>dynamicForms module</em></a> for the form instantiation.</p>
+<h1 id="form-configuration">Form Configuration<a class="headerlink" href="#form-configuration" title="Permanent link">#</a></h1>
+<p>This document describes the complete Form Configuration with focus on each property.</p>
+<p>The Form Configuration is written <em>client side</em> and passed to <code>makeForm</code> (see <a href="../../dynamic-forms-module/"><em>DynamicForms library</em></a>) to create the form.</p>
 <p>Glossary:</p>
 <ul>
-<li><strong>Subject</strong>: the subject is the entity who changed</li>
-<li><strong>Observer</strong>: the observer is an entity who is notified by the subject change</li>
+<li><strong>Subject</strong>: the role of a field whose change triggers an Update Rule</li>
+<li><strong>Observer</strong>: the role of a field updated when the Subject of an Update Rule changes. The same field can be Observer in one rule and Subject in another</li>
 </ul>
 <p>Here's the complete form configuration:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -1199,74 +1199,81 @@
 <span class="normal">13</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">const</span><span class="w"> </span><span class="nx">formConfiguration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="s1">'form_id'</span><span class="p">,</span>
 <span class="w">    </span><span class="nx">debug</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">behavior</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nx">beforeUpdate</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">subjectName</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Executed before the update related events. Return false to block all updates</span>
-<span class="w">        </span><span class="nx">afterUpdate</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">subjectName</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Executed after the update related events</span>
-<span class="w">        </span><span class="nx">beforeInit</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Executed before form initialization</span>
-<span class="w">        </span><span class="nx">afterInit</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// Executed after form initialization</span>
+<span class="w">    </span><span class="nx">behavior</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Form Hooks</span>
+<span class="w">        </span><span class="nx">beforeUpdate</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">subjectName</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Executed before updating the Observers. Return false to block all updates</span>
+<span class="w">        </span><span class="nx">afterUpdate</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">subjectName</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Executed after updating the Observers</span>
+<span class="w">        </span><span class="nx">beforeInit</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Executed before the form initialisation</span>
+<span class="w">        </span><span class="nx">afterInit</span><span class="o">:</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// Executed after the form initialisation</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nx">fields</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="c1">// Collection of fields objects</span>
-<span class="w">    </span><span class="nx">rules</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="c1">// Collection of rules objects</span>
-<span class="w">    </span><span class="nx">init</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="c1">// Collection of init objects</span>
+<span class="w">    </span><span class="nx">fields</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="c1">// Collection of Field Configurations</span>
+<span class="w">    </span><span class="nx">rules</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span><span class="w"> </span><span class="c1">// Collection of Update Rules</span>
+<span class="w">    </span><span class="nx">init</span><span class="o">:</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="c1">// Collection of Initialisation Rules</span>
 <span class="p">};</span>
+</code></pre></div></td></tr></table></div>
+<p><code>makeForm</code> checks the configuration before building the form. Every field name it mentions (in <code>fields</code>, <code>rules</code> and <code>init</code>) must be a field of the form; otherwise it throws an error listing every unknown name:</p>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>Invalid form configuration "form_id":
+- update rule "country": unknown field "regoin" in update
+- initialisation rule "contry": unknown field
 </code></pre></div></td></tr></table></div>
 <h2 id="id"><code>id</code>*<a class="headerlink" href="#id" title="Permanent link">#</a></h2>
 <p>The form id. Just the plain text, no '#'.</p>
 <p>Type: <code>string</code>.</p>
 <p><em>required</em></p>
 <h2 id="debug"><code>debug</code><a class="headerlink" href="#debug" title="Permanent link">#</a></h2>
-<p>A flag to activate the debug mode which prints in the console all the rules right before their execution.</p>
+<p>A flag to activate the debug mode which prints in the console every Update Rule and the initialisation right before their execution.</p>
 <p>Type: <code>boolean</code>.</p>
 <h2 id="behavior"><code>behavior</code><a class="headerlink" href="#behavior" title="Permanent link">#</a></h2>
-<p>Object which groups properties related to form behavior (e.g. what to do before or after an update event).</p>
+<p>Object which groups the Form Hooks (e.g. what to do before or after an update).</p>
 <h3 id="beforeupdate-subjectname"><code>beforeUpdate (subjectName)</code><a class="headerlink" href="#beforeupdate-subjectname" title="Permanent link">#</a></h3>
-<p>Method called after a subject registers an update, but before triggering the update on the whole form.</p>
+<p>Form Hook called after a Subject changes, but before updating its Observers.</p>
 <p>Useful to show a loader during the fields update.</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>string</code>} <code>subjectName</code>: the name of the subject who triggered the update. Manual updates (<code>form.manualUpdate</code>) don't call this method</li>
+<li>{<code>string</code>} <code>subjectName</code>: the name of the Subject which triggered the update. Manual updates (<code>form.manualUpdate</code>) don't call this Form Hook</li>
 </ul>
 <p>Returns</p>
 <ul>
 <li>{<code>bool</code>} <em>false</em> to abort the update, <em>true</em> otherwise</li>
 </ul>
 <h3 id="afterupdate-subjectname"><code>afterUpdate (subjectName)</code><a class="headerlink" href="#afterupdate-subjectname" title="Permanent link">#</a></h3>
-<p>Method called after the form update, and in particular after all involved form's fields have completed their update.</p>
+<p>Form Hook called after all the updated Observers have completed their update.</p>
 <p>Useful to hide a loader after the fields update.</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>string</code>} <code>subjectName</code>: the name of the subject who triggered the update. Manual updates (<code>form.manualUpdate</code>) don't call this method</li>
+<li>{<code>string</code>} <code>subjectName</code>: the name of the Subject which triggered the update. Manual updates (<code>form.manualUpdate</code>) don't call this Form Hook</li>
 </ul>
 <p>Returns</p>
 <ul>
 <li>{<code>void</code>}</li>
 </ul>
 <h3 id="beforeinit"><code>beforeInit ()</code><a class="headerlink" href="#beforeinit" title="Permanent link">#</a></h3>
-<p>Method executed before the form initialisation.</p>
+<p>Form Hook called before the form initialisation.</p>
 <p>Useful to show a loader before all fields are initialised.</p>
 <p>Returns</p>
 <ul>
 <li>{<code>void</code>}</li>
 </ul>
 <h3 id="afterinit"><code>afterInit ()</code><a class="headerlink" href="#afterinit" title="Permanent link">#</a></h3>
-<p>Method executed after the form initialisation.</p>
+<p>Form Hook called after the form initialisation.</p>
 <p>Useful to hide any loader after the form is ready.</p>
 <p>Returns</p>
 <ul>
 <li>{<code>void</code>}</li>
 </ul>
 <h2 id="fields"><code>fields</code><a class="headerlink" href="#fields" title="Permanent link">#</a></h2>
-<p>A collection of Fields configurations.</p>
-<p>Include here fields with custom behavior (get/set/update operations). Standard fields will be discovered automatically.</p>
-<p>See <a href="../fields-configuration/">Fields configuration</a>.</p>
+<p>A collection of Field Configurations.</p>
+<p>Include here the fields you want to customise (get/set/update operations). The other ones are discovered automatically.</p>
+<p>See <a href="../fields-configuration/">Field Configuration</a>.</p>
 <h2 id="rules"><code>rules</code><a class="headerlink" href="#rules" title="Permanent link">#</a></h2>
-<p>A collection of Update Rules configurations.</p>
-<p>Include here all rules like "if field A changes, trigger the update of fields B and C".</p>
-<p>See <a href="../update-rules/">Update Rules configuration</a>.</p>
+<p>A collection of Update Rules.</p>
+<p>Include here all the rules like "if field A changes, trigger the update of fields B and C".</p>
+<p>See <a href="../update-rules/">Update Rule configuration</a>.</p>
 <h2 id="init"><code>init</code><a class="headerlink" href="#init" title="Permanent link">#</a></h2>
-<p>A collection of Init Rules configurations.</p>
-<p>Include here all fields which will be updated during the DynamicForm instantiation.</p>
-<p>See <a href="../init-rules/">Initialisation Rules configuration</a>.</p>
+<p>A collection of Initialisation Rules.</p>
+<p>Include here all fields which will be updated when the form is created.</p>
+<p>See <a href="../init-rules/">Initialisation Rule configuration</a>.</p>
 
 
 

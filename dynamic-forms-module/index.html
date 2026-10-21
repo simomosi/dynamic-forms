@@ -1080,7 +1080,7 @@
 <h1 id="dynamicforms-library">DynamicForms library<a class="headerlink" href="#dynamicforms-library" title="Permanent link">#</a></h1>
 <h2 id="how-to-use-it">How to use it<a class="headerlink" href="#how-to-use-it" title="Permanent link">#</a></h2>
 <p>DynamicForms is designed to be <strong>simple and straightforward</strong>  - no complex setup or configuration required.</p>
-<p>The library offers 2 main functions that handle all the heavy lifting for you, including automatic configuration fixes and form initialization.</p>
+<p>The library offers 2 main functions that handle all the heavy lifting for you, including completing the Form Configuration with defaults and the form initialisation.</p>
 <p><strong>For 90% of use cases, <code>makeForm</code> is all you need!</strong></p>
 <p>First, import the module (see <a href="../start/loading/">loading guide</a>)</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -1090,7 +1090,7 @@
 <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
 </code></pre></div></td></tr></table></div>
 <h3 id="typescript">TypeScript<a class="headerlink" href="#typescript" title="Permanent link">#</a></h3>
-<p>The package exports the configuration types, so configurations can be written in their own files without casts. Only the form <code>id</code> is required, the library completes the rest.</p>
+<p>The package exports the configuration types, so Form and Field Configurations can be written in their own files without casts. Only the form <code>id</code> is required, the library completes the rest.</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -1122,24 +1122,24 @@
 <p>Exported types: <code>FormConfiguration</code>, <code>FormHooks</code>, <code>UpdateRule</code>, <code>InitialisationRule</code>, <code>FieldConfiguration</code>, <code>FieldIoHooks</code>, <code>FieldFetchConfiguration</code>, <code>FieldHooks</code>, <code>SelectConfiguration</code>, <code>CheckboxConfiguration</code>, <code>UpdateData</code> and <code>DynamicForm</code>.</p>
 <h2 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">#</a></h2>
 <h3 id="makeform-formconfiguration"><code>makeForm (formConfiguration)</code><a class="headerlink" href="#makeform-formconfiguration" title="Permanent link">#</a></h3>
-<p>Istantiates a DynamicForm.</p>
+<p>Creates a form.</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>object</code>} <code>formConfiguration</code>: the form configuration</li>
+<li>{<code>object</code>} <code>formConfiguration</code>: the Form Configuration</li>
 </ul>
 <p>Returns</p>
 <ul>
-<li>{<code>DynamicForm</code>} a DynamicForm instance</li>
+<li>{<code>DynamicForm</code>} the form</li>
 </ul>
 <h3 id="getform-id"><code>getForm (id)</code><a class="headerlink" href="#getform-id" title="Permanent link">#</a></h3>
-<p>Returns a DynamicForm instance corresponding to the form id, if it exists.</p>
+<p>Returns the form with the given id, if it exists.</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>string</code>} <code>id</code>: the form id</li>
 </ul>
 <p>Returns</p>
 <ul>
-<li>{<code>DynamicForm | null</code>} the DynamicForm instance or null if it does not exists</li>
+<li>{<code>DynamicForm | null</code>} the form, or null if it does not exist</li>
 </ul>
 
 

@@ -1465,12 +1465,12 @@
   
 
 
-<h1 id="field-configuration">Field configuration<a class="headerlink" href="#field-configuration" title="Permanent link">#</a></h1>
-<p>This document describes a single field configuration. The field configuration list must be included in the <em>fields</em> section in the <a href="../form-configuration/">form configuration</a>.</p>
-<p>Just specify fields with custom behavior as the standard ones will be discovered and included in the dynamic-form automatically.</p>
-<p>Every hook receives <code>htmlElement</code> as the <code>NodeList</code> of all the html elements with the field name, even when there is only one: read a single input with <code>htmlElement[0].value</code>.</p>
+<h1 id="field-configuration">Field Configuration<a class="headerlink" href="#field-configuration" title="Permanent link">#</a></h1>
+<p>This document describes a single Field Configuration. The list of Field Configurations goes in the <em>fields</em> section of the <a href="../form-configuration/">Form Configuration</a>.</p>
+<p>Just specify the fields you want to customise: the other ones are discovered and added to the form automatically, with the standard behaviour.</p>
+<p>Every Field Hook receives <code>htmlElement</code> as the <code>NodeList</code> of all the html elements with the field name, even when there is only one: read a single input with <code>htmlElement[0].value</code>.</p>
 <p>!!! tip "TypeScript"
-    TypeScript cannot see the html, so field hooks receive a <code>NodeListOf&lt;HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement&gt;</code> and an <code>any</code> value.
+    TypeScript cannot see the html, so Field Hooks receive a <code>NodeListOf&lt;HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement&gt;</code> and an <code>any</code> value.
     State the element and value types on the field to use them without casts:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
@@ -1506,8 +1506,8 @@ const tags: FieldConfiguration&lt;HTMLInputElement, string[]&gt; = {
 
 The library does not check these types against the html: `FieldConfiguration&lt;HTMLSelectElement&gt;` on an `&lt;input&gt;` compiles but fails at runtime.
 </code></pre></div></td></tr></table></div>
-<p>Here's a complete single field configuration. You just need to specify the attributes you need, the other will have default values.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Generic element</label><label for="__tabbed_1_2">Select element</label><label for="__tabbed_1_3">Checkbox element</label></div>
+<p>Here's a complete Field Configuration. You just need to specify the attributes you need, the other will have default values.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Generic field</label><label for="__tabbed_1_2">Select field</label><label for="__tabbed_1_3">Checkbox field</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
@@ -1542,8 +1542,8 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <span class="w">        </span><span class="nx">makeBody</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// JSON.stringify, formData, text...</span>
 <span class="w">        </span><span class="nx">fullFetchConfig</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Fetch complete configuration (RequestInit)</span>
 <span class="w">    </span><span class="p">},</span>
-<span class="w">    </span><span class="nx">behavior</span><span class="o">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">        </span><span class="nx">clear</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Clear field from its content</span>
+<span class="w">    </span><span class="nx">behavior</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Field Hooks</span>
+<span class="w">        </span><span class="nx">clear</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Clear the field's value</span>
 <span class="w">        </span><span class="nx">beforeUpdate</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">subjectName</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Executed before the remote call. Return false to block the update</span>
 <span class="w">        </span><span class="nx">updateStatus</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">subjectName</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span>
 <span class="w">        </span><span class="nx">afterUpdate</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">,</span><span class="w"> </span><span class="nx">subjectName</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c1">// Executed after the remote call</span>
@@ -1567,10 +1567,10 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <span class="w">    </span><span class="nx">io</span><span class="o">:</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">,</span>
 <span class="w">    </span><span class="nx">fetch</span><span class="o">:</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">,</span>
 <span class="w">    </span><span class="nx">behavior</span><span class="o">:</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">select</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Only for select elements</span>
+<span class="w">    </span><span class="nx">select</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Only for select fields</span>
 <span class="w">        </span><span class="nx">postProcessData</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Process data retrieved by remote call</span>
 <span class="w">        </span><span class="nx">saveData</span><span class="o">:</span><span class="w"> </span><span class="p">(</span><span class="nx">htmlElement</span><span class="p">,</span><span class="w"> </span><span class="nx">data</span><span class="p">)</span><span class="w"> </span><span class="p">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="c1">// Manually save data in html (e.g. creating `&lt;option value="value"&gt;'text'&lt;/option&gt;` nodes)</span>
-<span class="w">        </span><span class="nx">clearOnParentVoid</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="c1">// True (default) to clear field content when subject is empty; false to trigger a remote call</span>
+<span class="w">        </span><span class="nx">clearOnParentVoid</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="c1">// True (default) to clear the field when the Subject's value is empty; false to trigger a remote call</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">};</span>
 </code></pre></div></td></tr></table></div>
@@ -1589,8 +1589,8 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <span class="w">    </span><span class="nx">io</span><span class="o">:</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">,</span>
 <span class="w">    </span><span class="nx">fetch</span><span class="o">:</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">,</span>
 <span class="w">    </span><span class="nx">behavior</span><span class="o">:</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">,</span>
-<span class="w">    </span><span class="nx">checkbox</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Only for checkbox elements</span>
-<span class="w">        </span><span class="nx">booleanValue</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="c1">// True (default) to get element's value as boolean, based on the checked property; false to get the value property</span>
+<span class="w">    </span><span class="nx">checkbox</span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// Only for checkbox fields</span>
+<span class="w">        </span><span class="nx">booleanValue</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="c1">// True (default) to get the field's value as boolean, based on the checked property; false to get the value property</span>
 <span class="w">    </span><span class="p">}</span>
 <span class="p">};</span>
 </code></pre></div></td></tr></table></div>
@@ -1598,28 +1598,28 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 </div>
 </div>
 <h2 id="name"><code>name</code>*<a class="headerlink" href="#name" title="Permanent link">#</a></h2>
-<p>The html element name.</p>
+<p>The field name: the <code>name</code> attribute of its html elements.</p>
 <p>Type: <code>string</code>.</p>
 <p><em>required</em></p>
 <h2 id="io"><code>io</code><a class="headerlink" href="#io" title="Permanent link">#</a></h2>
-<p>Object which groups properties related to field input and output.</p>
+<p>Object which groups the properties to read and write the field's value.</p>
 <h3 id="event"><code>event</code><a class="headerlink" href="#event" title="Permanent link">#</a></h3>
-<p>The html event which symbolize the Subject's status change (e.g. <em>change</em> for a select, <em>click</em> for a checkbox...).</p>
-<p>It is used to put an event listener which will notify Subject's Observers.</p>
+<p>The html event which signals that the field's value changed (e.g. <em>change</em> for a select, <em>click</em> for a checkbox...).</p>
+<p>The library listens to it to update the Observers of the field when it is a Subject.</p>
 <p>Type: <code>string</code>.</p>
 <p>Default value: <code>change</code>.</p>
 <h3 id="get-htmlelement"><code>get (htmlElement)</code><a class="headerlink" href="#get-htmlelement" title="Permanent link">#</a></h3>
-<p>Function to fetch the html element's value. Useful for custom html elements.</p>
+<p>Function to read the field's value. Useful for custom html elements.</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
 </ul>
 <p>Returns</p>
 <ul>
-<li>{<code>string</code>} the field content</li>
+<li>{<code>string</code>} the field's value</li>
 </ul>
 <h3 id="set-htmlelement"><code>set (htmlElement)</code><a class="headerlink" href="#set-htmlelement" title="Permanent link">#</a></h3>
-<p>Function to set the html element's value. Useful for custom html elements.</p>
+<p>Function to write the field's value. Useful for custom html elements.</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
@@ -1631,8 +1631,8 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 </ul>
 <h2 id="fetch"><code>fetch</code>*<a class="headerlink" href="#fetch" title="Permanent link">#</a></h2>
 <p>Object which groups properties related to remote calls.</p>
-<p><strong>Available only for <em>DynamicSelect</em> instances</strong> (select-option like fields).</p>
-<p><strong>Required only if the select element is an observer</strong> (it will be updated for every observed subject change), unless you specify a new <em>updateStatus</em> function.</p>
+<p><strong>Available only for select fields</strong>.</p>
+<p><strong>Required only if the select field is an Observer</strong> (it is updated on every change of its Subject), unless you specify an <em>updateStatus</em> Field Hook.</p>
 <h3 id="method"><code>method</code><a class="headerlink" href="#method" title="Permanent link">#</a></h3>
 <p>It's the <em>http request method</em> (or verb).</p>
 <p>Type: <code>string</code>.</p>
@@ -1642,7 +1642,7 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <p><em>required</em></p>
 <p>Parameters</p>
 <ul>
-<li>{<code>JSON</code>} <code>data</code>: data obtained from additionalData and externalData functions in Update Rule Config</li>
+<li>{<code>JSON</code>} <code>data</code>: the <a href="../update-rules/#update-data">Update Data</a></li>
 </ul>
 <p>Returns</p>
 <ul>
@@ -1650,10 +1650,10 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 </ul>
 <h3 id="makebody-data"><code>makeBody (data)</code><a class="headerlink" href="#makebody-data" title="Permanent link">#</a></h3>
 <p>A function to generate the remote call body in the desired method (e.g. JSON.stringify, FormData...).</p>
-<p>It's not necessary if the remote call uses the GET request method (parameters need to be placed in the url).</p>
+<p>It's not necessary if the remote call uses the GET request method (the Update Data needs to be placed in the url).</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>JSON</code>} <code>data</code>: data obtained from additionalData and externalData functions in Update Rule Config</li>
+<li>{<code>JSON</code>} <code>data</code>: the <a href="../update-rules/#update-data">Update Data</a></li>
 </ul>
 <p>Returns</p>
 <ul>
@@ -1662,10 +1662,10 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <h3 id="fullfetchconfig-data"><code>fullFetchConfig (data)</code><a class="headerlink" href="#fullfetchconfig-data" title="Permanent link">#</a></h3>
 <p>A function to generate the complete Fetch configuration for remote calls.</p>
 <p>Use it when the request needs more than a method and a body, e.g. headers that depend on the field values.</p>
-<p>If this function is defined, the updateStatus default function will ignore <em>fetch.method</em> property and <em>fetch.makeBody</em> function.</p>
+<p>If this function is defined, the standard update ignores the <em>fetch.method</em> property and the <em>fetch.makeBody</em> function.</p>
 <p>Parameters</p>
 <ul>
-<li>{<code>JSON</code>} <code>data</code>: data obtained from additionalData and externalData functions in Update Rule Config</li>
+<li>{<code>JSON</code>} <code>data</code>: the <a href="../update-rules/#update-data">Update Data</a></li>
 </ul>
 <p>Returns</p>
 <ul>
@@ -1689,9 +1689,9 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 </code></pre></div></td></tr></table></div>
 <p><em>Until 3.x <code>fullFetchConfig</code> was a static object. Since 4.0.0 it must be a function: wrap an existing object as <code>fullFetchConfig: () =&gt; ({ ... })</code>.</em></p>
 <h2 id="behavior"><code>behavior</code><a class="headerlink" href="#behavior" title="Permanent link">#</a></h2>
-<p>Object which groups properties related to field behavior.</p>
+<p>Object which groups the Field Hooks.</p>
 <h3 id="clear-htmlelement"><code>clear (htmlElement)</code><a class="headerlink" href="#clear-htmlelement" title="Permanent link">#</a></h3>
-<p>Function to unset the field's current value. Sometimes it is used to clear the field from its content (for input and select types).</p>
+<p>Field Hook which replaces the standard clear: it empties the field of its value (and, for a select, of its options).</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
@@ -1701,47 +1701,47 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <li>{<code>void</code>}</li>
 </ul>
 <h3 id="beforeupdate-htmlelement-data-subjectname"><code>beforeUpdate (htmlElement, data, subjectName)</code><a class="headerlink" href="#beforeupdate-htmlelement-data-subjectname" title="Permanent link">#</a></h3>
-<p>Method called before triggering the field's status update. If return value is <em>false</em>, the update is aborted.</p>
-<p>Default behavior: nothing. It adds to the field's behaviour without replacing any of it: a select whose subject is empty is cleared before this method is called, and this method is not called (see <a href="#clearonparentvoid"><em>clearOnParentVoid</em></a>).</p>
+<p>Field Hook called before the field's update. If it returns <em>false</em>, the update is aborted.</p>
+<p>Default: nothing. It adds to the field's standard behaviour without switching any of it off: a select whose Subject's value is empty is cleared, and this hook is not called (see <a href="#clearonparentvoid"><em>clearOnParentVoid</em></a>).</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
-<li>{<code>JSON</code>} <code>data</code>: data obtained from additionalData and externalData functions in Update Rule Config</li>
-<li>{<code>string | null</code>}: <code>subjectName</code>: the name of the subject who triggered the update. It is null if the update is triggered manually</li>
+<li>{<code>JSON</code>} <code>data</code>: the <a href="../update-rules/#update-data">Update Data</a></li>
+<li>{<code>string | null</code>}: <code>subjectName</code>: the name of the Subject which triggered the update. It is null for a manual update</li>
 </ul>
 <p>Returns</p>
 <ul>
 <li>{<code>boolean</code>} <em>false</em> to abort the update, <em>true</em> otherwise</li>
 </ul>
 <h3 id="updatestatus-htmlelement-data-subjectname"><code>updateStatus (htmlElement, data, subjectName)</code><a class="headerlink" href="#updatestatus-htmlelement-data-subjectname" title="Permanent link">#</a></h3>
-<p>Method to update the field status. It is useful to update the field's attributes (<em>display</em>, <em>disabled</em>...) and content.</p>
-<p>Default behavior: nothing. For <strong>DynamicSelect</strong> elements it makes a remote call (using <em>fetch</em>), retrieves new date and saves it as <em>select</em> new content (<em>option</em>).</p>
+<p>Field Hook which replaces the standard update of the field's status: its attributes (<em>display</em>, <em>disabled</em>...) and, for a select, its options.</p>
+<p>Default: nothing. For select fields it makes a remote call (using <em>fetch</em>), retrieves the new data and saves it as the select's new options.</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
-<li>{<code>JSON</code>} <code>data</code>: data obtained from additionalData and externalData functions in Update Rule Config</li>
-<li>{<code>string | null</code>}: <code>subjectName</code>: the name of the subject who triggered the update. It is null if the update is triggered manually</li>
+<li>{<code>JSON</code>} <code>data</code>: the <a href="../update-rules/#update-data">Update Data</a></li>
+<li>{<code>string | null</code>}: <code>subjectName</code>: the name of the Subject which triggered the update. It is null for a manual update</li>
 </ul>
 <p>Returns</p>
 <ul>
 <li>{<code>Promise&lt;void&gt;</code>}</li>
 </ul>
 <h3 id="afterupdate-htmlelement-data-subjectname"><code>afterUpdate (htmlElement, data, subjectName)</code><a class="headerlink" href="#afterupdate-htmlelement-data-subjectname" title="Permanent link">#</a></h3>
-<p>Method called after triggering the field's status update, also when the update was aborted.</p>
+<p>Field Hook called after the field's update, also when the update was aborted.</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
-<li>{<code>JSON</code>} <code>data</code>: data obtained from additionalData and externalData functions in Update Rule Config</li>
-<li>{<code>string | null</code>}: <code>subjectName</code>: the name of the subject who triggered the update. It is null if the update is triggered manually</li>
+<li>{<code>JSON</code>} <code>data</code>: the <a href="../update-rules/#update-data">Update Data</a></li>
+<li>{<code>string | null</code>}: <code>subjectName</code>: the name of the Subject which triggered the update. It is null for a manual update</li>
 </ul>
 <p>Returns</p>
 <ul>
 <li>{<code>void</code>}</li>
 </ul>
 <h2 id="select"><code>select</code><a class="headerlink" href="#select" title="Permanent link">#</a></h2>
-<p>Object which groups properties related to select-option elements.</p>
+<p>Object which groups properties related to select fields.</p>
 <h3 id="postprocessdata-htmlelement-data"><code>postProcessData (htmlElement, data)</code><a class="headerlink" href="#postprocessdata-htmlelement-data" title="Permanent link">#</a></h3>
-<p>Function to process data retrieved by remote call. It is useful for filtering/ordering data.</p>
+<p>Field Hook to process the data retrieved by the remote call. It is useful for filtering/ordering data.</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
@@ -1752,8 +1752,8 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <li>{<code>{ value: string | number, text: string }[]</code>} the options to save</li>
 </ul>
 <h3 id="savedata-htmlelement-data"><code>saveData (htmlElement, data)</code><a class="headerlink" href="#savedata-htmlelement-data" title="Permanent link">#</a></h3>
-<p>Function to phisically save (post-processed) data retrieved by a remote call as html.</p>
-<p>Default behavior: saves data as <em>option</em> html elements using <em>value</em> and <em>text</em> properties, creating also empty option if they are not present in retrieved data.</p>
+<p>Field Hook which replaces the standard saving of the options: it writes the (post-processed) data retrieved by the remote call in the html.</p>
+<p>Default: saves the data as <em>option</em> html elements using <em>value</em> and <em>text</em> properties, creating also empty option if they are not present in retrieved data.</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name, where data will be saved</li>
@@ -1764,12 +1764,12 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <li>{<code>void</code>}</li>
 </ul>
 <h3 id="clearonparentvoid"><code>clearOnParentVoid</code><a class="headerlink" href="#clearonparentvoid" title="Permanent link">#</a></h3>
-<p>Property which (when <code>true</code>) tells to clear field content when subject value is empty instead of triggering a remote call (when <code>false</code>).</p>
-<p>The clear happens before the <a href="#beforeupdate-htmlelement-data-subjectname"><em>beforeUpdate</em></a> field hook, which is then not called: set this property to <code>false</code> to handle an empty subject in the hook.</p>
+<p>Property which (when <code>true</code>) tells to clear the field when the Subject's value is empty, instead of triggering a remote call (when <code>false</code>).</p>
+<p>The clear happens before the <a href="#beforeupdate-htmlelement-data-subjectname"><em>beforeUpdate</em></a> Field Hook, which is then not called: set this property to <code>false</code> to handle an empty Subject's value in the hook.</p>
 <p>Type: <code>boolean</code>.</p>
 <p>Default value: <code>true</code>.</p>
 <h2 id="checkbox"><code>checkbox</code><a class="headerlink" href="#checkbox" title="Permanent link">#</a></h2>
-<p>Object which groups properties related to select-option elements.</p>
+<p>Object which groups properties related to checkbox fields.</p>
 <h3 id="booleanvalue"><code>booleanValue</code><a class="headerlink" href="#booleanvalue" title="Permanent link">#</a></h3>
 <p>Property which tells if the field's value is <em>boolean</em>.</p>
 <p>When <em>true</em> the field considers its value as <em>boolean</em>, based on the  html <code>checked</code> attribute; when <em>false</em> it considers its value as <em>string</em>, based on the <code>value</code> attribute.</p>
