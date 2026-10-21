@@ -722,6 +722,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        update
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#additionaldata" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -963,6 +974,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        update
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#additionaldata" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1025,6 +1047,9 @@
 </code></pre></div></td></tr></table></div>
 <h2 id="name"><code>name</code>*<a class="headerlink" href="#name" title="Permanent link">#</a></h2>
 <p>The field name inside the form.</p>
+<h2 id="update"><code>update</code><a class="headerlink" href="#update" title="Permanent link">#</a></h2>
+<p>The names of the fields to update when this field changes. Their own observers are cleared, since their value is no longer valid.</p>
+<p>Update rules can't form a cycle: a field can't observe itself, directly or through other fields. <code>makeForm</code> throws <code>Update rules form a cycle: a → b → a</code> when they do.</p>
 <h2 id="additionaldata"><code>additionalData</code><a class="headerlink" href="#additionaldata" title="Permanent link">#</a></h2>
 <p>A collection of other fields name whose value will be automatically fetched and used in the field's update function.</p>
 <h2 id="externaldata-data-subjectname"><code>externalData (data, subjectName)</code><a class="headerlink" href="#externaldata-data-subjectname" title="Permanent link">#</a></h2>

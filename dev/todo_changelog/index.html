@@ -1175,6 +1175,10 @@
 </li>
 <li><strong>Breaking:</strong> <code>fetch.fullFetchConfig</code> is a function of the Update Data, <code>(data) =&gt; RequestInit</code>, instead of a static object, as the documentation already described (<a href="https://github.com/simomosi/dynamic-forms/issues/31">#31</a>). Wrap an existing object as <code>fullFetchConfig: () =&gt; ({ ... })</code></li>
 <li><code>makeForm()</code> no longer modifies the given configuration: defaults and discovered fields go into an internal copy. Form hooks set to <code>undefined</code> fall back to the default instead of throwing</li>
+<li><strong>Breaking:</strong> <code>makeForm()</code> throws when the update rules form a cycle, including a field listing itself in its own <code>update</code>, which used to be ignored (<a href="https://github.com/simomosi/dynamic-forms/issues/38">#38</a>). A cycle used to clear the field the user had just changed</li>
+<li>Initialisation no longer clears the init value of a field reached by the cascade clear of another initialised field (<a href="https://github.com/simomosi/dynamic-forms/issues/37">#37</a>)</li>
+<li>An update clears the observers' observers before updating the observers, so the result no longer depends on the order of the names in <code>update</code></li>
+<li><code>form.notify()</code> and <code>form.ready()</code> reject when clearing the observers' observers fails (e.g. a <code>behavior.clear</code> field hook throws), instead of leaving an unhandled rejection</li>
 <li>Clearing a checkbox unchecks it instead of checking it (<a href="https://github.com/simomosi/dynamic-forms/issues/25">#25</a>)</li>
 <li>A select filled by a remote call gets an empty option when neither the html nor the data have one (<a href="https://github.com/simomosi/dynamic-forms/issues/26">#26</a>). An option with value <code>0</code> is not taken for the empty one</li>
 </ul>
