@@ -1,4 +1,4 @@
-import { FieldHooks, FieldConfiguration, FieldElement, FieldFetchConfiguration, FieldIoHooks, UpdateData } from './FieldConfigurationTypes';
+import { FieldHooks, FieldElement, FieldFetchConfiguration, FieldIoHooks, ResolvedFieldConfiguration, UpdateData } from './FieldConfigurationTypes';
 import { Observer, Subject } from './ObserverPatternTypes';
 
 /**
@@ -7,7 +7,7 @@ import { Observer, Subject } from './ObserverPatternTypes';
  */
 class DynamicElement implements Observer {
     /** @param {object} config - the element configuration */
-    readonly config: FieldConfiguration;
+    readonly config: ResolvedFieldConfiguration;
 
     /** @param {NodeList} htmlElement - the HTML Elements returned by querySelectorAll, which every hook receives */
     readonly htmlElement: NodeListOf<FieldElement>;
@@ -27,33 +27,21 @@ class DynamicElement implements Observer {
     /** @param {string} event - the event to listen to */
     event: string;
 
-    /** @param {object} defaultConfig - property with default configuration values */
-    static defaultConfig = {
-        'io': {
-            'event': 'change',
-        }
-    }
-
     /**
     * Class constructor
-    * @param {FieldConfiguration} config the element configuration
+    * @param {ResolvedFieldConfiguration} config the field configuration completed with defaults
     * @param {Subject} subject the subject to notify when changes occour (according to Observer pattern)
     * @param {NodeList} htmlElement the html element(s) returned by querySelectorAll
     * @async
     */
-    constructor(config: FieldConfiguration, htmlElement: NodeListOf<FieldElement>) {
+    constructor(config: ResolvedFieldConfiguration, htmlElement: NodeListOf<FieldElement>) {
         this.config = config;
-        // Repairing config file if parameters are missing (to write code easily)
-        this.io = config.io ?? {};
-        this.fetch = config.fetch ?? {};
-        this.behavior = config.behavior ?? {};
-        this.event = this.io.event ?? DynamicElement.defaultConfig.io.event;
-
+        this.io = config.io;
+        this.fetch = config.fetch;
+        this.behavior = config.behavior;
+        this.event = config.io.event;
         this.htmlElement = htmlElement;
         this.name = config.name;
-        if (this.htmlElement.length === 0) {
-            throw new Error(`Element ${config.name} not found`);
-        }
     }
 
     public attach(subject: Subject): void {

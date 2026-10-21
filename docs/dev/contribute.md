@@ -68,19 +68,20 @@ classDiagram
 
     note for dynamicForms "Library entrypoint"
 
-    class ConfigurationFixer {
-        +fix(formHtmlElement, formConfiguration) ResolvedFormConfiguration
+    class resolveConfiguration {
+        +resolveConfiguration(formHtmlElement, formConfiguration) ResolvedFormConfiguration
     }
+
+    note for resolveConfiguration "Checks the configuration and completes every Form and Field default, Discovered Fields included"
 
     class FieldBuilder {
         +createFieldsMap(fieldsCollection, htmlForm)
     }
 
     class DynamicElement {
-        -FieldConfiguration config
+        -ResolvedFieldConfiguration config
         -NodeList htmlElement
         -string name
-        -JSON defaultConfig
         +get() string
         +set(value) string
         +clear()
@@ -103,7 +104,7 @@ classDiagram
         #saveData(data) void
     }
 
-    dynamicForms --> ConfigurationFixer
+    dynamicForms --> resolveConfiguration
     dynamicForms --> FieldBuilder
 
     DynamicForm <-- dynamicForms

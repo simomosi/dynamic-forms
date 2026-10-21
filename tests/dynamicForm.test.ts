@@ -47,7 +47,7 @@ describe('makeForm / getForm', () => {
     it('throws when a configured field is not in the form', () => {
         mountForm('f', '<input name="a">');
 
-        expect(() => createForm({ id: 'f', fields: [{ name: 'ghost' }] })).toThrow('Element ghost not found');
+        expect(() => createForm({ id: 'f', fields: [{ name: 'ghost' }] })).toThrow('Invalid form configuration "f":\n- field configuration "ghost": unknown field');
     });
 
     it.each([
@@ -57,7 +57,19 @@ describe('makeForm / getForm', () => {
     ])('throws when a %s has no name', (kind, config) => {
         mountForm('f', '<input name="a">');
 
-        expect(() => createForm({ id: 'f', ...config })).toThrow(`Missing required name in ${kind} #0`);
+        expect(() => createForm({ id: 'f', ...config })).toThrow(`Invalid form configuration "f":\n- ${kind} #0: missing name`);
+    });
+
+    it('lists every missing name, before checking the field names', () => {
+        mountForm('f', '<input name="a">');
+        const config = { id: 'f', fields: [{} as any], rules: [{ update: ['ghost'] } as any, { name: 'a', update: ['ghost'] }], init: [{} as any] };
+
+        expect(() => createForm(config)).toThrow(new Error([
+            'Invalid form configuration "f":',
+            '- field configuration #0: missing name',
+            '- update rule #0: missing name',
+            '- initialisation rule #0: missing name',
+        ].join('\n')));
     });
 
     it.each([
@@ -67,6 +79,35 @@ describe('makeForm / getForm', () => {
         mountForm('f', '<input name="a"><input name="b"><input name="c">');
 
         expect(() => createForm({ id: 'f', rules })).toThrow(`Update rules form a cycle: ${path}`);
+    });
+
+    it.each([
+        ['in update', { rules: [{ name: 'a', update: ['ghost'] }] }, 'update rule "a": unknown field "ghost" in update'],
+        ['in additionalData', { rules: [{ name: 'a', update: ['b'], additionalData: ['ghost'] }] }, 'update rule "a": unknown field "ghost" in additionalData'],
+        ['as the subject of an update rule', { rules: [{ name: 'ghost', update: ['b'] }] }, 'update rule "ghost": unknown subject'],
+        ['in an initialisation rule', { init: [{ name: 'ghost', value: 'x' }] }, 'initialisation rule "ghost": unknown field'],
+    ])('throws for an unknown field name %s (#45)', (_, config, error) => {
+        mountForm('f', '<input name="a"><input name="b">');
+
+        expect(() => createForm({ id: 'f', ...config })).toThrow(`Invalid form configuration "f":\n- ${error}`);
+    });
+
+    it('lists every unknown field name in one error', () => {
+        mountForm('f', '<input name="a"><input name="b">');
+        const config = {
+            id: 'f',
+            fields: [{ name: 'ghost' }],
+            rules: [{ name: 'a', update: ['b', 'titel'], additionalData: ['x'] }],
+            init: [{ name: 'contry' }],
+        };
+
+        expect(() => createForm(config)).toThrow([
+            'Invalid form configuration "f":',
+            '- field configuration "ghost": unknown field',
+            '- update rule "a": unknown field "titel" in update',
+            '- update rule "a": unknown field "x" in additionalData',
+            '- initialisation rule "contry": unknown field',
+        ].join('\n'));
     });
 
     it('accepts update rules reaching a field through two paths', () => {
