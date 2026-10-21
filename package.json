@@ -2,10 +2,12 @@
   "name": "@simomosi/dynamic-forms",
   "version": "3.0.0",
   "description": "DynamicForms is a js library that handles all interactions in forms with dynamic content (e.g. select with variable options, updating rules and visibility changes depending on fields' state).",
-  "main": "dist/dynamic-forms.umd.js",
-  "browser": "dist/dynamic-forms.umd.js",
-  "module": "dist/dynamic-forms.es.js",
+  "type": "module",
+  "main": "dist/dynamic-forms.umd.cjs",
+  "module": "dist/dynamic-forms.js",
   "types": "dist/index.d.ts",
+  "unpkg": "dist/dynamic-forms.umd.js",
+  "jsdelivr": "dist/dynamic-forms.umd.js",
   "files": [
     "dist",
     "src"
@@ -14,7 +16,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/simomosi/dynamic-forms.git"
+    "url": "git+https://github.com/simomosi/dynamic-forms.git"
   },
   "homepage": "https://simomosi.github.io/dynamic-forms/",
   "bugs": "https://github.com/simomosi/dynamic-forms/issues",
@@ -41,10 +43,12 @@
     "esm"
   ],
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@mermaid-js/mermaid-cli": "^10.1.0",
     "@vitest/coverage-v8": "^5.0.5",
     "jsdom": "^29.1.1",
     "mermaid": "^10.1.0",
+    "publint": "^0.3.25",
     "rollup-plugin-visualizer": "^6.0.1",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
@@ -58,13 +62,22 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "lint:package": "publint && attw --pack ."
   },
   "sideEffects": false,
   "exports": {
     ".": {
-      "import": "./dist/dynamic-forms.es.js",
-      "require": "./dist/dynamic-forms.umd.js"
-    }
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/dynamic-forms.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/dynamic-forms.umd.cjs"
+      }
+    },
+    "./dist/*": "./dist/*",
+    "./package.json": "./package.json"
   }
 }

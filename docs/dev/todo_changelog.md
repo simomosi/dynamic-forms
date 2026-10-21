@@ -1,6 +1,7 @@
 ## ToDo List
 
 - [ ] Release `4.0.0`: bump `version` in `package.json` (still `3.0.0`) before tagging, the publish workflow requires the tag to match it
+- [ ] Release `4.0.0`: replace `REPLACED_AT_THE_4.0.0_RELEASE` in `docs/start/loading.md` with the hash of the published `dist/dynamic-forms.umd.js` (command in that page); at every later release, update the version and hash of that snippet
 
 ## Changelog
 Dynamic-forms follows the [semver](https://semver.org) standard.
@@ -30,6 +31,8 @@ Dynamic-forms follows the [semver](https://semver.org) standard.
 - The `behavior.updateStatus` Field Hook receives a 4th parameter, the `AbortSignal` aborted when the Form is destroyed. A `signal` returned by `fetch.fullFetchConfig` is combined with it
 - **Breaking:** a failed remote call rejects `notify()` and `ready()` with a `RemoteCallError`, an `Error` exported by the package with the url and status in its message and the `Response` in `error.response`, instead of rejecting with the `Response` itself ([#49](https://github.com/simomosi/dynamic-forms/issues/49)). Read `error.response.status` instead of `error.status`
 - New `select.loadOptions` Field Hook: it replaces only the remote call of a select, receiving the parameters of `updateStatus`, and its data goes through `postProcessData` and `saveData` as usual ([#50](https://github.com/simomosi/dynamic-forms/issues/50))
+- **Breaking:** the package is `"type": "module"` and its files are renamed: `dist/dynamic-forms.js` (ES module), `dist/dynamic-forms.umd.cjs` (UMD for `require`) and `dist/dynamic-forms.umd.js` (the same UMD for `<script>` tags and CDNs). `exports` gives each of `import` and `require` its own types, so the types resolve with every TypeScript `moduleResolution` (before, only with the deprecated `node`), and exports `./package.json` and `./dist/*`. The `browser` field is removed; `unpkg` and `jsdelivr` keep the bare CDN URL serving the UMD build. `publint` and `@arethetypeswrong/cli` check the package in CI ([#52](https://github.com/simomosi/dynamic-forms/issues/52))
+- The loading docs cover every way to load the library: a bundler (`import` or `require`), a `<script>` tag from a CDN (with the `DynamicForms` global, and with Subresource Integrity), ES modules from esm.sh, an import map without a bundler, and self-hosting. CDN snippets use `@4` instead of `@latest`, and the snippets that didn't work are fixed
 - Initialisation no longer clears the initial value of a field reached by the Cascade Clear of another initialised field ([#37](https://github.com/simomosi/dynamic-forms/issues/37))
 - An update clears the Observers' Observers before updating the Observers, so the result no longer depends on the order of the names in `update`
 - `form.notify()` and `form.ready()` reject when clearing the Observers' Observers fails (e.g. a `behavior.clear` Field Hook throws), instead of leaving an unhandled rejection

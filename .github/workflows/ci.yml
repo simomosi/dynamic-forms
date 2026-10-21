@@ -32,3 +32,9 @@ jobs:
 
       - name: Test with coverage
         run: npm run coverage
+
+      - name: Build
+        run: npm run build
+
+      - name: Check the published package (publint, types with attw)
+        run: npm run lint:package

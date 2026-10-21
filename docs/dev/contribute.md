@@ -1,7 +1,7 @@
 # Contribute
 Help me develop DynamicForms!
 
-Remember to work on `src/*.ts` files, and test them building the bundle and importing it (`import { makeForm } from '@dist/dynamic-forms.es.js';` for prod build, `import { makeForm } from '@';` for dev mode).
+Remember to work on `src/*.ts` files, and test them building the bundle and importing it (`import { makeForm } from '@dist/dynamic-forms.js';` for prod build, `import { makeForm } from '@';` for dev mode).
 
 Useful commands:
 
