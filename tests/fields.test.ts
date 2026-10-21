@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { RemoteCallError } from '@/index';
 import { createForm, field, mountForm, optionValues, probeField, selectHtml, stubFetch, timeout } from './helpers';
 
 /**
@@ -188,9 +189,38 @@ describe('select', () => {
         expect(optionValues('s')).toEqual(['', '0', '1']);
     });
 
-    it('rejects notify() when the remote call fails', async () => {
+    it('loads the options with select.loadOptions instead of the remote call, then post-processes and saves them (#50)', async () => {
+        const fetchMock = stubFetch({});
+        const loadOptions = vi.fn(async () => [{ id: 3, name: 'Three' }]);
+        mountForm('f', '<input name="parent" value="x">' + selectHtml('s', { '1': 'One' }));
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 's', select: { loadOptions, postProcessData: (_el, items) => items.map((i: any) => ({ value: i.id, text: i.name })) } }],
+            rules: [{ name: 'parent', update: ['s'] }],
+        });
+
+        await form.notify('parent');
+
+        expect(optionValues('s')).toEqual(['', '3']);
+        expect(loadOptions).toHaveBeenCalledWith(expect.any(NodeList), { parent: 'x' }, 'parent', expect.any(AbortSignal));
+        expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('saves the options returned by select.loadOptions as they are, without postProcessData (#50)', async () => {
+        mountForm('f', '<input name="parent" value="x">' + selectHtml('s'));
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 's', select: { loadOptions: () => [{ value: '7', text: 'Seven' }] } }],
+            rules: [{ name: 'parent', update: ['s'] }],
+        });
+
+        await form.notify('parent');
+
+        expect(optionValues('s')).toEqual(['', '7']);
+    });
+
+    it('rejects notify() with a RemoteCallError when the remote call fails (#49)', async () => {
         stubFetch({});
-        vi.spyOn(console, 'error').mockImplementation(() => {});
         mountForm('f', '<input name="parent" value="x">' + selectHtml('s'));
         const form = createForm({
             id: 'f',
@@ -198,7 +228,12 @@ describe('select', () => {
             rules: [{ name: 'parent', update: ['s'] }],
         });
 
-        await expect(form.notify('parent')).rejects.toBeDefined();
+        const error = await form.notify('parent').catch(e => e);
+
+        expect(error).toBeInstanceOf(RemoteCallError);
+        expect(error).toBeInstanceOf(Error);
+        expect(error.message).toBe('Remote call to "/s" failed with status 404');
+        expect(error.response.status).toBe(404);
     });
 
     it('logs the remote call error when the change comes from the user', async () => {

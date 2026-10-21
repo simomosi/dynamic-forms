@@ -61,7 +61,8 @@ Here's a complete Field Configuration. You just need to specify the attributes y
         fetch: /* ... */,
         behavior: /* ... */,
         select: { // Only for select fields
-            postProcessData: (htmlElement, data) => { }, // Process data retrieved by remote call
+            loadOptions: (htmlElement, data, subjectName, signal) => { }, // Load the data instead of the remote call
+            postProcessData: (htmlElement, data) => { }, // Process data retrieved by the remote call or loadOptions
             saveData: (htmlElement, data) => { }, // Manually save data in html (e.g. creating `<option value="value">'text'</option>` nodes)
             clearOnParentVoid: true, // True (default) to clear the field when the Subject's value is empty; false to trigger a remote call
         }
@@ -129,7 +130,22 @@ Object which groups properties related to remote calls.
 
 **Available only for select fields**.
 
-**Required only if the select field is an Observer** (it is updated on every change of its Subject), unless you specify an *updateStatus* Field Hook.
+**Required only if the select field is an Observer** (it is updated on every change of its Subject), unless you specify a [*loadOptions*](#loadoptions-htmlelement-data-subjectname-signal) or an *updateStatus* Field Hook.
+
+When the remote call answers with a non-ok status, `notify()` (or `ready()`, during the Initialisation) rejects with a `RemoteCallError`, an `Error` exported by the package whose `response` holds the `Response`:
+
+```js
+import { RemoteCallError } from '@simomosi/dynamic-forms';
+
+try {
+    await form.notify('country');
+} catch (error) {
+    if (error instanceof RemoteCallError) {
+        console.log(error.message);          // Remote call to "/regions" failed with status 404
+        console.log(error.response.status);  // 404
+    }
+}
+```
 
 ### `method`
 It's the *http request method* (or verb).
@@ -255,27 +271,55 @@ Returns
 ## `select`
 Object which groups properties related to select fields.
 
+A select updates its options in three steps, each replaceable by a Field Hook:
+
+```text
+remote call (or loadOptions) → postProcessData → saveData
+```
+
+### `loadOptions (htmlElement, data, subjectName, signal)`
+Field Hook which replaces the remote call: it loads the data another way (another http client, a cache, data already in the page) and the update goes on as usual, through `postProcessData` and `saveData`. With it, `fetch` is not needed.
+
+```js
+select: {
+    loadOptions: async (htmlElement, data, subjectName, signal) =>
+        (await axios.get('/regions', { params: { country: data.country }, signal })).data,
+    postProcessData: (htmlElement, regions) => regions.map(r => ({ value: r.id, text: r.name })),
+}
+```
+
+Parameters (the same as [*updateStatus*](#updatestatus-htmlelement-data-subjectname-signal))
+
+- {`NodeList`} `htmlElement`: the html nodes with the field name
+- {`JSON`} `data`: the [Update Data](./update-rules.md#update-data)
+- {`string | null`}: `subjectName`: the name of the Subject which triggered the update. It is null for a manual update
+- {`AbortSignal`}: `signal`: aborted when the Form is [destroyed](../dynamic-forms-module.md#destroy)
+
+Returns
+
+- {`any | Promise<any>`} the data which `postProcessData` receives, or directly the options when there is no `postProcessData`
+
 ### `postProcessData (htmlElement, data)`
-Field Hook to process the data retrieved by the remote call. It is useful for filtering/ordering data.
+Field Hook to process the data retrieved by the remote call or by `loadOptions`. It is useful for filtering/ordering data.
 
 Parameters
 
 - {`NodeList`} `htmlElement`: the html nodes with the field name
-- {`JSON`} `data`: data retrieved from the remote call
+- {`JSON`} `data`: data retrieved from the remote call or returned by `loadOptions`
 
 Returns
 
 - {`{ value: string | number, text: string }[]`} the options to save
 
 ### `saveData (htmlElement, data)`
-Field Hook which replaces the standard saving of the options: it writes the (post-processed) data retrieved by the remote call in the html.
+Field Hook which replaces the standard saving of the options: it writes the (post-processed) data retrieved by the remote call or by `loadOptions` in the html.
 
 Default: saves the data as *option* html elements using *value* and *text* properties, creating also empty option if they are not present in retrieved data.
 
 Parameters
 
 - {`NodeList`} `htmlElement`: the html nodes with the field name, where data will be saved
-- {`{ value: string | number, text: string }[]`} `data`: the options returned by `postProcessData`, or the data retrieved from the remote call when there is no `postProcessData`
+- {`{ value: string | number, text: string }[]`} `data`: the options returned by `postProcessData`, or the data retrieved from the remote call or by `loadOptions` when there is no `postProcessData`
 
 Returns
 

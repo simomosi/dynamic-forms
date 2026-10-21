@@ -1,4 +1,5 @@
 import DynamicElement from './DynamicElement';
+import { RemoteCallError } from './RemoteCallError';
 import { FieldElement, ResolvedFieldConfiguration, SelectOption, UpdateData } from './FieldConfigurationTypes';
 
 /**
@@ -52,14 +53,28 @@ class DynamicSelect extends DynamicElement {
     }
 
     /**
-    * Standard update of the select status, replaced by the behavior.updateStatus field hook: loads the Options with a remote call and saves them
+    * Standard update of the select status, replaced by the behavior.updateStatus field hook:
+    * loads the data with select.loadOptions, or with a remote call, then turns it into Options and saves them
     * @param {UpdateData} data data to send with the http request
     * @param {string|null} subjectName name of the subject who changed
     * @param {AbortSignal} signal aborted when the form is destroyed, which aborts the remote call
     *
     * @returns a Promise in fulfilled state when data has been updated
     */
-    protected async standardUpdateStatus(data: UpdateData, _subjectName: string|null, signal: AbortSignal): Promise<void> {
+    protected async standardUpdateStatus(data: UpdateData, subjectName: string|null, signal: AbortSignal): Promise<void> {
+        const loaded = this.select.loadOptions
+            ? await this.select.loadOptions(this.htmlElement, data, subjectName, signal)
+            : await this.remoteCall(data, signal);
+        this.saveData(this.postProcessData(loaded));
+    }
+
+    /**
+    * Makes the remote call of the select, replaced by the select.loadOptions field hook
+    * @param {UpdateData} data data to send with the http request
+    * @param {AbortSignal} signal aborted when the form is destroyed, which aborts the remote call
+    * @returns the response parsed as json
+    */
+    private async remoteCall(data: UpdateData, signal: AbortSignal): Promise<any> {
         if (!this.fetch.makeUrl) {
             throw new Error("Function fetch.makeUrl not specified");
         }
@@ -78,16 +93,11 @@ class DynamicSelect extends DynamicElement {
 
         // Abort with the form destruction, or with the signal of fullFetchConfig if any
         const fetchSignal = fetchConfig.signal ? AbortSignal.any([fetchConfig.signal, signal]) : signal;
-        return fetch(requestUrl, { ...fetchConfig, signal: fetchSignal })
-            .then(response => { // Json
-                if (response.ok)
-                    return response.json();
-                throw response;
-            }).then(data => { // Postprocess data
-                return this.postProcessData(data);
-            }).then(data => { // Save options
-                return this.saveData(data);
-            });
+        const response = await fetch(requestUrl, { ...fetchConfig, signal: fetchSignal });
+        if (!response.ok) {
+            throw new RemoteCallError(requestUrl, response);
+        }
+        return response.json();
     }
 
     /**

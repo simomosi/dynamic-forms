@@ -100,7 +100,8 @@ classDiagram
         -string method
         #canUpdate(data, subjectName) boolean
         #standardClear()
-        #standardUpdateStatus(data, subjectName) Promise❬void❭
+        #standardUpdateStatus(data, subjectName, signal) Promise❬void❭
+        -remoteCall(data, signal) Promise❬any❭
         #postProcessData(data) SelectOption[]
         #saveData(data) void
     }

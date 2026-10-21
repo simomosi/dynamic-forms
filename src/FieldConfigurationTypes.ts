@@ -52,6 +52,11 @@ export interface SelectOption {
 }
 
 export interface SelectConfiguration<E extends FieldElement = FieldElement> {
+    /**
+     * Replaces the remote call: returns the data to turn into Options, which postProcessData receives.
+     * Receives the parameters of updateStatus; `signal` is aborted when the form is destroyed.
+     */
+    loadOptions?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null, signal: AbortSignal): any,
     /** Receives the remote call response as parsed json, and returns the Options to save. */
     postProcessData?(htmlElement: NodeListOf<E>, data: any): SelectOption[],
     /** Receives the Options returned by postProcessData, or the response itself when there is no postProcessData. */
