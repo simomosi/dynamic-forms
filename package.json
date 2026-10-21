@@ -45,6 +45,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@mermaid-js/mermaid-cli": "^10.1.0",
+    "@types/jsdom": "^30.0.0",
     "@vitest/coverage-v8": "^5.0.5",
     "jsdom": "^29.1.1",
     "mermaid": "^10.1.0",
@@ -63,7 +64,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
-    "lint:package": "publint && attw --pack ."
+    "lint:package": "publint && attw --pack .",
+    "test:package": "npm run build && vitest run --config vitest.package.config.ts"
   },
   "sideEffects": false,
   "exports": {

@@ -50,6 +50,9 @@ jobs:
 
       - name: Check the package (publint, types with attw)
         run: npm run lint:package
+
+      - name: Test the packed package (import, require, script tag, bundler)
+        run: npm run test:package
         
       - name: Publish to NPM
         run: npm publish --provenance --access public

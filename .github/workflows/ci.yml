@@ -33,8 +33,8 @@ jobs:
       - name: Test with coverage
         run: npm run coverage
 
-      - name: Build
-        run: npm run build
+      - name: Build and test the packed package (import, require, script tag, bundler)
+        run: npm run test:package
 
       - name: Check the published package (publint, types with attw)
         run: npm run lint:package

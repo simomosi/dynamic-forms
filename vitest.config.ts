@@ -10,6 +10,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     include: ['tests/**/*.test.ts'],
+    exclude: ['tests/package/**'], // the packed package, see vitest.package.config.ts
     setupFiles: ['tests/setup.ts'],
     restoreMocks: true,
     unstubGlobals: true,
