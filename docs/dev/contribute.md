@@ -3,16 +3,19 @@ Help me develop DynamicForms!
 
 Remember to work on `src/*.ts` files, and test them building the bundle and importing it (`import { makeForm } from '@dist/dynamic-forms.js';` for prod build, `import { makeForm } from '@';` for dev mode).
 
+Building needs Node 22.18 or later (see `.nvmrc`: `nvm use`).
+
 Useful commands:
 
 - `npm run dev` - Start Vite server for local development
-- `npm run build` - Build DynamicForms library in `dist` folder
+- `npm run build` - Build DynamicForms library in `dist` folder with [tsdown](https://tsdown.dev) (see `tsdown.config.ts`)
 - `npm test` - Run the test suite once
 - `npm run test:watch` - Run the test suite in watch mode
 - `npm run coverage` - Run the test suite with a coverage report in `coverage` folder
 - `npm run typecheck` - Check types of sources and tests
-- `npm run test:package` - Build, pack and test the package as users load it: `import` and `require` in Node, a `<script>` tag, a Vite bundle
+- `npm run test:package` - Build, pack and test the package as users load it: `import` and `require` in Node, a `<script>` tag, a Vite bundle; and that its declarations match its exports, its sourcemaps and declaration maps lead to `src`, and its JS files start with the banner
 - `npm run lint:package` - Check the package metadata and its types with `publint` and `@arethetypeswrong/cli` (after a build)
+- `npm run size` - Check the bundle sizes and that bundlers tree-shake the ES module build, with [size-limit](https://github.com/ai/size-limit) (after a build; budgets in `.size-limit.json`)
 
 ## Tests
 Tests live in the `tests` folder and run with [Vitest](https://vitest.dev) in a [jsdom](https://github.com/jsdom/jsdom) environment, which simulates the browser DOM inside Node.

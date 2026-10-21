@@ -11,6 +11,5 @@ site/
 .idea
 nbproject
 
-stats.html
 # Test coverage
 coverage/

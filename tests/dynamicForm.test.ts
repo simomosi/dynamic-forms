@@ -96,7 +96,12 @@ describe('makeForm / getForm', () => {
         expect(fetchMock.mock.calls[0][1]?.signal?.aborted).toBe(true);
     });
 
-    it('aborts the remote call with either the signal of fullFetchConfig or the form destruction (#47)', async () => {
+    it.each([
+        { browser: 'with AbortSignal.any', setupBrowser: () => {} },
+        // Safari < 17.4, Chrome < 116, Firefox < 124
+        { browser: 'without AbortSignal.any', setupBrowser: () => vi.stubGlobal('AbortSignal', Object.assign(Object.create(AbortSignal), { any: undefined })) },
+    ])('aborts the remote call with either the signal of fullFetchConfig or the form destruction, $browser (#47)', async ({ setupBrowser }) => {
+        setupBrowser();
         vi.stubGlobal('fetch', vi.fn((_url: string, init?: RequestInit) => new Promise<Response>((_, reject) => {
             init?.signal?.addEventListener('abort', () => reject(init.signal!.reason));
         })));
