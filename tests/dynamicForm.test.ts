@@ -60,6 +60,22 @@ describe('makeForm / getForm', () => {
         expect(() => createForm({ id: 'f', ...config })).toThrow(`Missing required name in ${kind} #0`);
     });
 
+    it.each([
+        ['a field observing itself', [{ name: 'a', update: ['a'] }], 'a → a'],
+        ['a cycle through other fields', [{ name: 'a', update: ['b'] }, { name: 'b', update: ['c'] }, { name: 'c', update: ['a'] }], 'a → b → c → a'],
+    ])('throws when the update rules form a cycle: %s (#38)', (_, rules, path) => {
+        mountForm('f', '<input name="a"><input name="b"><input name="c">');
+
+        expect(() => createForm({ id: 'f', rules })).toThrow(`Update rules form a cycle: ${path}`);
+    });
+
+    it('accepts update rules reaching a field through two paths', () => {
+        mountForm('f', '<input name="a"><input name="b"><input name="c"><input name="d">');
+        const rules = [{ name: 'a', update: ['b', 'c'] }, { name: 'b', update: ['d'] }, { name: 'c', update: ['d'] }];
+
+        expect(() => createForm({ id: 'f', rules })).not.toThrow();
+    });
+
     it('discovers fields present in the form but missing from the configuration', async () => {
         const probe = probeField();
         mountForm('f', '<input name="discovered" value="hello">' + probe.html);
@@ -185,20 +201,37 @@ describe('progressive filtering', () => {
         expect(second.updates).toEqual([{ data: { a: 'x' }, subjectName: 'a' }]);
     });
 
-    it('does not update a field which lists itself as observer', async () => {
-        const self = probeField('self');
-        const other = probeField('other');
-        mountForm('f', self.html + other.html);
+    it.each([
+        [['currency', 'region']],
+        [['region', 'currency']],
+    ])('clears on cascade before updating, whatever the order of the observers %j', async (observers) => {
+        stubFetch({ '/regions': [{ value: 'lom', text: 'Lombardia' }] });
+        mountForm('f', selectHtml('country', { it: 'Italia' }) + selectHtml('region') + '<input name="currency">');
         const form = createForm({
             id: 'f',
-            fields: [self.config, other.config],
-            rules: [{ name: 'self', update: ['self', 'other'] }],
+            fields: [
+                { name: 'region', fetch: { makeUrl: () => '/regions' } },
+                { name: 'currency', behavior: { updateStatus: (el, data) => { (el as HTMLInputElement).value = data.country === 'it' ? 'EUR' : ''; } } },
+            ],
+            rules: [{ name: 'country', update: observers }, { name: 'region', update: ['currency'] }],
+        });
+        field<HTMLSelectElement>('country').value = 'it';
+
+        await form.notify('country');
+
+        expect(field('currency').value).toBe('EUR');
+        expect(optionValues('region')).toEqual(['', 'lom']);
+    });
+
+    it('rejects notify() when the cascade clear fails', async () => {
+        mountForm('f', '<input name="a"><input name="b"><input name="c">');
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 'c', behavior: { clear: () => { throw new Error('clear failed'); } } }],
+            rules: [{ name: 'a', update: ['b'] }, { name: 'b', update: ['c'] }],
         });
 
-        await form.notify('self');
-
-        expect(self.updates).toEqual([]);
-        expect(other.updates).toHaveLength(1);
+        await expect(form.notify('a')).rejects.toThrow('clear failed');
     });
 });
 
@@ -514,5 +547,19 @@ describe('initialisation', () => {
 
         expect(probe.updates).toEqual([{ data: { a: 'x' }, subjectName: null }]);
         expect(field('a').value).toBe('x');
+    });
+
+    it('keeps the init value of a field reached by the cascade clear of another initialised field, still clearing the fields beyond it (#37)', async () => {
+        mountForm('f', '<input name="a"><input name="b"><input name="c"><input name="d" value="4">');
+        const form = createForm({
+            id: 'f',
+            rules: [{ name: 'a', update: ['b'] }, { name: 'b', update: ['c'] }, { name: 'c', update: ['d'] }],
+            init: [{ name: 'a', value: '1' }, { name: 'c', value: '3' }],
+        });
+
+        await form.ready();
+
+        expect(field('c').value).toBe('3');
+        expect(field('d').value).toBe('');
     });
 });
