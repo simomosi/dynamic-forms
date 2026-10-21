@@ -5,6 +5,7 @@ import { FormConfiguration } from './FormConfigurationTypes';
 import { resolveConfiguration } from './resolveConfiguration';
 
 export type { DynamicForm };
+export { RemoteCallError } from './RemoteCallError';
 export type { FormConfiguration, FormHooks, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
 export type { UpdateData, FieldElement, FieldConfiguration, FieldIoHooks, FieldFetchConfiguration, FieldHooks, SelectConfiguration, SelectOption, CheckboxConfiguration } from './FieldConfigurationTypes';
 

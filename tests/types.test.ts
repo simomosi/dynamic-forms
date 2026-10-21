@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import { makeForm } from '@/index';
+import { makeForm, RemoteCallError } from '@/index';
 import type { CheckboxConfiguration, DynamicForm, InitialisationRule, SelectOption, FieldConfiguration, FormConfiguration, FormHooks, SelectConfiguration, UpdateData, UpdateRule, FieldHooks, FieldIoHooks } from '@/index';
 
 // Type-level specification of the public api: these tests fail `npm run typecheck`, not `npm test`.
@@ -83,6 +83,17 @@ describe('update data type', () => {
 
     it('gives the updateStatus field hook the signal aborted when the form is destroyed', () => {
         expectTypeOf<NonNullable<FieldHooks['updateStatus']>>().parameter(3).toEqualTypeOf<AbortSignal>();
+    });
+
+    it('gives select.loadOptions the parameters of updateStatus', () => {
+        type LoadOptions = NonNullable<SelectConfiguration['loadOptions']>;
+        type UpdateStatus = NonNullable<FieldHooks['updateStatus']>;
+        expectTypeOf<Parameters<LoadOptions>>().toEqualTypeOf<Parameters<UpdateStatus>>();
+    });
+
+    it('exports RemoteCallError, an Error holding the failed response', () => {
+        expectTypeOf<RemoteCallError>().toExtend<Error>();
+        expectTypeOf<RemoteCallError['response']>().toEqualTypeOf<Response>();
     });
 });
 
