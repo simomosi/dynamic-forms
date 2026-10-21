@@ -62,7 +62,7 @@ class DynamicForm {
         this.fieldUpdateRulesMap = this.createFieldUpdateRulesMap(formConfiguration.fields, formConfiguration.rules);
         
         this.fieldsMap.forEach((field) => {
-            field.attach((name) => this.notify(name));
+            field.attach((name) => this.notify(name).catch(error => this.reportUnlessDestroyed(error)));
         });
         this.initPromise = this.untilDestroyed(this.handleInitialisation(this.fieldsMap, formConfiguration.init, this.behavior));
     }
@@ -129,7 +129,27 @@ class DynamicForm {
         }
         this.fieldsMap.forEach(field => field.detach());
         this.unregister();
+        // Destroying is no failure: a pending initialisation rejects ready(), but is no unhandled rejection when nobody awaits it
+        this.initPromise.catch(() => {});
         this.destruction.abort(new Error(`Form "${this.id}" was destroyed`));
+    }
+
+    /**
+     * Logs an error of an update started by a field event, unless it comes from destroying the form
+     * @param {unknown} error the error
+     */
+    private reportUnlessDestroyed(error: unknown): void {
+        if (!this.isDestroyedBy(error)) {
+            console.error(error);
+        }
+    }
+
+    /**
+     * @param {unknown} error an error
+     * @returns {boolean} true if the error is the one destroy() rejects with
+     */
+    private isDestroyedBy(error: unknown): boolean {
+        return this.destruction.signal.aborted && error === this.destruction.signal.reason;
     }
 
     /**

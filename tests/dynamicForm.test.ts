@@ -146,6 +146,31 @@ describe('makeForm / getForm', () => {
         await expect(form.ready()).rejects.toThrow('Form "init" was destroyed');
     });
 
+    it('reports nothing when destroyed during the initialisation or an update started by the user (#47)', async () => {
+        vi.stubGlobal('fetch', vi.fn((_url: string, init?: RequestInit) => new Promise<Response>((_, reject) => {
+            init?.signal?.addEventListener('abort', () => reject(init.signal!.reason));
+        })));
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const unhandled = vi.fn();
+        process.on('unhandledRejection', unhandled);
+        mountForm('quiet', selectHtml('user', { '1': 'Ann' }) + selectHtml('post'));
+        const form = makeForm({
+            id: 'quiet',
+            fields: [{ name: 'post', fetch: { makeUrl: () => '/posts' } }],
+            rules: [{ name: 'user', update: ['post'] }],
+            init: [{ name: 'post' }],
+        });
+        field<HTMLSelectElement>('user').value = '1';
+        field('user').dispatchEvent(new Event('change'));
+
+        form.destroy();
+        await new Promise(resolve => setTimeout(resolve, 10));
+        process.off('unhandledRejection', unhandled);
+
+        expect(unhandled).not.toHaveBeenCalled();
+        expect(consoleError).not.toHaveBeenCalled();
+    });
+
     it('returns undefined for an unknown form id', () => {
         expect(getForm('never-created')).toBeUndefined();
     });

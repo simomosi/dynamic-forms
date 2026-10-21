@@ -47,10 +47,10 @@ class DynamicElement {
 
     /**
     * Listens to the field event
-    * @param {(name: string) => Promise<void>} notify called with the field name on each event
+    * @param {(name: string) => void} onEvent called with the field name on each event
     */
-    public attach(notify: (name: string) => Promise<void>): void {
-        const listener: EventListener = (e) => { notify((e.target as HTMLInputElement).name).catch(console.error); };
+    public attach(onEvent: (name: string) => void): void {
+        const listener: EventListener = (e) => onEvent((e.target as HTMLInputElement).name);
         this.htmlElement.forEach(current => current.addEventListener(this.event, listener));
         this.listener = listener;
     }
