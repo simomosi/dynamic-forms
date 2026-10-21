@@ -1,0 +1,10 @@
+{
+  // The published declarations, built by tsdown: only src/, which passes isolatedDeclarations (fast declaration emit)
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "isolatedDeclarations": true
+  },
+  "include": ["src"]
+}

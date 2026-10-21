@@ -45,27 +45,29 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@mermaid-js/mermaid-cli": "^10.1.0",
+    "@size-limit/preset-small-lib": "^14.2.0",
     "@types/jsdom": "^30.0.0",
     "@vitest/coverage-v8": "^5.0.5",
     "jsdom": "^29.1.1",
     "mermaid": "^10.1.0",
     "publint": "^0.3.25",
-    "rollup-plugin-visualizer": "^6.0.1",
+    "size-limit": "^14.2.0",
+    "source-map-js": "^1.2.2",
+    "tsdown": "0.23.1",
     "typescript": "^5.8.3",
-    "vite": "^6.3.5",
-    "vite-plugin-banner": "^0.8.1",
-    "vite-plugin-dts": "^4.5.4",
+    "vite": "^8.3.5",
     "vitest": "^5.0.5"
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsdown",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "lint:package": "publint && attw --pack .",
-    "test:package": "npm run build && vitest run --config vitest.package.config.ts"
+    "test:package": "npm run build && vitest run --config vitest.package.config.ts",
+    "size": "size-limit"
   },
   "sideEffects": false,
   "exports": {

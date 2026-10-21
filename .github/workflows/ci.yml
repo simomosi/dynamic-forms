@@ -38,3 +38,6 @@ jobs:
 
       - name: Check the published package (publint, types with attw)
         run: npm run lint:package
+
+      - name: Check the bundle sizes and tree-shaking (size-limit)
+        run: npm run size

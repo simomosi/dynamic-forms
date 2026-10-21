@@ -9,7 +9,7 @@ DynamicForms is a client library to automate Progressive Filtering and the initi
 
 It supports the developer in managing and centralizing all forms interactions.
 
-It's written in *typescript* and built with *Vite*
+It's written in *typescript* and built with *tsdown*
 
 Here's some examples.
 
@@ -36,7 +36,7 @@ Got your attention? Try it!
 
 ## Main features
 - [x] **Easy to use**: DynamicForms works in a declarative way; no code for the standard behaviour, just a simple configuration!
-- [x] **Modern javascript and backward compatible**: works on all browsers!
+- [x] **Modern javascript**: works on Chrome and Edge 111+, Firefox 114+ and Safari 16.4+, with no polyfills
 - [x] **Lightweight**: having no dependencies, you can integrate it everywhere!
 - [x] **Automate repetitive and boring operations**: read values, fetch data making async remote calls, update fields' status, clear other fields, hide/show sections... even listing them is BORING!
 - [x] **Highly customizable**: are you using an external library with custom html elements? Don't worry as you can specify your own functions to read/write data
