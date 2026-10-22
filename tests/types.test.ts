@@ -85,10 +85,12 @@ describe('update data type', () => {
         expectTypeOf<NonNullable<FieldHooks['updateStatus']>>().parameter(3).toEqualTypeOf<AbortSignal>();
     });
 
-    it('gives select.loadOptions the parameters of updateStatus', () => {
+    it('gives select.loadOptions the parameters of updateStatus, and the remote call as its Standard Behaviour', () => {
         type LoadOptions = NonNullable<SelectConfiguration['loadOptions']>;
         type UpdateStatus = NonNullable<FieldHooks['updateStatus']>;
-        expectTypeOf<Parameters<LoadOptions>>().toEqualTypeOf<Parameters<UpdateStatus>>();
+        type WithoutStandard<P> = P extends [...infer Rest, unknown] ? Rest : never;
+        expectTypeOf<WithoutStandard<Parameters<LoadOptions>>>().toEqualTypeOf<WithoutStandard<Parameters<UpdateStatus>>>();
+        expectTypeOf<LoadOptions>().parameter(4).toEqualTypeOf<() => Promise<any>>();
     });
 
     it('exports RemoteCallError, an Error holding the failed response', () => {
@@ -223,5 +225,38 @@ describe('select options type', () => {
 
     it('gives saveData the options', () => {
         expectTypeOf<NonNullable<SelectConfiguration['saveData']>>().parameter(1).toEqualTypeOf<SelectOption[]>();
+    });
+});
+
+describe('Widget integration types', () => {
+    it('lets a field state a form-associated custom element as its element type', () => {
+        class SlSelect extends HTMLElement { value = ''; }
+        const country: FieldConfiguration<SlSelect, string> = {
+            name: 'country',
+            io: { get: (els) => els[0].value, set: (els, value) => { els[0].value = value; } },
+        };
+        expectTypeOf({ id: 'f', fields: [country] }).toExtend<FormConfiguration>();
+    });
+
+    it('gives each hook replacing a Standard Behaviour its standard, typed after the field value', () => {
+        type Io = Required<FieldIoHooks<HTMLInputElement, string[]>>;
+        type Hooks = Required<FieldHooks>;
+        type Select = Required<SelectConfiguration>;
+        expectTypeOf<Io['listen']>().parameter(2).toEqualTypeOf<() => () => void>();
+        expectTypeOf<Io['get']>().parameter(1).toEqualTypeOf<() => string[]>();
+        expectTypeOf<Io['set']>().parameter(2).toEqualTypeOf<() => void>();
+        expectTypeOf<Hooks['clear']>().parameter(1).toEqualTypeOf<() => void>();
+        expectTypeOf<Hooks['updateStatus']>().parameter(4).toEqualTypeOf<() => Promise<void>>();
+        expectTypeOf<Select['postProcessData']>().parameter(2).toEqualTypeOf<() => any>();
+        expectTypeOf<Select['saveData']>().parameter(2).toEqualTypeOf<() => void>();
+    });
+
+    it('lets io.listen subscribe to a Widget and return its unsubscribe function', () => {
+        const widget = { on: (_cb: () => void) => () => {} };
+        const country: FieldConfiguration = { name: 'country', io: { listen: (_els, onChange) => widget.on(onChange) } };
+        void country;
+        // @ts-expect-error io.listen must return the function that stops listening
+        const wrong: FieldConfiguration = { name: 'country', io: { listen: (_els, onChange) => { widget.on(onChange); } } };
+        void wrong;
     });
 });

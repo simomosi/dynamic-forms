@@ -62,7 +62,7 @@ class DynamicForm {
         this.fieldUpdateRulesMap = this.createFieldUpdateRulesMap(formConfiguration.fields, formConfiguration.rules);
         
         this.fieldsMap.forEach((field) => {
-            field.attach((name) => this.notify(name).catch(error => this.reportUnlessDestroyed(error)));
+            field.attach(() => this.notify(field.name).catch(error => this.reportUnlessDestroyed(error)));
         });
         this.initPromise = this.untilDestroyed(this.handleInitialisation(this.fieldsMap, formConfiguration.init, this.behavior));
     }
