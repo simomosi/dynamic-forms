@@ -63,7 +63,7 @@ Returns
 ### `destroy ()`
 A method of the Form returned by `makeForm`. It removes the Form's listeners, so the fields no longer update each other, unregisters it from `getForm`, and aborts its remote calls in progress. Destroying it again does nothing.
 
-A `notify()`, `manualUpdate()` or `ready()` still pending rejects with `Form "id" was destroyed`, and so do `notify()` and `manualUpdate()` called afterwards. A custom [`updateStatus`](./configurations/fields-configuration.md#updatestatus-htmlelement-data-subjectname-signal) Field Hook receives the abort signal, to stop its own remote calls.
+A `notify()`, `manualUpdate()` or `ready()` still pending rejects with `Form "id" was destroyed`, and so do `notify()` and `manualUpdate()` called afterwards. A custom [`updateStatus`](./configurations/fields-configuration.md#updatestatus-htmlelement-data-subjectname-signal-standard) Field Hook receives the abort signal, to stop its own remote calls.
 
 ### Fields added after `makeForm`
 Fields are discovered when the Form is created. To pick up fields added to the html form later, destroy the Form and create it again:
