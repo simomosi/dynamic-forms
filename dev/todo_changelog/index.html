@@ -649,6 +649,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../configurations/third-party-widgets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Third-party widgets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../configurations/update-rules/" class="md-nav__link">
         
   
@@ -1190,6 +1218,13 @@
 <li>Bundlers tree-shake the ES module build: importing only <code>RemoteCallError</code> no longer bundles the whole library. The ES module build isn't minified any more (consumers' bundlers minify it); the UMD builds still are</li>
 <li><strong>Breaking:</strong> supported browsers are stated: Chrome and Edge 111+, Firefox 114+, Safari 16.4+, which is also the build target (the README said "works on all browsers"). A <code>signal</code> returned by <code>fetch.fullFetchConfig</code> works where the browser lacks <code>AbortSignal.any</code></li>
 <li><code>size-limit</code> checks the bundle sizes and tree-shaking in CI</li>
+</ul>
+</li>
+<li>Third-party widgets (select2, Choices.js, Tom Select, bootstrap-select, flatpickr, form-associated custom elements) can be integrated through Field Hooks (<a href="https://github.com/simomosi/dynamic-forms/issues/57">#57</a>), with a new <a href="../../configurations/third-party-widgets/">Third-party widgets</a> page and tested recipes:<ul>
+<li>New <code>io.listen(htmlElement, onChange, standard)</code> Field Hook: it subscribes to the field's changes and returns the function which unsubscribes, called by <code>form.destroy()</code>. It hears widgets that announce changes only through jQuery events or callbacks, which <code>io.event</code> never could</li>
+<li>Every Field Hook which replaces a Standard Behaviour receives it as its last parameter, <code>standard</code>: <code>io.listen</code>, <code>io.get</code>, <code>io.set</code>, <code>behavior.clear</code>, <code>behavior.updateStatus</code>, <code>select.loadOptions</code>, <code>select.postProcessData</code> and <code>select.saveData</code>. Call it to add to the Standard Behaviour instead of rewriting it</li>
+<li><strong>Breaking:</strong> while the library writes to a field (<code>io.set</code>, <code>behavior.clear</code>, <code>select.saveData</code>), it ignores the changes that field fires: a hook or widget firing <code>change</code> when written no longer starts a second, duplicate update of the field's Observers</li>
+<li><code>FieldConfiguration&lt;E&gt;</code> accepts any <code>HTMLElement</code>, so a custom element's type can be stated</li>
 </ul>
 </li>
 <li>The loading docs cover every way to load the library: a bundler (<code>import</code> or <code>require</code>), a <code>&lt;script&gt;</code> tag from a CDN (with the <code>DynamicForms</code> global, and with Subresource Integrity), ES modules from esm.sh, an import map without a bundler, and self-hosting. CDN snippets use <code>@4</code> instead of <code>@latest</code>, and the snippets that didn't work are fixed</li>

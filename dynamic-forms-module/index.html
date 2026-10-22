@@ -787,6 +787,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../configurations/third-party-widgets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Third-party widgets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../configurations/update-rules/" class="md-nav__link">
         
   
@@ -1183,7 +1211,7 @@
 </ul>
 <h3 id="destroy"><code>destroy ()</code><a class="headerlink" href="#destroy" title="Permanent link">#</a></h3>
 <p>A method of the Form returned by <code>makeForm</code>. It removes the Form's listeners, so the fields no longer update each other, unregisters it from <code>getForm</code>, and aborts its remote calls in progress. Destroying it again does nothing.</p>
-<p>A <code>notify()</code>, <code>manualUpdate()</code> or <code>ready()</code> still pending rejects with <code>Form "id" was destroyed</code>, and so do <code>notify()</code> and <code>manualUpdate()</code> called afterwards. A custom <a href="../configurations/fields-configuration/#updatestatus-htmlelement-data-subjectname-signal"><code>updateStatus</code></a> Field Hook receives the abort signal, to stop its own remote calls.</p>
+<p>A <code>notify()</code>, <code>manualUpdate()</code> or <code>ready()</code> still pending rejects with <code>Form "id" was destroyed</code>, and so do <code>notify()</code> and <code>manualUpdate()</code> called afterwards. A custom <a href="../configurations/fields-configuration/#updatestatus-htmlelement-data-subjectname-signal-standard"><code>updateStatus</code></a> Field Hook receives the abort signal, to stop its own remote calls.</p>
 <h3 id="fields-added-after-makeform">Fields added after <code>makeForm</code><a class="headerlink" href="#fields-added-after-makeform" title="Permanent link">#</a></h3>
 <p>Fields are discovered when the Form is created. To pick up fields added to the html form later, destroy the Form and create it again:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
