@@ -555,7 +555,7 @@ describe('remote call configuration', () => {
 
         await form.notify('user');
 
-        expect(saveData).toHaveBeenCalledWith(expect.any(NodeList), postsOfUser1);
+        expect(saveData).toHaveBeenCalledWith(expect.any(NodeList), postsOfUser1, expect.any(Function));
         expect(optionValues('post')).toEqual(['']);
     });
 
@@ -703,7 +703,7 @@ describe('field behavior', () => {
         await form.notify('a');
 
         expect(beforeUpdate).toHaveBeenCalledWith(expect.any(NodeList), { a: '1' }, 'a');
-        expect(updateStatus).toHaveBeenCalledWith(expect.any(NodeList), { a: '1' }, 'a', expect.any(AbortSignal));
+        expect(updateStatus).toHaveBeenCalledWith(expect.any(NodeList), { a: '1' }, 'a', expect.any(AbortSignal), expect.any(Function));
     });
 });
 

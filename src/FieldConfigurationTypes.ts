@@ -4,7 +4,7 @@
  */
 export type UpdateData = Record<string, any>;
 
-/** The html elements a field can be made of. */
+/** The html elements hooks receive by default. A field made of another element, such as a form-associated custom element, states its type in FieldConfiguration. */
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 /**
@@ -13,7 +13,7 @@ export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaEl
  * TypeScript cannot see the html, so `E` states the element type the hooks receive
  * and `V` the value type io.get returns and io.set receives.
  */
-export interface FieldConfiguration<E extends FieldElement = FieldElement, V = any> {
+export interface FieldConfiguration<E extends HTMLElement = FieldElement, V = any> {
     name: string,
     io?: FieldIoHooks<E, V>,
     fetch?: FieldFetchConfiguration,
@@ -24,10 +24,17 @@ export interface FieldConfiguration<E extends FieldElement = FieldElement, V = a
 
 // Every hook receives all the elements sharing the field name, even when there is only one.
 // Hooks are declared as methods, so a FieldConfiguration<HTMLSelectElement> is still a FieldConfiguration.
-export interface FieldIoHooks<E extends FieldElement = FieldElement, V = any> {
+export interface FieldIoHooks<E extends HTMLElement = FieldElement, V = any> {
     event?: string,
-    get?(htmlElement: NodeListOf<E>): V,
-    set?(htmlElement: NodeListOf<E>, value: V): void,
+    /**
+     * Subscribes to the field changes, calling `onChange` on each one, and returns the function that unsubscribes, called when the form is destroyed.
+     * `standard` listens to io.event on the elements and returns its own unsubscribe function.
+     */
+    listen?(htmlElement: NodeListOf<E>, onChange: () => void, standard: () => () => void): () => void,
+    /** `standard` reads the value the way the library does for this kind of field. */
+    get?(htmlElement: NodeListOf<E>, standard: () => V): V,
+    /** `standard` writes `value` the way the library does for this kind of field. */
+    set?(htmlElement: NodeListOf<E>, value: V, standard: () => void): void,
 }
 
 export interface FieldFetchConfiguration {
@@ -37,11 +44,15 @@ export interface FieldFetchConfiguration {
     fullFetchConfig?: (data: UpdateData) => RequestInit
 }
 
-export interface FieldHooks<E extends FieldElement = FieldElement> {
-    clear?(htmlElement: NodeListOf<E>): void,
+export interface FieldHooks<E extends HTMLElement = FieldElement> {
+    /** `standard` clears the field the way the library does for this kind of field. */
+    clear?(htmlElement: NodeListOf<E>, standard: () => void): void,
     beforeUpdate?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null): boolean,
-    /** `signal` is aborted when the form is destroyed: pass it to the remote calls of the hook. */
-    updateStatus?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null, signal: AbortSignal): void,
+    /**
+     * `signal` is aborted when the form is destroyed: pass it to the remote calls of the hook.
+     * `standard` updates the status the way the library does: nothing, or for a select loading and saving its Options.
+     */
+    updateStatus?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null, signal: AbortSignal, standard: () => Promise<void>): void,
     afterUpdate?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null): void,
 }
 
@@ -51,16 +62,20 @@ export interface SelectOption {
     text: string
 }
 
-export interface SelectConfiguration<E extends FieldElement = FieldElement> {
+export interface SelectConfiguration<E extends HTMLElement = FieldElement> {
     /**
      * Replaces the remote call: returns the data to turn into Options, which postProcessData receives.
      * Receives the parameters of updateStatus; `signal` is aborted when the form is destroyed.
+     * `standard` makes the remote call and resolves with the response parsed as json.
      */
-    loadOptions?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null, signal: AbortSignal): any,
-    /** Receives the remote call response as parsed json, and returns the Options to save. */
-    postProcessData?(htmlElement: NodeListOf<E>, data: any): SelectOption[],
-    /** Receives the Options returned by postProcessData, or the response itself when there is no postProcessData. */
-    saveData?(htmlElement: NodeListOf<E>, data: SelectOption[]): void,
+    loadOptions?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null, signal: AbortSignal, standard: () => Promise<any>): any,
+    /** Receives the remote call response as parsed json, and returns the Options to save. `standard` returns the response as it is. */
+    postProcessData?(htmlElement: NodeListOf<E>, data: any, standard: () => any): SelectOption[],
+    /**
+     * Receives the Options returned by postProcessData, or the response itself when there is no postProcessData.
+     * `standard` clears the select and writes an `<option>` for each Option, plus an empty one when needed.
+     */
+    saveData?(htmlElement: NodeListOf<E>, data: SelectOption[], standard: () => void): void,
     clearOnParentVoid?: boolean
 }
 

@@ -84,7 +84,7 @@ class DynamicSelect extends DynamicElement {
     */
     protected async standardUpdateStatus(data: UpdateData, subjectName: string|null, signal: AbortSignal): Promise<void> {
         const loaded = this.select.loadOptions
-            ? await this.select.loadOptions(this.htmlElement, data, subjectName, signal)
+            ? await this.select.loadOptions(this.htmlElement, data, subjectName, signal, () => this.remoteCall(data, signal))
             : await this.remoteCall(data, signal);
         this.saveData(this.postProcessData(loaded));
     }
@@ -130,12 +130,8 @@ class DynamicSelect extends DynamicElement {
      * @param {any} data the remote call response, parsed as json
      */
     protected postProcessData(data: any): SelectOption[] {
-        // Custom
-        if (this.select.postProcessData) {
-            return this.select.postProcessData(this.htmlElement, data);
-        }
-        // Standard (no operation)
-        return data;
+        // Standard: no operation
+        return this.select.postProcessData ? this.select.postProcessData(this.htmlElement, data, () => data) : data;
     }
 
     /**
@@ -145,11 +141,15 @@ class DynamicSelect extends DynamicElement {
     * @see postProcessData
     */
     protected saveData(data: SelectOption[]): void {
-        // Custom
-        if (this.select.saveData) {
-            return this.select.saveData(this.htmlElement, data);
-        }
-        // Standard
+        this.whileWriting(() => this.select.saveData ? this.select.saveData(this.htmlElement, data, () => this.standardSaveData(data)) : this.standardSaveData(data));
+    }
+
+    /**
+    * Standard saving of the Options, replaced by the select.saveData field hook: clears the select and adds an option for each one,
+    * plus an empty option when neither the html nor the data have one
+    * @param {SelectOption[]} data the Options to save
+    */
+    private standardSaveData(data: SelectOption[]): void {
         this.clear();
         if (this.htmlElement.length == 1) {
             // Add empty option

@@ -26,8 +26,11 @@ class DynamicElement {
     /** @param {string} event - the event to listen to */
     event: string;
 
-    /** @param {EventListener|null} listener - the listener added by attach, removed by detach */
-    private listener: EventListener | null = null;
+    /** @param {(() => void)|null} stopListening - stops the listening started by attach, called by detach */
+    private stopListening: (() => void) | null = null;
+
+    /** @param {number} writing - how many writes of the library to the field are in progress, during which its changes are ignored */
+    private writing = 0;
 
     /**
     * Class constructor
@@ -46,24 +49,37 @@ class DynamicElement {
     }
 
     /**
-    * Listens to the field event
-    * @param {(name: string) => void} onEvent called with the field name on each event
+    * Listens to the field changes, through the io.listen field hook if given
+    * @param {() => void} onChange called on each change
     */
-    public attach(onEvent: (name: string) => void): void {
-        const listener: EventListener = (e) => onEvent((e.target as HTMLInputElement).name);
-        this.htmlElement.forEach(current => current.addEventListener(this.event, listener));
-        this.listener = listener;
+    public attach(onChange: () => void): void {
+        // A change fired by the library's own write is no change of the user: the library already updates the observers (ADR 0001)
+        const onUserChange = () => {
+            if (this.writing === 0) {
+                onChange();
+            }
+        };
+        const standard = () => this.standardListen(onUserChange);
+        this.stopListening = this.io.listen ? this.io.listen(this.htmlElement, onUserChange, standard) : standard();
     }
 
     /**
-    * Removes the listener added by attach
+    * Stops the listening started by attach
     */
     public detach(): void {
-        const listener = this.listener;
-        if (listener) {
-            this.htmlElement.forEach(current => current.removeEventListener(this.event, listener));
-            this.listener = null;
-        }
+        this.stopListening?.();
+        this.stopListening = null;
+    }
+
+    /**
+    * Standard listening to the field changes, replaced by the io.listen field hook: listens to io.event on the elements
+    * @param {() => void} onChange called on each event
+    * @returns the function that removes the listeners
+    */
+    protected standardListen(onChange: () => void): () => void {
+        const listener = () => onChange();
+        this.htmlElement.forEach(current => current.addEventListener(this.event, listener));
+        return () => this.htmlElement.forEach(current => current.removeEventListener(this.event, listener));
     }
 
     /**
@@ -71,7 +87,7 @@ class DynamicElement {
     * @returns {string} the value
     */
     public get(): any {
-        return this.io.get ? this.io.get(this.htmlElement) : this.standardGet();
+        return this.io.get ? this.io.get(this.htmlElement, () => this.standardGet()) : this.standardGet();
     }
 
     /**
@@ -79,14 +95,27 @@ class DynamicElement {
     * @param {string} value new value to set
     */
     public set(value: string): void {
-        return this.io.set ? this.io.set(this.htmlElement, value) : this.standardSet(value);
+        this.whileWriting(() => this.io.set ? this.io.set(this.htmlElement, value, () => this.standardSet(value)) : this.standardSet(value));
     }
 
     /**
     * Method to clear this element from its content, through the behavior.clear field hook if given
     */
     public clear(): void {
-        return this.behavior.clear ? this.behavior.clear(this.htmlElement) : this.standardClear();
+        this.whileWriting(() => this.behavior.clear ? this.behavior.clear(this.htmlElement, () => this.standardClear()) : this.standardClear());
+    }
+
+    /**
+    * Runs a write of the library to the field, ignoring the field changes it fires
+    * @param {() => void} write the write
+    */
+    protected whileWriting(write: () => void): void {
+        this.writing++;
+        try {
+            write();
+        } finally {
+            this.writing--;
+        }
     }
 
     /**
@@ -159,7 +188,8 @@ class DynamicElement {
      * @param {AbortSignal} signal aborted when the form is destroyed
      */
     private async updateStatus(data: UpdateData, subjectName: string|null, signal: AbortSignal): Promise<void> {
-        return this.behavior.updateStatus ? this.behavior.updateStatus(this.htmlElement, data, subjectName, signal) : this.standardUpdateStatus(data, subjectName, signal);
+        const standard = () => this.standardUpdateStatus(data, subjectName, signal);
+        return this.behavior.updateStatus ? this.behavior.updateStatus(this.htmlElement, data, subjectName, signal, standard) : standard();
     }
 
     /**

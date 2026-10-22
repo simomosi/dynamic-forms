@@ -18,6 +18,7 @@ nav:
     - How to use it: dynamic-forms-module.md
     - Form configuration: configurations/form-configuration.md
     - Fields configuration: configurations/fields-configuration.md
+    - Third-party widgets: configurations/third-party-widgets.md
     - Update rules: configurations/update-rules.md
     - Initialisation rules: configurations/init-rules.md
   - Developers:
@@ -28,6 +29,9 @@ markdown_extensions:
   - toc:
       permalink: '#'
   - attr_list
+  - pymdownx.snippets:
+      base_path: [docs]
+      check_paths: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid

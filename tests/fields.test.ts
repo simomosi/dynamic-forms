@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { RemoteCallError } from '@/index';
+import type { FieldElement, SelectOption } from '@/index';
 import { createForm, field, mountForm, optionValues, probeField, selectHtml, stubFetch, timeout } from './helpers';
 
 /**
@@ -59,7 +60,7 @@ describe('generic input', () => {
         const set = vi.fn();
         mountForm('f', '<input name="a">');
         await createForm({ id: 'f', fields: [{ name: 'a', io: { set } }], init: [{ name: 'a', value: 'v' }] }).ready();
-        expect(set).toHaveBeenCalledWith(expect.any(NodeList), 'v');
+        expect(set).toHaveBeenCalledWith(expect.any(NodeList), 'v', expect.any(Function));
 
         const clear = vi.fn();
         await clearViaCascade('a', '<input name="a" value="hello">', { behavior: { clear } });
@@ -202,7 +203,7 @@ describe('select', () => {
         await form.notify('parent');
 
         expect(optionValues('s')).toEqual(['', '3']);
-        expect(loadOptions).toHaveBeenCalledWith(expect.any(NodeList), { parent: 'x' }, 'parent', expect.any(AbortSignal));
+        expect(loadOptions).toHaveBeenCalledWith(expect.any(NodeList), { parent: 'x' }, 'parent', expect.any(AbortSignal), expect.any(Function));
         expect(fetchMock).not.toHaveBeenCalled();
     });
 
@@ -307,8 +308,217 @@ describe('field hooks', () => {
 
         await form.notify('parent');
 
-        expect(postProcessData).toHaveBeenCalledWith(expect.any(NodeList), [{ value: '1', text: 'One' }]);
-        expect(saveData).toHaveBeenCalledWith(expect.any(NodeList), [{ value: '1', text: 'One' }]);
+        expect(postProcessData).toHaveBeenCalledWith(expect.any(NodeList), [{ value: '1', text: 'One' }], expect.any(Function));
+        expect(saveData).toHaveBeenCalledWith(expect.any(NodeList), [{ value: '1', text: 'One' }], expect.any(Function));
+    });
+});
+
+describe('the Standard Behaviour a Field Hook replaces', () => {
+    it('is given to io.get, which reads through it', async () => {
+        const get = (_el: unknown, standard: () => string) => standard().toUpperCase();
+
+        expect(await valueSentBy('a', '<input name="a" value="hello">', { io: { get } })).toBe('HELLO');
+    });
+
+    it('is given to io.set, which writes through it and adds to it', async () => {
+        mountForm('f', '<input name="a">');
+        await createForm({
+            id: 'f',
+            fields: [{ name: 'a', io: { set: (el, _value, standard) => { standard(); el[0].dataset.written = 'yes'; } } }],
+            init: [{ name: 'a', value: 'hello' }],
+        }).ready();
+
+        expect(field('a').value).toBe('hello');
+        expect(field('a').dataset.written).toBe('yes');
+    });
+
+    it('is given to behavior.clear, the one of the field kind', async () => {
+        await clearViaCascade('s', selectHtml('s', { '1': 'One' }), { behavior: { clear: (el: NodeListOf<HTMLSelectElement>, standard: () => void) => { standard(); el[0].dataset.cleared = 'yes'; } } });
+
+        expect(optionValues('s')).toEqual(['']);
+        expect(field('s').dataset.cleared).toBe('yes');
+    });
+
+    it('is given to behavior.updateStatus, the remote call and Options saving of a select', async () => {
+        stubFetch({ '/s': [{ value: '1', text: 'One' }] });
+        mountForm('f', '<input name="parent" value="x">' + selectHtml('s'));
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 's', fetch: { makeUrl: () => '/s' }, behavior: { updateStatus: async (el, _data, _subject, _signal, standard) => { await standard(); el[0].dataset.updated = 'yes'; } } }],
+            rules: [{ name: 'parent', update: ['s'] }],
+        });
+
+        await form.notify('parent');
+
+        expect(optionValues('s')).toEqual(['', '1']);
+        expect(field('s').dataset.updated).toBe('yes');
+    });
+    it('is given to select.loadOptions: the remote call', async () => {
+        stubFetch({ '/s': [{ value: '1', text: 'One' }] });
+        mountForm('f', '<input name="parent" value="x">' + selectHtml('s'));
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 's', fetch: { makeUrl: () => '/s' }, select: { loadOptions: async (_el, _data, _subject, _signal, standard) => [...await standard(), { value: '2', text: 'Two' }] } }],
+            rules: [{ name: 'parent', update: ['s'] }],
+        });
+
+        await form.notify('parent');
+
+        expect(optionValues('s')).toEqual(['', '1', '2']);
+    });
+
+    it('is given to select.postProcessData: the Options as they are', async () => {
+        stubFetch({ '/s': [{ value: '1', text: 'One' }, { value: '2', text: 'Two' }] });
+        mountForm('f', '<input name="parent" value="x">' + selectHtml('s'));
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 's', fetch: { makeUrl: () => '/s' }, select: { postProcessData: (_el, _data, standard) => standard().filter((option: SelectOption) => option.value !== '1') } }],
+            rules: [{ name: 'parent', update: ['s'] }],
+        });
+
+        await form.notify('parent');
+
+        expect(optionValues('s')).toEqual(['', '2']);
+    });
+
+    it('is given to select.saveData, which saves through it and adds to it', async () => {
+        stubFetch({ '/s': [{ value: '1', text: 'One' }] });
+        mountForm('f', '<input name="parent" value="x">' + selectHtml('s', { '9': 'Old' }));
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 's', fetch: { makeUrl: () => '/s' }, select: { saveData: (el, _data, standard) => { standard(); el[0].dataset.saved = 'yes'; } } }],
+            rules: [{ name: 'parent', update: ['s'] }],
+        });
+
+        await form.notify('parent');
+
+        expect(optionValues('s')).toEqual(['', '1']);
+        expect(field('s').dataset.saved).toBe('yes');
+    });
+});
+
+describe('the events of a field while the library writes it', () => {
+    /** Writes through the Standard Behaviour, then fires `change` on the field like Widgets do when written by code */
+    const writeAndFireChange = (el: NodeListOf<FieldElement>, standard: () => void) => { standard(); el[0].dispatchEvent(new Event('change')); };
+    const settle = () => new Promise(resolve => setTimeout(resolve));
+
+    it('start no Update when io.set writes the init value, but still reach the application', async () => {
+        const probe = probeField();
+        mountForm('f', '<input name="a">' + probe.html);
+        const heardByApplication = vi.fn();
+        field('a').addEventListener('change', heardByApplication);
+        await createForm({
+            id: 'f',
+            fields: [{ name: 'a', io: { set: (el, _value, standard) => writeAndFireChange(el, standard) } }, probe.config],
+            rules: [{ name: 'a', update: ['probe'] }],
+            init: [{ name: 'a', value: 'v' }],
+        }).ready();
+        await settle();
+
+        expect(probe.updates).toHaveLength(1); // by the Initialisation only
+        expect(heardByApplication).toHaveBeenCalledTimes(1);
+    });
+
+    it('start no Update when behavior.clear clears the field in a Cascade Clear', async () => {
+        const middle = probeField('middle');
+        const probe = probeField();
+        mountForm('f', '<input name="parent">' + middle.html + '<input name="a" value="x">' + probe.html);
+        const form = createForm({
+            id: 'f',
+            fields: [middle.config, { name: 'a', behavior: { clear: (el, standard) => writeAndFireChange(el, standard) } }, probe.config],
+            rules: [{ name: 'parent', update: ['middle'] }, { name: 'middle', update: ['a'] }, { name: 'a', update: ['probe'] }],
+        });
+
+        await form.notify('parent');
+        await settle();
+
+        expect(field('a').value).toBe('');
+        expect(probe.updates).toHaveLength(0); // cleared by the Cascade Clear, never updated
+    });
+
+    it('start no Update when select.saveData saves the loaded Options', async () => {
+        stubFetch({ '/s': [{ value: '1', text: 'One' }] });
+        const probe = probeField();
+        mountForm('f', '<input name="parent" value="x">' + selectHtml('s') + probe.html);
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 's', fetch: { makeUrl: () => '/s' }, select: { saveData: (el, _data, standard) => writeAndFireChange(el, standard) } }, probe.config],
+            rules: [{ name: 'parent', update: ['s'] }, { name: 's', update: ['probe'] }],
+        });
+
+        await form.notify('parent');
+        await settle();
+
+        expect(optionValues('s')).toEqual(['', '1']);
+        expect(probe.updates).toHaveLength(0);
+    });
+
+    it('still start an Update when the user changes the field afterwards', async () => {
+        const probe = probeField();
+        mountForm('f', '<input name="a">' + probe.html);
+        await createForm({
+            id: 'f',
+            fields: [{ name: 'a', io: { set: (el, _value, standard) => writeAndFireChange(el, standard) } }, probe.config],
+            rules: [{ name: 'a', update: ['probe'] }],
+            init: [{ name: 'a', value: 'v' }],
+        }).ready();
+
+        field('a').dispatchEvent(new Event('change'));
+        await vi.waitFor(() => expect(probe.updates).toHaveLength(2));
+    });
+});
+
+/** A third-party Widget announcing its changes through its own subscription api, not through DOM events */
+function fakeWidget() {
+    let subscriber: (() => void) | null = null;
+    return {
+        subscribe(onChange: () => void) {
+            subscriber = onChange;
+            return () => { subscriber = null; };
+        },
+        change() { subscriber?.(); },
+        get listened() { return subscriber !== null; },
+    };
+}
+
+describe('io.listen', () => {
+    it('listens to a Widget instead of the field event, and stops listening when the form is destroyed', async () => {
+        const widget = fakeWidget();
+        const probe = probeField();
+        mountForm('f', '<input name="a" value="x">' + probe.html);
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 'a', io: { listen: (_el, onChange) => widget.subscribe(onChange) } }, probe.config],
+            rules: [{ name: 'a', update: ['probe'] }],
+        });
+
+        widget.change();
+        await vi.waitFor(() => expect(probe.updates).toHaveLength(1));
+        expect(probe.updates[0].data).toEqual({ a: 'x' });
+        field('a').dispatchEvent(new Event('change'));
+        await new Promise(resolve => setTimeout(resolve));
+        expect(probe.updates).toHaveLength(1);
+
+        form.destroy();
+        expect(widget.listened).toBe(false);
+    });
+
+    it('receives the Standard Behaviour, which listens to io.event until the form is destroyed', async () => {
+        const probe = probeField();
+        mountForm('f', '<input name="a">' + probe.html);
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 'a', io: { event: 'input', listen: (_el, _onChange, standard) => standard() } }, probe.config],
+            rules: [{ name: 'a', update: ['probe'] }],
+        });
+
+        field('a').dispatchEvent(new Event('input'));
+        await vi.waitFor(() => expect(probe.updates).toHaveLength(1));
+        form.destroy();
+        field('a').dispatchEvent(new Event('input'));
+        await new Promise(resolve => setTimeout(resolve));
+
+        expect(probe.updates).toHaveLength(1);
     });
 });
 
