@@ -38,6 +38,8 @@ To integrate a third-party widget (select2, Choices.js, a date picker...), see [
     };
     ```
 
+    The element type can be any `HTMLElement`, such as a form-associated custom element (see [Third-party widgets](./third-party-widgets.md#custom-elements)). The `standard` parameter of each hook is typed too: in `tags` above, `io.get`'s `standard` returns `string[]`.
+
     The library does not check these types against the html: `FieldConfiguration<HTMLSelectElement>` on an `<input>` compiles but fails at runtime.
 
 Here's a complete Field Configuration. You just need to specify the attributes you need, the other will have default values.

@@ -111,7 +111,7 @@ const city: FieldConfiguration<SlSelect, string> = {
     name: 'city',
     behavior: {
         updateStatus: async (htmlElement, data, subjectName, signal) => {
-            const cities = await (await fetch(`/cities?country=${data.country}`, { signal })).json();
+            const cities: { id: string, name: string }[] = await (await fetch(`/cities?country=${data.country}`, { signal })).json();
             htmlElement[0].replaceChildren(...cities.map((c) => Object.assign(document.createElement('sl-option'), { value: c.id, textContent: c.name })));
         },
     },

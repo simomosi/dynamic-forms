@@ -33,7 +33,7 @@ const configuration: FormConfiguration = {
 makeForm(configuration);
 ```
 
-Exported types: `FormConfiguration`, `FormHooks`, `UpdateRule`, `InitialisationRule`, `FieldConfiguration`, `FieldIoHooks`, `FieldFetchConfiguration`, `FieldHooks`, `SelectConfiguration`, `CheckboxConfiguration`, `UpdateData` and `DynamicForm`. The package also exports the `RemoteCallError` class, the error of a [failed remote call](./configurations/fields-configuration.md#fetch).
+Exported types: `FormConfiguration`, `FormHooks`, `UpdateRule`, `InitialisationRule`, `FieldConfiguration`, `FieldIoHooks`, `FieldFetchConfiguration`, `FieldHooks`, `SelectConfiguration`, `SelectOption`, `CheckboxConfiguration`, `FieldElement`, `UpdateData` and `DynamicForm` (a type only: forms are created by `makeForm`). The package also exports the `RemoteCallError` class, the error of a [failed remote call](./configurations/fields-configuration.md#fetch).
 
 
 ## Properties
