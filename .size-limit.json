@@ -3,7 +3,7 @@
     "name": "makeForm, bundled from the ES module build",
     "path": "dist/dynamic-forms.js",
     "import": "{ makeForm }",
-    "limit": "3.6 kB"
+    "limit": "4.1 kB"
   },
   {
     "name": "RemoteCallError alone: the rest of the ES module build is tree-shaken",
@@ -15,6 +15,6 @@
     "name": "UMD build for <script> tags",
     "path": "dist/dynamic-forms.umd.js",
     "rolldown": false,
-    "limit": "3.9 kB"
+    "limit": "4.35 kB"
   }
 ]

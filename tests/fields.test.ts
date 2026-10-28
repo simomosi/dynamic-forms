@@ -19,6 +19,7 @@ async function valueSentBy(name: string, html: string, fieldConfig: object = {})
         fields: [{ name, ...fieldConfig }, probe.config],
         rules: [{ name, update: ['probe'] }],
     });
+    await form.ready();
     await form.notify(name);
     return probe.updates[0].data[name];
 }
@@ -32,6 +33,7 @@ async function clearViaCascade(name: string, html: string, fieldConfig: object =
         fields: [{ name, ...fieldConfig }, middle.config],
         rules: [{ name: 'parent', update: ['middle'] }, { name: 'middle', update: [name] }],
     });
+    await form.ready();
     await form.notify('parent');
 }
 
@@ -142,6 +144,7 @@ describe('select', () => {
             fields: [{ name: 's', fetch: { makeUrl: () => '/s' } }],
             rules: [{ name: 'parent', update: ['s'] }],
         });
+        await form.ready();
 
         await form.notify('parent');
 
@@ -156,6 +159,7 @@ describe('select', () => {
             fields: [{ name: 's', fetch: { makeUrl: () => '/s' } }],
             rules: [{ name: 'parent', update: ['s'] }],
         });
+        await form.ready();
 
         await form.notify('parent');
 
@@ -170,6 +174,7 @@ describe('select', () => {
             fields: [{ name: 's', fetch: { makeUrl: () => '/s' } }],
             rules: [{ name: 'parent', update: ['s'] }],
         });
+        await form.ready();
 
         await form.notify('parent');
 
@@ -184,6 +189,7 @@ describe('select', () => {
             fields: [{ name: 's', fetch: { makeUrl: () => '/s' } }],
             rules: [{ name: 'parent', update: ['s'] }],
         });
+        await form.ready();
 
         await form.notify('parent');
 
@@ -199,6 +205,7 @@ describe('select', () => {
             fields: [{ name: 's', select: { loadOptions, postProcessData: (_el, items) => items.map((i: any) => ({ value: i.id, text: i.name })) } }],
             rules: [{ name: 'parent', update: ['s'] }],
         });
+        await form.ready();
 
         await form.notify('parent');
 
@@ -214,6 +221,7 @@ describe('select', () => {
             fields: [{ name: 's', select: { loadOptions: () => [{ value: '7', text: 'Seven' }] } }],
             rules: [{ name: 'parent', update: ['s'] }],
         });
+        await form.ready();
 
         await form.notify('parent');
 
@@ -228,6 +236,7 @@ describe('select', () => {
             fields: [{ name: 's', fetch: { makeUrl: () => '/s' } }],
             rules: [{ name: 'parent', update: ['s'] }],
         });
+        await form.ready();
 
         const error = await form.notify('parent').catch(e => e);
 
@@ -241,11 +250,11 @@ describe('select', () => {
         stubFetch({});
         const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
         mountForm('f', '<input name="parent" value="x">' + selectHtml('s'));
-        createForm({
+        await createForm({
             id: 'f',
             fields: [{ name: 's', fetch: { makeUrl: () => '/s' } }],
             rules: [{ name: 'parent', update: ['s'] }],
-        });
+        }).ready();
 
         field('parent').dispatchEvent(new Event('change'));
 
@@ -305,6 +314,7 @@ describe('field hooks', () => {
             fields: [{ name: 's', fetch: { makeUrl: () => '/s' }, select: { postProcessData, saveData } }],
             rules: [{ name: 'parent', update: ['s'] }],
         });
+        await form.ready();
 
         await form.notify('parent');
 
@@ -347,6 +357,7 @@ describe('the Standard Behaviour a Field Hook replaces', () => {
             fields: [{ name: 's', fetch: { makeUrl: () => '/s' }, behavior: { updateStatus: async (el, _data, _subject, _signal, standard) => { await standard(); el[0].dataset.updated = 'yes'; } } }],
             rules: [{ name: 'parent', update: ['s'] }],
         });
+        await form.ready();
 
         await form.notify('parent');
 
@@ -361,6 +372,7 @@ describe('the Standard Behaviour a Field Hook replaces', () => {
             fields: [{ name: 's', fetch: { makeUrl: () => '/s' }, select: { loadOptions: async (_el, _data, _subject, _signal, standard) => [...await standard(), { value: '2', text: 'Two' }] } }],
             rules: [{ name: 'parent', update: ['s'] }],
         });
+        await form.ready();
 
         await form.notify('parent');
 
@@ -375,6 +387,7 @@ describe('the Standard Behaviour a Field Hook replaces', () => {
             fields: [{ name: 's', fetch: { makeUrl: () => '/s' }, select: { postProcessData: (_el, _data, standard) => standard().filter((option: SelectOption) => option.value !== '1') } }],
             rules: [{ name: 'parent', update: ['s'] }],
         });
+        await form.ready();
 
         await form.notify('parent');
 
@@ -389,6 +402,7 @@ describe('the Standard Behaviour a Field Hook replaces', () => {
             fields: [{ name: 's', fetch: { makeUrl: () => '/s' }, select: { saveData: (el, _data, standard) => { standard(); el[0].dataset.saved = 'yes'; } } }],
             rules: [{ name: 'parent', update: ['s'] }],
         });
+        await form.ready();
 
         await form.notify('parent');
 
@@ -428,6 +442,7 @@ describe('the events of a field while the library writes it', () => {
             fields: [middle.config, { name: 'a', behavior: { clear: (el, standard) => writeAndFireChange(el, standard) } }, probe.config],
             rules: [{ name: 'parent', update: ['middle'] }, { name: 'middle', update: ['a'] }, { name: 'a', update: ['probe'] }],
         });
+        await form.ready();
 
         await form.notify('parent');
         await settle();
@@ -445,6 +460,7 @@ describe('the events of a field while the library writes it', () => {
             fields: [{ name: 's', fetch: { makeUrl: () => '/s' }, select: { saveData: (el, _data, standard) => writeAndFireChange(el, standard) } }, probe.config],
             rules: [{ name: 'parent', update: ['s'] }, { name: 's', update: ['probe'] }],
         });
+        await form.ready();
 
         await form.notify('parent');
         await settle();
@@ -491,6 +507,7 @@ describe('io.listen', () => {
             fields: [{ name: 'a', io: { listen: (_el, onChange) => widget.subscribe(onChange) } }, probe.config],
             rules: [{ name: 'a', update: ['probe'] }],
         });
+        await form.ready();
 
         widget.change();
         await vi.waitFor(() => expect(probe.updates).toHaveLength(1));
@@ -511,6 +528,7 @@ describe('io.listen', () => {
             fields: [{ name: 'a', io: { event: 'input', listen: (_el, _onChange, standard) => standard() } }, probe.config],
             rules: [{ name: 'a', update: ['probe'] }],
         });
+        await form.ready();
 
         field('a').dispatchEvent(new Event('input'));
         await vi.waitFor(() => expect(probe.updates).toHaveLength(1));

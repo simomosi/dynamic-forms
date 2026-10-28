@@ -41,6 +41,8 @@ Exported types: `FormConfiguration`, `FormHooks`, `UpdateRule`, `InitialisationR
 ### `makeForm (formConfiguration)`
 Creates a form. An html form has at most one Form at a time: `makeForm` throws `Form "id" already exists` when the previous Form for that id has not been destroyed (see [`destroy`](#destroy)).
 
+The form starts with its [Initialisation](./tutorial/initial_status.md#wait-for-complete-initialisation): until `form.ready()` settles, the fields' changes are ignored and `notify()` and `manualUpdate()` reject. Wait for it (`await form.ready()` or `form.ready().then(...)`) before calling them.
+
 Parameters
 
 - {`object`} `formConfiguration`: the Form Configuration

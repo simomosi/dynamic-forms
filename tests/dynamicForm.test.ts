@@ -1,15 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 import { getForm, makeForm, RemoteCallError } from '@/index';
-import { createForm, field, mountForm, optionValues, probeField, selectHtml, stubFetch } from './helpers';
+import { createForm, field, manualFetch, mountForm, optionValues, probeField, selectHtml, stubFetch, timeout } from './helpers';
 
 const users = [{ value: '1', text: 'Ann' }, { value: '2', text: 'Bob' }];
 const postsOfUser1 = [{ value: '10', text: 'Post A' }, { value: '11', text: 'Post B' }];
 const commentsOfPost10 = [{ value: '100', text: 'Comment X' }];
 
 /** user -> post -> comment, each select filled from the remote endpoint of its parent */
-function mountProgressiveForm(id = 'progressive') {
+async function mountProgressiveForm(id = 'progressive') {
     mountForm(id, selectHtml('user', { '1': 'Ann', '2': 'Bob' }) + selectHtml('post') + selectHtml('comment'));
-    return createForm({
+    const form = createForm({
         id,
         fields: [
             { name: 'user', fetch: { makeUrl: () => '/users' } },
@@ -21,6 +21,8 @@ function mountProgressiveForm(id = 'progressive') {
             { name: 'post', update: ['comment'] },
         ],
     });
+    await form.ready();
+    return form;
 }
 
 describe('makeForm / getForm', () => {
@@ -64,7 +66,7 @@ describe('makeForm / getForm', () => {
         const calls: string[] = [];
         const rules = [{ name: 'a', update: ['b'] }];
         makeForm({ id: 'listen', rules, behavior: { beforeUpdate: () => { calls.push('first'); return true; } } }).destroy();
-        makeForm({ id: 'listen', rules, behavior: { beforeUpdate: () => { calls.push('second'); return true; } } });
+        await makeForm({ id: 'listen', rules, behavior: { beforeUpdate: () => { calls.push('second'); return true; } } }).ready();
 
         field('a').dispatchEvent(new Event('change'));
 
@@ -87,6 +89,7 @@ describe('makeForm / getForm', () => {
         vi.stubGlobal('fetch', fetchMock);
         mountForm('abort', selectHtml('user', { '1': 'Ann' }) + selectHtml('post'));
         const form = makeForm({ id: 'abort', fields: [{ name: 'post', fetch: { makeUrl: () => '/posts' } }], rules: [{ name: 'user', update: ['post'] }] });
+        await form.ready();
         field<HTMLSelectElement>('user').value = '1';
 
         const pending = form.notify('user');
@@ -112,6 +115,7 @@ describe('makeForm / getForm', () => {
             fields: [{ name: 'post', fetch: { makeUrl: () => '/posts', fullFetchConfig: () => ({ signal: userController.signal }) } }],
             rules: [{ name: 'user', update: ['post'] }],
         });
+        await form.ready();
         field<HTMLSelectElement>('user').value = '1';
 
         const abortedByUser = form.notify('user');
@@ -132,6 +136,7 @@ describe('makeForm / getForm', () => {
             fields: [{ name: 'b', behavior: { updateStatus: (_el, _data, _subject, signal) => { signals.push(signal); return new Promise(() => {}); } } }],
             rules: [{ name: 'a', update: ['b'] }],
         });
+        await form.ready();
 
         const pending = form.notify('a');
         form.destroy();
@@ -151,10 +156,14 @@ describe('makeForm / getForm', () => {
         await expect(form.ready()).rejects.toThrow('Form "init" was destroyed');
     });
 
-    it('reports nothing when destroyed during the initialisation or an update started by the user (#47)', async () => {
-        vi.stubGlobal('fetch', vi.fn((_url: string, init?: RequestInit) => new Promise<Response>((_, reject) => {
+    it.each([
+        ['the initialisation', false],
+        ['an update started by the user', true],
+    ])('reports nothing when destroyed during %s (#47)', async (_, afterReady) => {
+        const fetchMock = vi.fn((_url: string, init?: RequestInit) => new Promise<Response>((_, reject) => {
             init?.signal?.addEventListener('abort', () => reject(init.signal!.reason));
-        })));
+        }));
+        vi.stubGlobal('fetch', fetchMock);
         const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
         const unhandled = vi.fn();
         process.on('unhandledRejection', unhandled);
@@ -163,10 +172,14 @@ describe('makeForm / getForm', () => {
             id: 'quiet',
             fields: [{ name: 'post', fetch: { makeUrl: () => '/posts' } }],
             rules: [{ name: 'user', update: ['post'] }],
-            init: [{ name: 'post' }],
+            init: afterReady ? [] : [{ name: 'post' }],
         });
-        field<HTMLSelectElement>('user').value = '1';
-        field('user').dispatchEvent(new Event('change'));
+        if (afterReady) {
+            await form.ready();
+            field<HTMLSelectElement>('user').value = '1';
+            field('user').dispatchEvent(new Event('change'));
+        }
+        await vi.waitFor(() => expect(fetchMock).toHaveBeenCalled());
 
         form.destroy();
         await new Promise(resolve => setTimeout(resolve, 10));
@@ -269,6 +282,7 @@ describe('makeForm / getForm', () => {
             fields: [probe.config],
             rules: [{ name: 'discovered', update: ['probe'] }],
         });
+        await form.ready();
 
         await form.notify('discovered');
 
@@ -288,7 +302,7 @@ describe('makeForm / getForm', () => {
 describe('progressive filtering', () => {
     it('fills the observer select with the options fetched for the subject value', async () => {
         const fetchMock = stubFetch({ '/posts?userId=1': postsOfUser1 });
-        const form = mountProgressiveForm();
+        const form = await mountProgressiveForm();
 
         field<HTMLSelectElement>('user').value = '1';
         await form.notify('user');
@@ -300,7 +314,7 @@ describe('progressive filtering', () => {
 
     it('updates observers when the subject fires its change event', async () => {
         stubFetch({ '/posts?userId=1': postsOfUser1 });
-        mountProgressiveForm();
+        await mountProgressiveForm();
 
         const user = field<HTMLSelectElement>('user');
         user.value = '1';
@@ -312,11 +326,11 @@ describe('progressive filtering', () => {
     it('listens to the event configured in io.event', async () => {
         const probe = probeField();
         mountForm('f', '<input name="search">' + probe.html);
-        createForm({
+        await createForm({
             id: 'f',
             fields: [{ name: 'search', io: { event: 'input' } }, probe.config],
             rules: [{ name: 'search', update: ['probe'] }],
-        });
+        }).ready();
 
         const search = field('search');
         search.value = 'abc';
@@ -329,7 +343,7 @@ describe('progressive filtering', () => {
 
     it('clears the observers of the observers on cascade', async () => {
         stubFetch({ '/posts?userId=1': postsOfUser1, '/comments?postId=10': commentsOfPost10, '/posts?userId=2': [] });
-        const form = mountProgressiveForm();
+        const form = await mountProgressiveForm();
         field<HTMLSelectElement>('user').value = '1';
         await form.notify('user');
         field<HTMLSelectElement>('post').value = '10';
@@ -344,7 +358,7 @@ describe('progressive filtering', () => {
 
     it('clears the observer select without fetching when the subject becomes empty', async () => {
         const fetchMock = stubFetch({ '/posts?userId=1': postsOfUser1 });
-        const form = mountProgressiveForm();
+        const form = await mountProgressiveForm();
         field<HTMLSelectElement>('user').value = '1';
         await form.notify('user');
         fetchMock.mockClear();
@@ -365,6 +379,7 @@ describe('progressive filtering', () => {
             fields: [{ name: 'post', fetch: { makeUrl: (data) => `/posts?userId=${data.user}` }, behavior: { beforeUpdate } }],
             rules: [{ name: 'user', update: ['post'] }],
         });
+        await form.ready();
 
         await form.notify('user');
 
@@ -382,6 +397,7 @@ describe('progressive filtering', () => {
             fields: [{ name: 'post', fetch: { makeUrl: (data) => `/posts?userId=${data.user}` }, behavior: { beforeUpdate } }],
             rules: [{ name: 'user', update: ['post'] }],
         });
+        await form.ready();
         field<HTMLSelectElement>('user').value = '1';
 
         await form.notify('user');
@@ -398,6 +414,7 @@ describe('progressive filtering', () => {
             fields: [{ name: 'post', fetch: { makeUrl: (data) => `/posts?userId=${data.user}` }, select: { clearOnParentVoid: false } }],
             rules: [{ name: 'user', update: ['post'] }],
         });
+        await form.ready();
 
         await form.notify('user');
 
@@ -413,6 +430,7 @@ describe('progressive filtering', () => {
             fields: [first.config, second.config],
             rules: [{ name: 'a', update: ['first', 'second'] }],
         });
+        await form.ready();
 
         await form.notify('a');
 
@@ -434,6 +452,7 @@ describe('progressive filtering', () => {
             ],
             rules: [{ name: 'country', update: observers }, { name: 'region', update: ['currency'] }],
         });
+        await form.ready();
         field<HTMLSelectElement>('country').value = 'it';
 
         await form.notify('country');
@@ -449,6 +468,7 @@ describe('progressive filtering', () => {
             fields: [{ name: 'c', behavior: { clear: () => { throw new Error('clear failed'); } } }],
             rules: [{ name: 'a', update: ['b'] }, { name: 'b', update: ['c'] }],
         });
+        await form.ready();
 
         await expect(form.notify('a')).rejects.toThrow('clear failed');
     });
@@ -463,6 +483,7 @@ describe('update parameters', () => {
             fields: [probe.config],
             rules: [{ name: 'a', update: ['probe'], additionalData: ['b'] }],
         });
+        await form.ready();
 
         await form.notify('a');
 
@@ -482,6 +503,7 @@ describe('update parameters', () => {
             fields: [probe.config],
             rules: [{ name: 'a', update: ['probe'], externalData }],
         });
+        await form.ready();
 
         await form.notify('a');
 
@@ -499,6 +521,7 @@ describe('remote call configuration', () => {
             fields: [{ name: 'post', fetch: { method: 'POST', makeUrl: () => '/posts', makeBody: (data) => JSON.stringify(data) } }],
             rules: [{ name: 'user', update: ['post'] }],
         });
+        await form.ready();
 
         await form.notify('user');
 
@@ -518,6 +541,7 @@ describe('remote call configuration', () => {
             fields: [{ name: 'post', fetch: { method: 'POST', makeUrl: () => '/posts', makeBody: () => 'ignored', fullFetchConfig } }],
             rules: [{ name: 'user', update: ['post'] }],
         });
+        await form.ready();
 
         await form.notify('user');
 
@@ -537,6 +561,7 @@ describe('remote call configuration', () => {
             }],
             rules: [{ name: 'user', update: ['post'] }],
         });
+        await form.ready();
 
         await form.notify('user');
 
@@ -552,6 +577,7 @@ describe('remote call configuration', () => {
             fields: [{ name: 'post', fetch: { makeUrl: () => '/posts' }, select: { saveData } }],
             rules: [{ name: 'user', update: ['post'] }],
         });
+        await form.ready();
 
         await form.notify('user');
 
@@ -567,6 +593,7 @@ describe('remote call configuration', () => {
             fields: [{ name: 'post', fetch: { makeUrl: () => '/posts' } }],
             rules: [{ name: 'user', update: ['post'] }],
         });
+        await form.ready();
 
         await expect(form.notify('user')).rejects.toBeDefined();
 
@@ -582,6 +609,7 @@ describe('remote call configuration', () => {
             fields: [{ name: 'post', fetch: { makeUrl: () => '/posts' } }],
             rules: [{ name: 'user', update: ['post'] }],
         });
+        await form.ready();
 
         await form.notify('user');
 
@@ -604,6 +632,7 @@ describe('form behavior', () => {
                 afterUpdate: (name: string) => { calls.push(`after:${name}`); },
             },
         });
+        await form.ready();
 
         await form.notify('a');
 
@@ -620,6 +649,7 @@ describe('form behavior', () => {
             rules: [{ name: 'a', update: ['probe'] }],
             behavior: { beforeUpdate: () => false, afterUpdate },
         });
+        await form.ready();
 
         await form.notify('a');
 
@@ -651,6 +681,7 @@ describe('form behavior', () => {
             fields: [probe.config],
             rules: [{ name: 'a', update: ['probe'] }],
         });
+        await form.ready();
 
         form.setEnabled(false);
         await form.notify('a');
@@ -664,7 +695,7 @@ describe('form behavior', () => {
 
     it('updates a single field on demand with manualUpdate', async () => {
         const fetchMock = stubFetch({ '/posts?userId=2': postsOfUser1 });
-        const form = mountProgressiveForm();
+        const form = await mountProgressiveForm();
 
         await form.manualUpdate({ user: '2' }, 'post');
 
@@ -683,6 +714,7 @@ describe('field behavior', () => {
             fields: [{ name: 'b', behavior: { beforeUpdate: () => false, updateStatus, afterUpdate } }],
             rules: [{ name: 'a', update: ['b'] }],
         });
+        await form.ready();
 
         await form.notify('a');
 
@@ -699,6 +731,7 @@ describe('field behavior', () => {
             fields: [{ name: 'b', behavior: { beforeUpdate, updateStatus } }],
             rules: [{ name: 'a', update: ['b'] }],
         });
+        await form.ready();
 
         await form.notify('a');
 
@@ -708,6 +741,64 @@ describe('field behavior', () => {
 });
 
 describe('initialisation', () => {
+    describe('and the changes made before ready() (#64)', () => {
+        /** user → post, initialised to user 1 and its post 10, with the posts loading until answered by hand */
+        function mountUserPost() {
+            const server = manualFetch();
+            mountForm('up', '<input name="user">' + selectHtml('post'));
+            const form = createForm({
+                id: 'up',
+                fields: [{ name: 'post', fetch: { makeUrl: (data) => `/posts?userId=${data.user}` } }],
+                rules: [{ name: 'user', update: ['post'] }],
+                init: [{ name: 'user', value: '1' }, { name: 'post', value: '10' }],
+            });
+            return { server, form };
+        }
+
+        it('ignores the field events until ready() settles: the init Values win', async () => {
+            const { server, form } = mountUserPost();
+
+            await new Promise(resolve => setTimeout(resolve)); // Initialisation is loading the posts of user 1
+            field('user').value = '2';
+            field('user').dispatchEvent(new Event('change'));
+            server.answer('/posts?userId=1', [{ value: '10', text: 'Post 10' }]);
+            await Promise.race([form.ready(), timeout(500)]);
+            await new Promise(resolve => setTimeout(resolve));
+
+            expect(field('user').value).toBe('1');
+            expect(optionValues('post')).toEqual(['', '10']);
+            expect(field<HTMLSelectElement>('post').value).toBe('10');
+        });
+
+        it.each([
+            ['notify()', (form: ReturnType<typeof createForm>) => form.notify('user'), '/posts?userId=1'],
+            ['manualUpdate()', (form: ReturnType<typeof createForm>) => form.manualUpdate({ user: '2' }, 'post'), '/posts?userId=2'],
+        ])('rejects %s until ready() settles, then runs it', async (_, call, url) => {
+            const { server, form } = mountUserPost();
+
+            await expect(call(form)).rejects.toThrow('Form "up" is initialising: await ready() first');
+            await new Promise(resolve => setTimeout(resolve));
+            server.answer('/posts?userId=1', [{ value: '10', text: 'Post 10' }]);
+            await form.ready();
+
+            const afterReady = call(form);
+            server.answer(url, []);
+            await expect(afterReady).resolves.toBeUndefined();
+        });
+
+        it('listens to the field events and accepts notify() once ready() has rejected', async () => {
+            const probe = probeField();
+            mountForm('f', '<input name="a">' + probe.html);
+            const form = createForm({ id: 'f', fields: [probe.config], rules: [{ name: 'a', update: ['probe'] }], behavior: { beforeInit: () => { throw new Error('no session'); } } });
+            await expect(form.ready()).rejects.toThrow('no session');
+
+            field('a').dispatchEvent(new Event('change'));
+            await vi.waitFor(() => expect(probe.updates).toHaveLength(1));
+            await form.notify('a');
+            expect(probe.updates).toHaveLength(2);
+        });
+    });
+
     it('resolves ready() and calls beforeInit/afterInit even without init rules', async () => {
         const calls: string[] = [];
         mountForm('f', '<input name="a">');
@@ -784,34 +875,28 @@ describe('initialisation', () => {
 });
 
 describe('a newer Update of a Field (#60)', () => {
-    /** fetch whose responses are released by hand, in any order, also after their call was aborted (the server answers anyway) */
-    function manualFetch() {
-        const pending = new Map<string, (status: number, body: unknown) => void>();
-        vi.stubGlobal('fetch', vi.fn((url: string) => new Promise<Response>(resolve => {
-            pending.set(url, (status, body) => resolve(new Response(JSON.stringify(body), { status })));
-        })));
-        return { answer: (url: string, body: unknown, status = 200) => pending.get(url)!(status, body) };
-    }
     const italy = [{ value: 'rome', text: 'Roma' }];
     const france = [{ value: 'paris', text: 'Paris' }];
 
     /** country → city, the cities loaded from /cities?country=... */
-    function mountCountryCity(cityConfig: object = {}) {
+    async function mountCountryCity(cityConfig: object = {}) {
         mountForm('cc', selectHtml('country', { it: 'Italia', fr: 'France' }) + selectHtml('city'));
-        return createForm({
+        const form = createForm({
             id: 'cc',
             fields: [{ name: 'city', fetch: { makeUrl: (data) => `/cities?country=${data.country}` }, ...cityConfig }],
             rules: [{ name: 'country', update: ['city'] }],
         });
+        await form.ready();
+        return form;
     }
-    const choose = (form: ReturnType<typeof mountCountryCity>, country: string) => {
+    const choose = (form: Awaited<ReturnType<typeof mountCountryCity>>, country: string) => {
         field<HTMLSelectElement>('country').value = country;
         return form.notify('country');
     };
 
     it.each([['the newer first', ['fr', 'it']], ['the older first', ['it', 'fr']]])('discards the Options of the replaced Update, with %s response', async (_order, answers) => {
         const server = manualFetch();
-        const form = mountCountryCity();
+        const form = await mountCountryCity();
 
         const updates = [choose(form, 'it'), choose(form, 'fr')];
         answers.forEach(country => server.answer(`/cities?country=${country}`, country === 'it' ? italy : france));
@@ -822,7 +907,7 @@ describe('a newer Update of a Field (#60)', () => {
 
     it('keeps a select cleared by its empty Subject cleared when the replaced response arrives', async () => {
         const server = manualFetch();
-        const form = mountCountryCity();
+        const form = await mountCountryCity();
 
         const updates = [choose(form, 'it'), choose(form, '')];
         server.answer('/cities?country=it', italy);
@@ -833,7 +918,7 @@ describe('a newer Update of a Field (#60)', () => {
 
     it('settles the replaced notify() only with the newest Update of the Field', async () => {
         const server = manualFetch();
-        const form = mountCountryCity();
+        const form = await mountCountryCity();
         let replacedSettled = false;
 
         const replaced = choose(form, 'it').finally(() => { replacedSettled = true; });
@@ -850,7 +935,7 @@ describe('a newer Update of a Field (#60)', () => {
 
     it('rejects the replaced notify() with the error of the newest Update', async () => {
         const server = manualFetch();
-        const form = mountCountryCity();
+        const form = await mountCountryCity();
 
         const replaced = choose(form, 'it');
         const newest = choose(form, 'fr');
@@ -863,7 +948,7 @@ describe('a newer Update of a Field (#60)', () => {
 
     it('aborts the signal of the replaced Update, which select.loadOptions receives', async () => {
         const signals: AbortSignal[] = [];
-        const form = mountCountryCity({ select: { loadOptions: (_el: unknown, _data: unknown, _subject: unknown, signal: AbortSignal) => { signals.push(signal); return new Promise(() => {}); } } });
+        const form = await mountCountryCity({ select: { loadOptions: (_el: unknown, _data: unknown, _subject: unknown, signal: AbortSignal) => { signals.push(signal); return new Promise(() => {}); } } });
 
         const updates = [choose(form, 'it'), choose(form, 'fr')];
 
@@ -874,7 +959,7 @@ describe('a newer Update of a Field (#60)', () => {
 
     it('discards the pending Update of a Field emptied by a Cascade Clear', async () => {
         const server = manualFetch();
-        const form = mountProgressiveForm();
+        const form = await mountProgressiveForm();
         field<HTMLSelectElement>('user').value = '1';
         const loadingPosts = form.notify('user');
         server.answer('/posts?userId=1', postsOfUser1);
@@ -895,7 +980,7 @@ describe('a newer Update of a Field (#60)', () => {
         const server = manualFetch();
         const saveData = vi.fn();
         const afterUpdate = vi.fn();
-        const form = mountCountryCity({ select: { saveData }, behavior: { afterUpdate } });
+        const form = await mountCountryCity({ select: { saveData }, behavior: { afterUpdate } });
 
         const updates = [choose(form, 'it'), choose(form, 'fr')];
         server.answer('/cities?country=it', italy);
