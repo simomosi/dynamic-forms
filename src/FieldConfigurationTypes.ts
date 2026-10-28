@@ -49,7 +49,8 @@ export interface FieldHooks<E extends HTMLElement = FieldElement> {
     clear?(htmlElement: NodeListOf<E>, standard: () => void): void,
     beforeUpdate?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null): boolean,
     /**
-     * `signal` is aborted when the form is destroyed: pass it to the remote calls of the hook.
+     * `signal` is aborted when the form is destroyed or a newer Update of the field replaces this one: pass it to the remote calls of the hook,
+     * and check it before writing the field after waiting for anything else.
      * `standard` updates the status the way the library does: nothing, or for a select loading and saving its Options.
      */
     updateStatus?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null, signal: AbortSignal, standard: () => Promise<void>): void,
@@ -65,7 +66,8 @@ export interface SelectOption {
 export interface SelectConfiguration<E extends HTMLElement = FieldElement> {
     /**
      * Replaces the remote call: returns the data to turn into Options, which postProcessData receives.
-     * Receives the parameters of updateStatus; `signal` is aborted when the form is destroyed.
+     * Receives the parameters of updateStatus; `signal` is aborted when the form is destroyed or a newer Update of the field replaces this one,
+     * and the data loaded then is discarded.
      * `standard` makes the remote call and resolves with the response parsed as json.
      */
     loadOptions?(htmlElement: NodeListOf<E>, data: UpdateData, subjectName: string|null, signal: AbortSignal, standard: () => Promise<any>): any,

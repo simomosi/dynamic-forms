@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getForm, makeForm } from '@/index';
+import { getForm, makeForm, RemoteCallError } from '@/index';
 import { createForm, field, mountForm, optionValues, probeField, selectHtml, stubFetch } from './helpers';
 
 const users = [{ value: '1', text: 'Ann' }, { value: '2', text: 'Bob' }];
@@ -780,5 +780,129 @@ describe('initialisation', () => {
 
         expect(field('c').value).toBe('3');
         expect(field('d').value).toBe('');
+    });
+});
+
+describe('a newer Update of a Field (#60)', () => {
+    /** fetch whose responses are released by hand, in any order, also after their call was aborted (the server answers anyway) */
+    function manualFetch() {
+        const pending = new Map<string, (status: number, body: unknown) => void>();
+        vi.stubGlobal('fetch', vi.fn((url: string) => new Promise<Response>(resolve => {
+            pending.set(url, (status, body) => resolve(new Response(JSON.stringify(body), { status })));
+        })));
+        return { answer: (url: string, body: unknown, status = 200) => pending.get(url)!(status, body) };
+    }
+    const italy = [{ value: 'rome', text: 'Roma' }];
+    const france = [{ value: 'paris', text: 'Paris' }];
+
+    /** country → city, the cities loaded from /cities?country=... */
+    function mountCountryCity(cityConfig: object = {}) {
+        mountForm('cc', selectHtml('country', { it: 'Italia', fr: 'France' }) + selectHtml('city'));
+        return createForm({
+            id: 'cc',
+            fields: [{ name: 'city', fetch: { makeUrl: (data) => `/cities?country=${data.country}` }, ...cityConfig }],
+            rules: [{ name: 'country', update: ['city'] }],
+        });
+    }
+    const choose = (form: ReturnType<typeof mountCountryCity>, country: string) => {
+        field<HTMLSelectElement>('country').value = country;
+        return form.notify('country');
+    };
+
+    it.each([['the newer first', ['fr', 'it']], ['the older first', ['it', 'fr']]])('discards the Options of the replaced Update, with %s response', async (_order, answers) => {
+        const server = manualFetch();
+        const form = mountCountryCity();
+
+        const updates = [choose(form, 'it'), choose(form, 'fr')];
+        answers.forEach(country => server.answer(`/cities?country=${country}`, country === 'it' ? italy : france));
+        await Promise.all(updates);
+
+        expect(optionValues('city')).toEqual(['', 'paris']);
+    });
+
+    it('keeps a select cleared by its empty Subject cleared when the replaced response arrives', async () => {
+        const server = manualFetch();
+        const form = mountCountryCity();
+
+        const updates = [choose(form, 'it'), choose(form, '')];
+        server.answer('/cities?country=it', italy);
+        await Promise.all(updates);
+
+        expect(optionValues('city')).toEqual(['']);
+    });
+
+    it('settles the replaced notify() only with the newest Update of the Field', async () => {
+        const server = manualFetch();
+        const form = mountCountryCity();
+        let replacedSettled = false;
+
+        const replaced = choose(form, 'it').finally(() => { replacedSettled = true; });
+        const newest = choose(form, 'fr');
+        server.answer('/cities?country=it', italy);
+        await new Promise(resolve => setTimeout(resolve));
+        expect(replacedSettled).toBe(false);
+
+        server.answer('/cities?country=fr', france);
+        await replaced;
+        expect(optionValues('city')).toEqual(['', 'paris']);
+        await newest;
+    });
+
+    it('rejects the replaced notify() with the error of the newest Update', async () => {
+        const server = manualFetch();
+        const form = mountCountryCity();
+
+        const replaced = choose(form, 'it');
+        const newest = choose(form, 'fr');
+        server.answer('/cities?country=it', italy);
+        server.answer('/cities?country=fr', null, 500);
+
+        await expect(newest).rejects.toThrow(RemoteCallError);
+        await expect(replaced).rejects.toThrow(RemoteCallError);
+    });
+
+    it('aborts the signal of the replaced Update, which select.loadOptions receives', async () => {
+        const signals: AbortSignal[] = [];
+        const form = mountCountryCity({ select: { loadOptions: (_el: unknown, _data: unknown, _subject: unknown, signal: AbortSignal) => { signals.push(signal); return new Promise(() => {}); } } });
+
+        const updates = [choose(form, 'it'), choose(form, 'fr')];
+
+        expect(signals.map(signal => signal.aborted)).toEqual([true, false]);
+        form.destroy(); // the newest load never ends
+        await expect(Promise.all(updates)).rejects.toThrow('Form "cc" was destroyed');
+    });
+
+    it('discards the pending Update of a Field emptied by a Cascade Clear', async () => {
+        const server = manualFetch();
+        const form = mountProgressiveForm();
+        field<HTMLSelectElement>('user').value = '1';
+        const loadingPosts = form.notify('user');
+        server.answer('/posts?userId=1', postsOfUser1);
+        await loadingPosts;
+
+        field<HTMLSelectElement>('post').value = '10';
+        const loadingComments = form.notify('post');
+        field<HTMLSelectElement>('user').value = '2'; // empties the comments, whose load is still pending
+        const loadingOtherPosts = form.notify('user');
+        server.answer('/comments?postId=10', commentsOfPost10);
+        server.answer('/posts?userId=2', []);
+        await Promise.all([loadingComments, loadingOtherPosts]);
+
+        expect(optionValues('comment')).toEqual(['']);
+    });
+
+    it('runs no saveData and no afterUpdate field hook for the replaced Update', async () => {
+        const server = manualFetch();
+        const saveData = vi.fn();
+        const afterUpdate = vi.fn();
+        const form = mountCountryCity({ select: { saveData }, behavior: { afterUpdate } });
+
+        const updates = [choose(form, 'it'), choose(form, 'fr')];
+        server.answer('/cities?country=it', italy);
+        server.answer('/cities?country=fr', france);
+        await Promise.all(updates);
+
+        expect(saveData.mock.calls.map(call => call[1])).toEqual([france]);
+        expect(afterUpdate).toHaveBeenCalledTimes(1);
     });
 });
