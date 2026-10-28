@@ -16,6 +16,8 @@ The name of the Subject.
 ## `update`
 The names of the Observers to update when the Subject changes. Their own Observers are cleared on cascade, since their value is no longer valid.
 
+When the Subject changes again before an Observer has finished loading, the newer Update replaces the pending one: the pending one's remote call is aborted and its data discarded, even when it arrives later, so the Observer always shows the data of the latest change. The same happens when a Cascade Clear empties a field still loading. A `notify()` waiting on a replaced Update settles with the newest one.
+
 Update Rules can't form a cycle: a field can't be an Observer of itself, directly or through other fields. `makeForm` throws `Update rules form a cycle: a → b → a` when they do.
 
 ## `additionalData`

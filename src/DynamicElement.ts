@@ -1,3 +1,4 @@
+import { anySignal } from './anySignal';
 import { FieldHooks, FieldElement, FieldFetchConfiguration, FieldIoHooks, ResolvedFieldConfiguration, UpdateData } from './FieldConfigurationTypes';
 
 /**
@@ -31,6 +32,9 @@ class DynamicElement {
 
     /** @param {number} writing - how many writes of the library to the field are in progress, during which its changes are ignored */
     private writing = 0;
+
+    /** @param {object|null} latestUpdate - the newest Update of the field: aborting its controller replaces it, and settled settles with the newest one */
+    private latestUpdate: { controller: AbortController, settled: Promise<void> } | null = null;
 
     /**
     * Class constructor
@@ -99,6 +103,19 @@ class DynamicElement {
     }
 
     /**
+    * Clears the field in a Cascade Clear: its Value is no longer valid, and neither is the data a pending Update is loading,
+    * so the pending Update is discarded, and settles as the field is cleared
+    */
+    public cascadeClear(): void {
+        const pending = this.latestUpdate;
+        if (pending) {
+            this.latestUpdate = { controller: new AbortController(), settled: Promise.resolve() };
+            pending.controller.abort(new Error(`Update of "${this.name}" discarded by a Cascade Clear`));
+        }
+        this.clear();
+    }
+
+    /**
     * Method to clear this element from its content, through the behavior.clear field hook if given
     */
     public clear(): void {
@@ -154,9 +171,30 @@ class DynamicElement {
     *
     * @async
     */
-    public async update(data: UpdateData, subjectName: string|null, signal: AbortSignal): Promise<void> {
+    public update(data: UpdateData, subjectName: string|null, signal: AbortSignal): Promise<void> {
+        // A newer Update replaces the pending one: its signal is aborted and its result discarded
+        this.latestUpdate?.controller.abort(new Error(`Update of "${this.name}" replaced by a newer one`));
+        const controller = new AbortController();
+        const updateSignal = anySignal([signal, controller.signal]);
+        const run = this.runUpdate(data, subjectName, updateSignal.signal).finally(() => updateSignal.release());
+        // A replaced Update settles with the newest one, so that awaiting it ends when the field shows the latest data
+        const update: { controller: AbortController, settled: Promise<void> } = { controller, settled: run };
+        update.settled = run.then(
+            () => this.latestUpdate === update ? undefined : this.latestUpdate!.settled,
+            (error) => this.latestUpdate === update ? Promise.reject(error) : this.latestUpdate!.settled,
+        );
+        this.latestUpdate = update;
+        return update.settled;
+    }
+
+    /**
+     * Runs an Update of the field: the status update, unless canUpdate or beforeUpdate stop it, then afterUpdate.
+     * Nothing runs after the status update if the signal was aborted meanwhile.
+     */
+    private async runUpdate(data: UpdateData, subjectName: string|null, signal: AbortSignal): Promise<void> {
         if (this.canUpdate(data, subjectName) && this.beforeUpdate(data, subjectName) !== false) {
             await this.updateStatus(data, subjectName, signal);
+            signal.throwIfAborted();
         }
         this.afterUpdate(data, subjectName);
     }

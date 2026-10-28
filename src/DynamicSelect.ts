@@ -1,27 +1,7 @@
 import DynamicElement from './DynamicElement';
 import { RemoteCallError } from './RemoteCallError';
+import { anySignal } from './anySignal';
 import { FieldElement, ResolvedFieldConfiguration, SelectOption, UpdateData } from './FieldConfigurationTypes';
-
-/**
- * A signal aborted when any of the given signals aborts, with its reason: AbortSignal.any, or the same by hand on
- * browsers without it (Safari < 17.4, Chrome < 116, Firefox < 124)
- * @returns the signal, and a release function that stops listening to the given signals once the signal is no longer needed
- */
-function anySignal(signals: AbortSignal[]): { signal: AbortSignal, release: () => void } {
-    if (typeof AbortSignal.any === 'function') {
-        return { signal: AbortSignal.any(signals), release: () => {} };
-    }
-    const controller = new AbortController();
-    const listening = new AbortController();
-    for (const signal of signals) {
-        if (signal.aborted) {
-            controller.abort(signal.reason);
-            break;
-        }
-        signal.addEventListener('abort', () => controller.abort(signal.reason), { once: true, signal: listening.signal });
-    }
-    return { signal: controller.signal, release: () => listening.abort() };
-}
 
 /**
 * This class represents a select field with dynamic content (like a standard html-select with dynamic options)
@@ -86,6 +66,7 @@ class DynamicSelect extends DynamicElement {
         const loaded = this.select.loadOptions
             ? await this.select.loadOptions(this.htmlElement, data, subjectName, signal, () => this.remoteCall(data, signal))
             : await this.remoteCall(data, signal);
+        signal.throwIfAborted(); // a newer Update or the destruction of the form came first: the loaded data is stale
         this.saveData(this.postProcessData(loaded));
     }
 

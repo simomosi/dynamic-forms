@@ -273,7 +273,7 @@ class DynamicForm {
                     if (this.debug){
                         console.log(`> > > [${currentSubject}] ==x==> [${observer}]`);
                     }
-                    this.getField(observer).clear();
+                    this.getField(observer).cascadeClear();
                 }
                 this.clearCascade(observer, untouched, visited);
             });
