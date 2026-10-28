@@ -1865,7 +1865,7 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
 <li>{<code>JSON</code>} <code>data</code>: the <a href="../update-rules/#update-data">Update Data</a></li>
 <li>{<code>string | null</code>}: <code>subjectName</code>: the name of the Subject which triggered the update. It is null for a manual update</li>
-<li>{<code>AbortSignal</code>}: <code>signal</code>: aborted when the Form is <a href="../../dynamic-forms-module/#destroy">destroyed</a>. Pass it to the hook's remote calls (<code>fetch(url, { signal })</code>) so they stop with the Form</li>
+<li>{<code>AbortSignal</code>}: <code>signal</code>: aborted when the Form is <a href="../../dynamic-forms-module/#destroy">destroyed</a>, or when a newer Update of the field replaces this one (see <a href="../update-rules/#update">Update Rules</a>). Pass it to the hook's remote calls (<code>fetch(url, { signal })</code>) so they stop; a hook writing the field after waiting for something else checks <code>signal.aborted</code> first, or it may write stale data</li>
 <li>{<code>() =&gt; Promise&lt;void&gt;</code>}: <code>standard</code>: updates the status the way the library does: nothing, or for a select its remote call and the saving of the options</li>
 </ul>
 <p>Returns</p>
@@ -1906,7 +1906,7 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name</li>
 <li>{<code>JSON</code>} <code>data</code>: the <a href="../update-rules/#update-data">Update Data</a></li>
 <li>{<code>string | null</code>}: <code>subjectName</code>: the name of the Subject which triggered the update. It is null for a manual update</li>
-<li>{<code>AbortSignal</code>}: <code>signal</code>: aborted when the Form is <a href="../../dynamic-forms-module/#destroy">destroyed</a></li>
+<li>{<code>AbortSignal</code>}: <code>signal</code>: aborted when the Form is <a href="../../dynamic-forms-module/#destroy">destroyed</a>, or when a newer Update of the field replaces this one: the data then loaded is discarded</li>
 <li>{<code>() =&gt; Promise&lt;any&gt;</code>}: <code>standard</code>: makes the remote call with <em>fetch</em>, and resolves with the response parsed as json</li>
 </ul>
 <p>Returns</p>

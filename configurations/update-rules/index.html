@@ -1099,6 +1099,7 @@
 <p>The name of the Subject.</p>
 <h2 id="update"><code>update</code><a class="headerlink" href="#update" title="Permanent link">#</a></h2>
 <p>The names of the Observers to update when the Subject changes. Their own Observers are cleared on cascade, since their value is no longer valid.</p>
+<p>When the Subject changes again before an Observer has finished loading, the newer Update replaces the pending one: the pending one's remote call is aborted and its data discarded, even when it arrives later, so the Observer always shows the data of the latest change. The same happens when a Cascade Clear empties a field still loading. A <code>notify()</code> waiting on a replaced Update settles with the newest one.</p>
 <p>Update Rules can't form a cycle: a field can't be an Observer of itself, directly or through other fields. <code>makeForm</code> throws <code>Update rules form a cycle: a → b → a</code> when they do.</p>
 <h2 id="additionaldata"><code>additionalData</code><a class="headerlink" href="#additionaldata" title="Permanent link">#</a></h2>
 <p>The names of other fields whose values are read and added to the Update Data.</p>
