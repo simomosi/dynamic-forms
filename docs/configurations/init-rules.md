@@ -1,7 +1,7 @@
 # Single Initialisation Rule configuration
 These rules declare the fields to bring up to date when the form is created, optionally with their initial value.
 
-An Initialisation Rule can name a field of the form, or external data which is not a field.
+An Initialisation Rule names a field of the form: `makeForm` throws for a name which is not a field. A select with nowhere to load its options from (a static select) keeps the options of its html and gets its value.
 
 ```javascript
 const initialisationRuleConfiguration = {

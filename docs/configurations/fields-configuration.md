@@ -174,7 +174,9 @@ Object which groups properties related to remote calls.
 
 **Available only for select fields**.
 
-**Required only if the select field is an Observer** (it is updated on every change of its Subject), unless you specify a [*loadOptions*](#loadoptions-htmlelement-data-subjectname-signal-standard) or an *updateStatus* Field Hook.
+**Required only if the select field is an Observer** (it is updated on every change of its Subject), unless you specify a [*loadOptions*](#loadoptions-htmlelement-data-subjectname-signal-standard) or an *updateStatus* Field Hook: `makeForm` throws for an Observer select with none of them.
+
+A select which is not an Observer and has nowhere to load its options from keeps the options of its html: an [Initialisation Rule](./init-rules.md) only sets its value.
 
 When the remote call answers with a non-ok status, `notify()` (or `ready()`, during the Initialisation) rejects with a `RemoteCallError`, an `Error` exported by the package whose `response` holds the `Response`:
 
@@ -202,7 +204,7 @@ Default value: `GET`
 ### `makeUrl (data)`*
 A function to generate the url to make the remote call to.
 
-*required*
+*required* for an Observer select, unless it has *loadOptions* or *updateStatus* (see above)
 
 Parameters
 
