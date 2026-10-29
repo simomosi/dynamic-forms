@@ -1191,6 +1191,7 @@
 <h2 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">#</a></h2>
 <h3 id="makeform-formconfiguration"><code>makeForm (formConfiguration)</code><a class="headerlink" href="#makeform-formconfiguration" title="Permanent link">#</a></h3>
 <p>Creates a form. An html form has at most one Form at a time: <code>makeForm</code> throws <code>Form "id" already exists</code> when the previous Form for that id has not been destroyed (see <a href="#destroy"><code>destroy</code></a>).</p>
+<p>The form starts with its <a href="../tutorial/initial_status/#wait-for-complete-initialisation">Initialisation</a>: until <code>form.ready()</code> settles, the fields' changes are ignored and <code>notify()</code> and <code>manualUpdate()</code> reject. Wait for it (<code>await form.ready()</code> or <code>form.ready().then(...)</code>) before calling them.</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>object</code>} <code>formConfiguration</code>: the Form Configuration</li>

@@ -1030,10 +1030,15 @@
 <li>the Update Rules in the <code>rules</code> section to update the Observers of the initialised fields</li>
 </ul>
 <p>In the example above, dynamic-forms will first initialise <code>field_one</code> using its Field Configuration and its Initialisation Rule, then it will update its Observer <code>field_two</code> using the Update Rules specified in the previous page.</p>
-<p>If you need to pass other data to the initialised fields, just list their name and value in the Initialisation Rules (<code>init</code> collection) just like they were form fields: they go in the Update Data.</p>
+<p>The values of all the Initialisation Rules go in the Update Data of each initialised field. Initialisation Rules name fields of the form only: <code>makeForm</code> throws for any other name.</p>
 <h2 id="wait-for-complete-initialisation">Wait for complete initialisation<a class="headerlink" href="#wait-for-complete-initialisation" title="Permanent link">#</a></h2>
-<p>The initialisation phase is an asynchronous procedure: your script will continue without waiting for the subroutine to end. </p>
-<p>If you need to execute code after the initialisation is complete, use the <code>ready</code> function as shown below.</p>
+<p>The initialisation phase is an asynchronous procedure: your script will continue without waiting for the subroutine to end. Every form goes through it, also without Initialisation Rules (it calls <code>beforeInit</code> and <code>afterInit</code>).</p>
+<p>Until <code>ready()</code> settles (resolved or rejected), the Initialisation comes first:</p>
+<ul>
+<li>the fields' changes are ignored: the initial values win over what the user types meanwhile, and a field changed then updates its Observers only at its next change;</li>
+<li><code>notify()</code> and <code>manualUpdate()</code> reject with <code>Form "id" is initialising: await ready() first</code>.</li>
+</ul>
+<p>So wait for <code>ready()</code> before calling them, as shown below.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Promise</label><label for="__tabbed_1_2">Async/Await</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
