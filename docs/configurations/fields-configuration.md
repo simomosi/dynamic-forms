@@ -370,7 +370,7 @@ Parameters
 
 - {`NodeList`} `htmlElement`: the html nodes with the field name, where data will be saved
 - {`{ value: string | number, text: string }[]`} `data`: the options returned by `postProcessData`, or the data retrieved from the remote call or by `loadOptions` when there is no `postProcessData`
-- {`() => void`} `standard`: saves the options the way the library does
+- {`() => void`} `standard`: saves the options the way the library does: it empties the select with the library's own clear, not with a [*clear*](#clear-htmlelement-standard) Field Hook, then writes an *option* for each one
 
 Returns
 

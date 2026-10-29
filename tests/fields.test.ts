@@ -394,6 +394,24 @@ describe('the Standard Behaviour a Field Hook replaces', () => {
         expect(optionValues('s')).toEqual(['', '2']);
     });
 
+    it('is only the library\'s own: the standard saveData clears the select its own way, not through behavior.clear', async () => {
+        stubFetch({ '/s': [{ value: '1', text: 'One' }] });
+        mountForm('f', '<input name="parent" value="x">' + selectHtml('s'));
+        const clear = vi.fn((el: NodeListOf<HTMLSelectElement>) => { el[0].value = ''; });
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 's', fetch: { makeUrl: () => '/s' }, behavior: { clear } }],
+            rules: [{ name: 'parent', update: ['s'] }],
+        });
+        await form.ready();
+
+        await form.notify('parent');
+        await form.notify('parent');
+
+        expect(optionValues('s')).toEqual(['', '1']);
+        expect(clear).not.toHaveBeenCalled();
+    });
+
     it('is given to select.saveData, which saves through it and adds to it', async () => {
         stubFetch({ '/s': [{ value: '1', text: 'One' }] });
         mountForm('f', '<input name="parent" value="x">' + selectHtml('s', { '9': 'Old' }));
