@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { SourceMapConsumer } from 'source-map-js';
 import ts from 'typescript';
@@ -83,7 +83,8 @@ describe('the types of the package', () => {
     it.each(['mts', 'cts'] as const)('lead "Go to definition" from a .%s file to the TypeScript source', (extension) => {
         const definitions = goToDefinitionOfMakeForm(`import { makeForm } from '@simomosi/dynamic-forms';\nmakeForm({ id: 'f' });\n`, extension);
 
-        expect(definitions).toEqual(['src/index.ts:19']);
+        const makeFormLine = readFileSync(path.resolve(import.meta.dirname, '../../src/index.ts'), 'utf8').split('\n').findIndex(line => line.startsWith('export function makeForm(')) + 1;
+        expect(definitions).toEqual([`src/index.ts:${makeFormLine}`]);
     });
 
     it('declare for import exactly the values the ES module build exports', () => {

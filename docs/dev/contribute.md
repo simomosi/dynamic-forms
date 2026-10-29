@@ -1,7 +1,7 @@
 # Contribute
 Help me develop DynamicForms!
 
-Remember to work on `src/*.ts` files, and test them building the bundle and importing it (`import { makeForm } from '@dist/dynamic-forms.js';` for prod build, `import { makeForm } from '@';` for dev mode).
+Remember to work on `src/*.ts` files (see the [Architecture](./architecture.md)), and test them building the bundle and importing it (`import { makeForm } from '@dist/dynamic-forms.js';` for prod build, `import { makeForm } from '@';` for dev mode).
 
 Building needs Node 22.18 or later (see `.nvmrc`: `nvm use`).
 
@@ -19,7 +19,7 @@ Useful commands:
 ## Tests
 Tests live in the `tests` folder and run with [Vitest](https://vitest.dev) in a [jsdom](https://github.com/jsdom/jsdom) environment, which simulates the browser DOM inside Node.
 
-- Test through the public API (`makeForm`, `getForm` and the returned `DynamicForm`) on a real html form mounted with `mountForm` (see `tests/helpers.ts`)
+- Test through the public API (`makeForm`, `getForm` and the returned [`Form`](../form.md)) on a real html form mounted with `mountForm` (see `tests/helpers.ts`)
 - Never call the network: stub remote calls with `stubFetch`
 - Known bugs are tracked with `it.fails` tests describing the expected behavior: fixing the bug makes them fail, so turn them into plain `it` tests
 
@@ -38,86 +38,3 @@ It is a very generic library but there may be other use cases which I didn't acc
 If you have trouble using DynamicForms open an issue, I'll be glad to help you. Suggestions are also welcome!
 
 It will be useful if you pass me some code to try: you can use tools like CodePen, PasteBin etc.
-
-# Project Structure
-Here is the UML Class Diagram to help you understand the project structure. Types are not specified for space reasons: the diagram is created using Mermaid which places elements automatically.
-
-```mermaid
-classDiagram
-
-    class DynamicForm {
-        ResolvedFormConfiguration config
-        HTMLFormElement htmlElement
-        Map❬String DynamicElement❭ entities
-        boolean debug
-        boolean enabled
-        json elementToClassMapping
-
-        +ready() Promise❬void❭
-        +notify(subjectName) Promise❬void❭
-        -fetchAllParameters(rule) UpdateData
-        -clearCascade(currentSubject) Promise❬void❭
-        +manualUpdate(data, subjectName) Promise❬void❭
-        +destroy() void
-        -getField(name) DynamicElement
-        +getId() string
-        +setEnabled() void
-        +isEnabled() boolean
-    }
-
-    class dynamicForms {
-        -Map❬String DynamicForm❭ formCollection
-        +makeForm(formConfiguration) DynamicForm
-        +getForm(id) DynamicForm
-    }
-
-    note for dynamicForms "Library entrypoint"
-
-    class resolveConfiguration {
-        +resolveConfiguration(formHtmlElement, formConfiguration) ResolvedFormConfiguration
-    }
-
-    note for resolveConfiguration "Checks the configuration and completes every Form and Field default, Discovered Fields included"
-
-    class FieldBuilder {
-        +createFieldsMap(fieldsCollection, htmlForm)
-    }
-
-    class DynamicElement {
-        -ResolvedFieldConfiguration config
-        -NodeList htmlElement
-        -string name
-        +get() string
-        +set(value) string
-        +clear()
-        +update(data, subjectName)
-        #canUpdate(data, subjectName) boolean
-        #standardGet() string
-        #standardSet(value)
-        #standardClear()
-        #standardUpdateStatus(data, subjectName) Promise❬void❭
-    }
-
-    note for DynamicElement "Public methods use the Field Hook if given, else the standard behaviour; subclasses override only the standard behaviours"
-
-    class DynamicSelect {
-        -string method
-        #canUpdate(data, subjectName) boolean
-        #standardClear()
-        #standardUpdateStatus(data, subjectName, signal) Promise❬void❭
-        -remoteCall(data, signal) Promise❬any❭
-        #postProcessData(data) SelectOption[]
-        #saveData(data) void
-    }
-
-    dynamicForms --> resolveConfiguration
-    dynamicForms --> FieldBuilder
-
-    DynamicForm <-- dynamicForms
-    DynamicForm o-- DynamicElement
-
-    DynamicElement <|-- DynamicSelect
-    DynamicElement <|-- DynamicCheckbox
-    DynamicElement <|-- DynamicRadio
-
-```

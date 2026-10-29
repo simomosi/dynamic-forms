@@ -33,17 +33,15 @@ const configuration: FormConfiguration = {
 makeForm(configuration);
 ```
 
-Exported types: `FormConfiguration`, `FormHooks`, `UpdateRule`, `InitialisationRule`, `FieldConfiguration`, `FieldIoHooks`, `FieldFetchConfiguration`, `FieldHooks`, `SelectConfiguration`, `SelectOption`, `CheckboxConfiguration`, `FieldElement`, `UpdateData` and `DynamicForm` (a type only: forms are created by `makeForm`). The package also exports the `RemoteCallError` class, the error of a [failed remote call](./configurations/fields-configuration.md#fetch).
+Exported types: `FormConfiguration`, `FormHooks`, `UpdateRule`, `InitialisationRule`, `FieldConfiguration`, `FieldIoHooks`, `FieldFetchConfiguration`, `FieldHooks`, `SelectConfiguration`, `SelectOption`, `CheckboxConfiguration`, `FieldElement`, `UpdateData` and `Form`, the type of the [Form](./form.md) returned by `makeForm` (a type only: forms are created by `makeForm`). The package also exports the `RemoteCallError` class, the error of a [failed remote call](./configurations/fields-configuration.md#fetch).
 
 
 ## Properties
 
 ### `makeForm (formConfiguration)`
-Creates a form. An html form has at most one Form at a time: `makeForm` throws `Form "id" already exists` when the previous Form for that id has not been destroyed (see [`destroy`](#destroy)).
+Creates a form. An html form has at most one Form at a time: `makeForm` throws `Form "id" already exists` when the previous Form for that id has not been destroyed (see [`destroy`](./form.md#destroy)).
 
-The form starts with its [Initialisation](./tutorial/initial_status.md#wait-for-complete-initialisation): until `form.ready()` settles, the fields' changes are ignored and `notify()` and `manualUpdate()` reject. Wait for it (`await form.ready()` or `form.ready().then(...)`) before calling them.
-
-`notify(name)` and `manualUpdate(data, name)` throw at once, before returning their promise, when the form has no field with that name: `Form "id" has no field "name"`.
+The form starts with its [Initialisation](./tutorial/initial_status.md#wait-for-complete-initialisation): until `form.ready()` settles, the fields' changes are ignored and `notify()` and `manualUpdate()` reject. Wait for it (`await form.ready()` or `form.ready().then(...)`) before calling them. The [Form](./form.md) page describes the methods of the form and when they fail.
 
 Parameters
 
@@ -51,7 +49,7 @@ Parameters
 
 Returns
 
-- {`DynamicForm`} the form
+- {`Form`} the [form](./form.md)
 
 ### `getForm (id)`
 Returns the form with the given id, if it exists.
@@ -62,15 +60,10 @@ Parameters
 
 Returns
 
-- {`DynamicForm | null`} the form, or null if it does not exist
-
-### `destroy ()`
-A method of the Form returned by `makeForm`. It removes the Form's listeners, so the fields no longer update each other, unregisters it from `getForm`, and aborts its remote calls in progress. Destroying it again does nothing.
-
-A `notify()`, `manualUpdate()` or `ready()` still pending rejects with `Form "id" was destroyed`, and so do `notify()` and `manualUpdate()` called afterwards. A custom [`updateStatus`](./configurations/fields-configuration.md#updatestatus-htmlelement-data-subjectname-signal-standard) Field Hook receives the abort signal, to stop its own remote calls.
+- {`Form | undefined`} the [form](./form.md), or `undefined` if it does not exist
 
 ### Fields added after `makeForm`
-Fields are discovered when the Form is created. To pick up fields added to the html form later, destroy the Form and create it again:
+Fields are discovered when the Form is created. To pick up fields added to the html form later, [destroy](./form.md#destroy) the Form and create it again:
 
 ```js
 let form = makeForm(configuration);
