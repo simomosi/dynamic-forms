@@ -45,7 +45,6 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@mermaid-js/mermaid-cli": "^10.1.0",
-    "@size-limit/preset-small-lib": "^14.2.0",
     "@types/jquery": "^4.0.1",
     "@types/jsdom": "^30.0.0",
     "@types/select2": "^4.0.63",
@@ -57,7 +56,6 @@
     "mermaid": "^10.1.0",
     "publint": "^0.3.25",
     "select2": "^4.1.0",
-    "size-limit": "^14.2.0",
     "source-map-js": "^1.2.2",
     "tom-select": "^2.6.2",
     "tsdown": "0.23.1",
@@ -73,8 +71,7 @@
     "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "lint:package": "publint && attw --pack .",
-    "test:package": "npm run build && vitest run --config vitest.package.config.ts",
-    "size": "size-limit"
+    "test:package": "npm run build && vitest run --config vitest.package.config.ts"
   },
   "sideEffects": false,
   "exports": {
