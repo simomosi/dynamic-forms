@@ -1,7 +1,7 @@
 /** Module to easily manage dynamic forms */
 import DynamicForm from './DynamicForm';
 import { Form } from './Form';
-import { FieldBuilder } from './FieldBuilder';
+import { createFields } from './createFields';
 import { FormConfiguration } from './FormConfigurationTypes';
 import { resolveConfiguration } from './resolveConfiguration';
 
@@ -24,7 +24,7 @@ export function makeForm(formConfiguration: FormConfiguration): Form {
     if (formCollection.has(id)) {
         throw new Error(`Form "${id}" already exists: call destroy() on it first`);
     }
-    const fieldsMap = (new FieldBuilder()).createFieldsMap(completeFormConfiguration.fields, htmlFormElement);
+    const fieldsMap = createFields(completeFormConfiguration.fields, htmlFormElement);
 
     const form = new DynamicForm(completeFormConfiguration, fieldsMap, () => formCollection.delete(id));
     formCollection.set(id, form);

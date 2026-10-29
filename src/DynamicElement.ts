@@ -6,9 +6,6 @@ import { FieldHooks, FieldElement, FieldFetchConfiguration, FieldIoHooks, Resolv
  * In particular it is a generic input element, whose behavior is based on element.value property
  */
 class DynamicElement {
-    /** @param {object} config - the element configuration */
-    readonly config: ResolvedFieldConfiguration;
-
     /** @param {NodeList} htmlElement - the HTML Elements returned by querySelectorAll, which every hook receives */
     readonly htmlElement: NodeListOf<FieldElement>;
 
@@ -43,7 +40,6 @@ class DynamicElement {
     * @async
     */
     constructor(config: ResolvedFieldConfiguration, htmlElement: NodeListOf<FieldElement>) {
-        this.config = config;
         this.io = config.io;
         this.fetch = config.fetch;
         this.behavior = config.behavior;
