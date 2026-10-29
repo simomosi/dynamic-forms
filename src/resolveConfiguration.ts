@@ -24,6 +24,7 @@ export function resolveConfiguration(formHtmlElement: HTMLFormElement | null, fo
 
     checkNames(id, fields, rules, init);
     checkKnownNames(id, fields, rules, init, namesInForm);
+    checkObserverSelects(id, fields, rules, formHtmlElement);
     checkNoCycles(rules);
 
     return {
@@ -84,6 +85,22 @@ function checkKnownNames(formId: string, fields: FieldConfiguration[], rules: Up
     init.filter(rule => !namesInForm.has(rule.name))
         .forEach(rule => errors.push(`initialisation rule "${rule.name}": unknown field`));
     throwIfAny(formId, errors);
+}
+
+/** Throws when an Observer select has nowhere to load its Options from, listing every such select */
+function checkObserverSelects(formId: string, fields: FieldConfiguration[], rules: UpdateRule[], formHtmlElement: HTMLFormElement): void {
+    const observers = new Set(rules.flatMap(rule => rule.update));
+    const errors = fields
+        .filter(field => observers.has(field.name) && isSelect(formHtmlElement, field.name))
+        .filter(field => !field.fetch?.makeUrl && !field.select?.loadOptions && !field.behavior?.updateStatus)
+        .map(field => `field "${field.name}": an Observer select needs fetch.makeUrl, select.loadOptions or behavior.updateStatus to load its Options`);
+    throwIfAny(formId, errors);
+}
+
+/** Whether the field with the given name is a select, as FieldBuilder decides it from its first element */
+function isSelect(formHtmlElement: HTMLFormElement, name: string): boolean {
+    const type = formHtmlElement.querySelector<HTMLSelectElement>(`[name="${name}"]`)?.type;
+    return type === 'select-one' || type === 'select-multiple';
 }
 
 /** Throws one error listing all the given errors, if any */
