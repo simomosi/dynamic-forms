@@ -58,8 +58,9 @@ class DynamicForm implements Form {
         
         this.#fieldsMap.forEach((field) => {
             field.attach(() => {
-                // Initialisation comes first: a change during it is overwritten by the init Values (#64)
-                if (!this.#initialising) {
+                // Initialisation comes first: a change during it is overwritten by the init Values (#64);
+                // a Disabled Form ignores the changes, which are no error of the application
+                if (!this.#initialising && this.#enabled) {
                     this.notify(field.name).catch(error => this.#reportUnlessDestroyed(error));
                 }
             });
@@ -190,9 +191,7 @@ class DynamicForm implements Form {
     async #notifyField(subjectName: string): Promise<void> {
         this.#destruction.signal.throwIfAborted();
         this.#throwIfInitialising();
-        if (this.isEnabled() === false) {
-            return;
-        }
+        this.#throwIfDisabled();
         if (this.#debug) {
             console.log(`-\n${new Date()}\n> [${subjectName}] Changed. Notifying observers...\n-`);
         }
@@ -302,6 +301,7 @@ class DynamicForm implements Form {
     async #manualUpdateField(data: UpdateData, subjectName: string): Promise<void> {
         this.#destruction.signal.throwIfAborted();
         this.#throwIfInitialising();
+        this.#throwIfDisabled();
         return this.#updateField(data, subjectName);
     }
 
@@ -311,6 +311,15 @@ class DynamicForm implements Form {
     #throwIfInitialising(): void {
         if (this.#initialising) {
             throw new Error(`Form "${this.#id}" is initialising: await ready() first`);
+        }
+    }
+
+    /**
+     * Throws while the form is disabled: a Disabled Form runs no Update until setEnabled(true)
+     */
+    #throwIfDisabled(): void {
+        if (!this.#enabled) {
+            throw new Error(`Form "${this.#id}" is disabled: call setEnabled(true) first`);
         }
     }
 
