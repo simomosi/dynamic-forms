@@ -39,6 +39,9 @@ class DynamicForm {
     /** @param {() => void} unregister - removes the form from the forms returned by getForm */
     private readonly unregister: () => void;
 
+    /** @param {boolean} initialising - true until ready() settles: field events are ignored, notify() and manualUpdate() reject */
+    private initialising = true;
+
     /** @param {AbortController} destruction - aborted by destroy, with the error a destroyed form throws */
     private readonly destruction = new AbortController();
 
@@ -62,9 +65,16 @@ class DynamicForm {
         this.fieldUpdateRulesMap = this.createFieldUpdateRulesMap(formConfiguration.fields, formConfiguration.rules);
         
         this.fieldsMap.forEach((field) => {
-            field.attach(() => this.notify(field.name).catch(error => this.reportUnlessDestroyed(error)));
+            field.attach(() => {
+                // Initialisation comes first: a change during it is overwritten by the init Values (#64)
+                if (!this.initialising) {
+                    this.notify(field.name).catch(error => this.reportUnlessDestroyed(error));
+                }
+            });
         });
-        this.initPromise = this.untilDestroyed(this.handleInitialisation(this.fieldsMap, formConfiguration.init, this.behavior));
+        const initialisation = this.handleInitialisation(this.fieldsMap, formConfiguration.init, this.behavior)
+            .finally(() => { this.initialising = false; });
+        this.initPromise = this.untilDestroyed(initialisation);
     }
     
     private createFieldUpdateRulesMap(fieldsCollection: ResolvedFieldConfiguration[], rulesCollection: UpdateRule[] = []): Map<string, UpdateRule[]> {
@@ -103,7 +113,7 @@ class DynamicForm {
         const tmpInitialStatusAsObject = Object.fromEntries(initialStatus); // Evaluate if using maps instead of objects makes the module harder to use
         const initPromises: Promise<void>[] = initFields
         .filter(x => fieldsMap.get(x.name) !== undefined)
-        .map(field => this.manualUpdate(tmpInitialStatusAsObject, field.name));
+        .map(field => this.updateField(tmpInitialStatusAsObject, field.name));
         
         await Promise.all(initPromises);
         
@@ -181,6 +191,7 @@ class DynamicForm {
     */
     public async notify(subjectName: string): Promise<void> {
         this.destruction.signal.throwIfAborted();
+        this.throwIfInitialising();
         if (this.isEnabled() === false) {
             return;
         }
@@ -288,6 +299,25 @@ class DynamicForm {
     */
     public async manualUpdate(data: UpdateData, subjectName: string): Promise<void> {
         this.destruction.signal.throwIfAborted();
+        this.throwIfInitialising();
+        return this.updateField(data, subjectName);
+    }
+
+    /**
+     * Throws while the form is initialising: the application calls notify() and manualUpdate() once ready() settles
+     */
+    private throwIfInitialising(): void {
+        if (this.initialising) {
+            throw new Error(`Form "${this.id}" is initialising: await ready() first`);
+        }
+    }
+
+    /**
+    * Updates a single field with the given data, as a Manual Update: neither its observers nor the form hooks are involved
+    * @param {UpdateData} data data useful to the element's status change
+    * @param {string} subjectName name of the field to update
+    */
+    private async updateField(data: UpdateData, subjectName: string): Promise<void> {
         const field = this.getField(subjectName);
         if (field) {
             return this.untilDestroyed(field.update(data, null, this.destruction.signal));

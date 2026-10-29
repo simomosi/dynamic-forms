@@ -33,13 +33,18 @@ Dynamic-forms uses:
 
 In the example above, dynamic-forms will first initialise `field_one` using its Field Configuration and its Initialisation Rule, then it will update its Observer `field_two` using the Update Rules specified in the previous page.
 
-If you need to pass other data to the initialised fields, just list their name and value in the Initialisation Rules (`init` collection) just like they were form fields: they go in the Update Data.
+The values of all the Initialisation Rules go in the Update Data of each initialised field. Initialisation Rules name fields of the form only: `makeForm` throws for any other name.
 
 ## Wait for complete initialisation
 
-The initialisation phase is an asynchronous procedure: your script will continue without waiting for the subroutine to end. 
+The initialisation phase is an asynchronous procedure: your script will continue without waiting for the subroutine to end. Every form goes through it, also without Initialisation Rules (it calls `beforeInit` and `afterInit`).
 
-If you need to execute code after the initialisation is complete, use the `ready` function as shown below.
+Until `ready()` settles (resolved or rejected), the Initialisation comes first:
+
+- the fields' changes are ignored: the initial values win over what the user types meanwhile, and a field changed then updates its Observers only at its next change;
+- `notify()` and `manualUpdate()` reject with `Form "id" is initialising: await ready() first`.
+
+So wait for `ready()` before calling them, as shown below.
 
 
 

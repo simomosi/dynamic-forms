@@ -47,6 +47,18 @@ export function stubFetch(responses: Record<string, unknown> = {}) {
 }
 
 /**
+ * Replaces the global fetch with a stub whose responses are released by hand, in any order,
+ * also after their call was aborted (the server answers anyway)
+ */
+export function manualFetch() {
+    const pending = new Map<string, (status: number, body: unknown) => void>();
+    vi.stubGlobal('fetch', vi.fn((url: string) => new Promise<Response>(resolve => {
+        pending.set(url, (status, body) => resolve(new Response(JSON.stringify(body), { status })));
+    })));
+    return { answer: (url: string, body: unknown, status = 200) => pending.get(url)!(status, body) };
+}
+
+/**
  * A text field which records every update it receives, to observe the data a subject sends to its observers.
  */
 export function probeField(name = 'probe'): { config: FieldConfiguration, html: string, updates: Array<{ data: UpdateData, subjectName: string | null }> } {

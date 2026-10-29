@@ -38,11 +38,11 @@ describe('select2 recipe', () => {
         stubFetch(cities);
         mountForm('f', selectHtml('country', { it: 'Italia' }) + selectHtml('city'));
         $('[name=country], [name=city]').select2();
-        createForm({
+        await createForm({
             id: 'f',
             fields: [select2Field('country'), select2Field('city', { fetch: { makeUrl } })],
             rules: [{ name: 'country', update: ['city'] }],
-        });
+        }).ready();
 
         $('[name=country]').val('it').trigger('change'); // what select2 does on a user's choice
         await vi.waitFor(() => expect(optionValues('city')).toEqual(['', 'rm', 'mi']));
@@ -75,11 +75,11 @@ describe('Choices.js recipe', () => {
         mountForm('f', selectHtml('country', { it: 'Italia' }) + selectHtml('city'));
         const country = new Choices('[name=country]', { removeItemButton: true });
         const city = new Choices('[name=city]');
-        createForm({
+        await createForm({
             id: 'f',
             fields: [choicesField('country', country), choicesField('city', city, { fetch: { makeUrl } })],
             rules: [{ name: 'country', update: ['city'] }],
-        });
+        }).ready();
 
         pick(country, 'it');
         await vi.waitFor(() => expect(offered(city)).toEqual(expect.arrayContaining(['rm', 'mi'])));
@@ -106,11 +106,11 @@ describe('Tom Select recipe', () => {
         mountForm('f', selectHtml('country', { it: 'Italia' }) + selectHtml('city'));
         const country = new TomSelect('[name=country]', {});
         const city = new TomSelect('[name=city]', {});
-        createForm({
+        await createForm({
             id: 'f',
             fields: [tomSelectField('country'), tomSelectField('city', { fetch: { makeUrl } })],
             rules: [{ name: 'country', update: ['city'] }],
-        });
+        }).ready();
 
         pick(country, 'it');
         await vi.waitFor(() => expect(offered(city)).toEqual(['rm', 'mi']));
