@@ -1754,7 +1754,8 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <h2 id="fetch"><code>fetch</code>*<a class="headerlink" href="#fetch" title="Permanent link">#</a></h2>
 <p>Object which groups properties related to remote calls.</p>
 <p><strong>Available only for select fields</strong>.</p>
-<p><strong>Required only if the select field is an Observer</strong> (it is updated on every change of its Subject), unless you specify a <a href="#loadoptions-htmlelement-data-subjectname-signal-standard"><em>loadOptions</em></a> or an <em>updateStatus</em> Field Hook.</p>
+<p><strong>Required only if the select field is an Observer</strong> (it is updated on every change of its Subject), unless you specify a <a href="#loadoptions-htmlelement-data-subjectname-signal-standard"><em>loadOptions</em></a> or an <em>updateStatus</em> Field Hook: <code>makeForm</code> throws for an Observer select with none of them.</p>
+<p>A select which is not an Observer and has nowhere to load its options from keeps the options of its html: an <a href="../init-rules/">Initialisation Rule</a> only sets its value.</p>
 <p>When the remote call answers with a non-ok status, <code>notify()</code> (or <code>ready()</code>, during the Initialisation) rejects with a <code>RemoteCallError</code>, an <code>Error</code> exported by the package whose <code>response</code> holds the <code>Response</code>:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
@@ -1782,7 +1783,7 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <p>Default value: <code>GET</code></p>
 <h3 id="makeurl-data"><code>makeUrl (data)</code>*<a class="headerlink" href="#makeurl-data" title="Permanent link">#</a></h3>
 <p>A function to generate the url to make the remote call to.</p>
-<p><em>required</em></p>
+<p><em>required</em> for an Observer select, unless it has <em>loadOptions</em> or <em>updateStatus</em> (see above)</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>JSON</code>} <code>data</code>: the <a href="../update-rules/#update-data">Update Data</a></li>
