@@ -16,6 +16,7 @@ nav:
     - Initial status: tutorial/initial_status.md
   - Documentation:
     - How to use it: dynamic-forms-module.md
+    - Form: form.md
     - Form configuration: configurations/form-configuration.md
     - Fields configuration: configurations/fields-configuration.md
     - Third-party widgets: configurations/third-party-widgets.md
@@ -23,6 +24,7 @@ nav:
     - Initialisation rules: configurations/init-rules.md
   - Developers:
     - Contribute: dev/contribute.md
+    - Architecture: dev/architecture.md
     - ToDo & Changelog: dev/todo_changelog.md
     - Cool stuff: dev/cool_stuff.md
 markdown_extensions:

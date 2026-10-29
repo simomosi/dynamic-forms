@@ -1,10 +1,11 @@
 /** Module to easily manage dynamic forms */
 import DynamicForm from './DynamicForm';
-import { FieldBuilder } from './FieldBuilder';
+import { Form } from './Form';
+import { createFields } from './createFields';
 import { FormConfiguration } from './FormConfigurationTypes';
 import { resolveConfiguration } from './resolveConfiguration';
 
-export type { DynamicForm };
+export type { Form };
 export { RemoteCallError } from './RemoteCallError';
 export type { FormConfiguration, FormHooks, UpdateRule, InitialisationRule } from './FormConfigurationTypes';
 export type { UpdateData, FieldElement, FieldConfiguration, FieldIoHooks, FieldFetchConfiguration, FieldHooks, SelectConfiguration, SelectOption, CheckboxConfiguration } from './FieldConfigurationTypes';
@@ -12,29 +13,29 @@ export type { UpdateData, FieldElement, FieldConfiguration, FieldIoHooks, FieldF
 const formCollection: Map<string, DynamicForm> = new Map();
 
 /**
- * Instantiate a single DynamicForm
+ * Creates the Form of an html form
  * @param {FormConfiguration} formConfiguration the form configuration
- * @returns Single DynamicForm instance
+ * @returns the Form
  */
-export function makeForm(formConfiguration: FormConfiguration): DynamicForm {
+export function makeForm(formConfiguration: FormConfiguration): Form {
     const htmlFormElement = document.forms.namedItem(formConfiguration.id) as HTMLFormElement;
     const completeFormConfiguration = resolveConfiguration(htmlFormElement, formConfiguration);
     const id = completeFormConfiguration.id;
     if (formCollection.has(id)) {
         throw new Error(`Form "${id}" already exists: call destroy() on it first`);
     }
-    const fieldsMap = (new FieldBuilder()).createFieldsMap(completeFormConfiguration.fields, htmlFormElement);
+    const fieldsMap = createFields(completeFormConfiguration.fields, htmlFormElement);
 
-    const form = new DynamicForm(htmlFormElement, completeFormConfiguration, fieldsMap, () => formCollection.delete(id));
+    const form = new DynamicForm(completeFormConfiguration, fieldsMap, () => formCollection.delete(id));
     formCollection.set(id, form);
     return form;
 }
 
 /**
- * Method to retrieve a Dynamic Form instance.
+ * Returns the Form with the given id, if it exists
  * @param {string} id the form id
  */
-export function getForm(id: string): DynamicForm|undefined {
+export function getForm(id: string): Form|undefined {
     return formCollection.get(id);
 }
 

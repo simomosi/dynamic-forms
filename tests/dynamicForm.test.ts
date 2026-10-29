@@ -34,6 +34,15 @@ describe('makeForm / getForm', () => {
         expect(form.getId()).toBe('registered');
     });
 
+    it('exposes only the methods of the Form, not its state (#72)', () => {
+        mountForm('sealed', '<input name="a">');
+        const form = createForm({ id: 'sealed', debug: true });
+
+        expect(Object.keys(form)).toEqual([]);
+        expect((form as any).fieldsMap).toBeUndefined();
+        expect((form as any).debug).toBeUndefined();
+    });
+
     it('throws when a form with the same id still exists (#47)', () => {
         mountForm('twice', '<input name="a">');
         makeForm({ id: 'twice' });
@@ -706,7 +715,7 @@ describe('form behavior', () => {
         expect(probe.updates).toEqual([{ data: { a: '1' }, subjectName: 'a' }]);
     });
 
-    it('ignores changes while disabled', async () => {
+    it('rejects notify while disabled, updating nothing (#72)', async () => {
         const probe = probeField();
         mountForm('f', '<input name="a">' + probe.html);
         const form = createForm({
@@ -717,13 +726,84 @@ describe('form behavior', () => {
         await form.ready();
 
         form.setEnabled(false);
-        await form.notify('a');
+        await expect(form.notify('a')).rejects.toThrow('Form "f" is disabled');
         expect(form.isEnabled()).toBe(false);
         expect(probe.updates).toEqual([]);
 
         form.setEnabled(true);
         await form.notify('a');
         expect(probe.updates).toHaveLength(1);
+    });
+
+    it('ignores the user changes while disabled, reporting nothing (#72)', async () => {
+        const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+        const probe = probeField();
+        mountForm('f', '<input name="a">' + probe.html);
+        const form = createForm({
+            id: 'f',
+            fields: [probe.config],
+            rules: [{ name: 'a', update: ['probe'] }],
+        });
+        await form.ready();
+        form.setEnabled(false);
+
+        field('a').dispatchEvent(new Event('change'));
+        await new Promise(resolve => setTimeout(resolve));
+
+        expect(probe.updates).toEqual([]);
+        expect(consoleError).not.toHaveBeenCalled();
+    });
+
+    it('finishes the updates already running when disabled (#72)', async () => {
+        const server = manualFetch();
+        const form = await mountProgressiveForm();
+        field<HTMLSelectElement>('user').value = '1';
+        const update = form.notify('user');
+        await vi.waitFor(() => expect(fetch).toHaveBeenCalled());
+
+        form.setEnabled(false);
+        server.answer('/posts?userId=1', postsOfUser1);
+
+        await expect(update).resolves.toBeUndefined();
+        expect(optionValues('post')).toEqual(['', '10', '11']);
+    });
+
+    it('completes the Initialisation of a form disabled while initialising (#72)', async () => {
+        stubFetch({ '/posts?userId=1': postsOfUser1 });
+        mountForm('f', selectHtml('user', { '1': 'Ann' }) + selectHtml('post'));
+        const form = createForm({
+            id: 'f',
+            fields: [{ name: 'post', fetch: { makeUrl: (data) => `/posts?userId=${data.user}` } }],
+            rules: [{ name: 'user', update: ['post'] }],
+            init: [{ name: 'user', value: '1' }],
+        });
+
+        form.setEnabled(false);
+
+        await expect(form.ready()).resolves.toBeUndefined();
+        expect(optionValues('post')).toEqual(['', '10', '11']);
+    });
+
+    it('reports a destroyed form, then an initialising one, before a disabled one (#72)', async () => {
+        mountForm('f', '<input name="a">');
+        const form = createForm({ id: 'f' });
+        form.setEnabled(false);
+
+        await expect(form.notify('a')).rejects.toThrow('Form "f" is initialising');
+        await form.ready();
+        form.destroy();
+        await expect(form.manualUpdate({}, 'a')).rejects.toThrow('Form "f" was destroyed');
+    });
+
+    it('rejects manualUpdate while disabled, making no remote call (#72)', async () => {
+        const fetchMock = stubFetch({ '/posts?userId=2': postsOfUser1 });
+        const form = await mountProgressiveForm();
+        form.setEnabled(false);
+
+        await expect(form.manualUpdate({ user: '2' }, 'post')).rejects.toThrow('Form "progressive" is disabled');
+
+        expect(fetchMock).not.toHaveBeenCalled();
+        expect(optionValues('post')).toEqual(['']);
     });
 
     it('updates a single field on demand with manualUpdate', async () => {

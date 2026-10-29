@@ -119,7 +119,7 @@ Type: `string`.
 Default value: `change`.
 
 ### `listen (htmlElement, onChange, standard)`
-Field Hook which replaces the standard listening to the field's changes: it subscribes to them, calls `onChange` on each one, and returns the function which unsubscribes. The library calls that function when the Form is [destroyed](../dynamic-forms-module.md#destroy).
+Field Hook which replaces the standard listening to the field's changes: it subscribes to them, calls `onChange` on each one, and returns the function which unsubscribes. The library calls that function when the Form is [destroyed](../form.md#destroy).
 
 Use it for a widget which announces its changes in a way `addEventListener` doesn't hear, such as jQuery events or a callback:
 
@@ -296,7 +296,7 @@ Parameters
 - {`NodeList`} `htmlElement`: the html nodes with the field name
 - {`JSON`} `data`: the [Update Data](./update-rules.md#update-data)
 - {`string | null`}: `subjectName`: the name of the Subject which triggered the update. It is null for a manual update
-- {`AbortSignal`}: `signal`: aborted when the Form is [destroyed](../dynamic-forms-module.md#destroy), or when a newer Update of the field replaces this one (see [Update Rules](./update-rules.md#update)). Pass it to the hook's remote calls (`fetch(url, { signal })`) so they stop; a hook writing the field after waiting for something else checks `signal.aborted` first, or it may write stale data
+- {`AbortSignal`}: `signal`: aborted when the Form is [destroyed](../form.md#destroy), or when a newer Update of the field replaces this one (see [Update Rules](./update-rules.md#update)). Pass it to the hook's remote calls (`fetch(url, { signal })`) so they stop; a hook writing the field after waiting for something else checks `signal.aborted` first, or it may write stale data
 - {`() => Promise<void>`}: `standard`: updates the status the way the library does: nothing, or for a select its remote call and the saving of the options
 
 Returns
@@ -341,7 +341,7 @@ Parameters (the same as [*updateStatus*](#updatestatus-htmlelement-data-subjectn
 - {`NodeList`} `htmlElement`: the html nodes with the field name
 - {`JSON`} `data`: the [Update Data](./update-rules.md#update-data)
 - {`string | null`}: `subjectName`: the name of the Subject which triggered the update. It is null for a manual update
-- {`AbortSignal`}: `signal`: aborted when the Form is [destroyed](../dynamic-forms-module.md#destroy), or when a newer Update of the field replaces this one: the data then loaded is discarded
+- {`AbortSignal`}: `signal`: aborted when the Form is [destroyed](../form.md#destroy), or when a newer Update of the field replaces this one: the data then loaded is discarded
 - {`() => Promise<any>`}: `standard`: makes the remote call with *fetch*, and resolves with the response parsed as json
 
 Returns

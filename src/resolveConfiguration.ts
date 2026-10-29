@@ -97,7 +97,7 @@ function checkObserverSelects(formId: string, fields: FieldConfiguration[], rule
     throwIfAny(formId, errors);
 }
 
-/** Whether the field with the given name is a select, as FieldBuilder decides it from its first element */
+/** Whether the field with the given name is a select, as createFields decides it from its first element */
 function isSelect(formHtmlElement: HTMLFormElement, name: string): boolean {
     const type = formHtmlElement.querySelector<HTMLSelectElement>(`[name="${name}"]`)?.type;
     return type === 'select-one' || type === 'select-multiple';
