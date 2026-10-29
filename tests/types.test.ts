@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest';
-import { makeForm, RemoteCallError } from '@/index';
-import type { CheckboxConfiguration, DynamicForm, InitialisationRule, SelectOption, FieldConfiguration, FormConfiguration, FormHooks, SelectConfiguration, UpdateData, UpdateRule, FieldHooks, FieldIoHooks } from '@/index';
+import { getForm, makeForm, RemoteCallError } from '@/index';
+import type { CheckboxConfiguration, Form, InitialisationRule, SelectOption, FieldConfiguration, FormConfiguration, FormHooks, SelectConfiguration, UpdateData, UpdateRule, FieldHooks, FieldIoHooks } from '@/index';
 
 // Type-level specification of the public api: these tests fail `npm run typecheck`, not `npm test`.
 
@@ -11,9 +11,22 @@ describe('form configuration type', () => {
         expectTypeOf<{}>().toExtend<FormConfiguration>();
     });
 
-    it('is what makeForm accepts and makeForm returns a DynamicForm', () => {
+    it('is what makeForm accepts and makeForm returns a Form', () => {
         expectTypeOf(makeForm).parameter(0).toEqualTypeOf<FormConfiguration>();
-        expectTypeOf(makeForm).returns.toEqualTypeOf<DynamicForm>();
+        expectTypeOf(makeForm).returns.toEqualTypeOf<Form>();
+        expectTypeOf(getForm).returns.toEqualTypeOf<Form | undefined>();
+    });
+});
+
+describe('form type', () => {
+    it('has only the methods of the Form', () => {
+        expectTypeOf<keyof Form>().toEqualTypeOf<'ready' | 'notify' | 'manualUpdate' | 'destroy' | 'setEnabled' | 'isEnabled' | 'getId'>();
+    });
+
+    it('is no longer exported as DynamicForm', () => {
+        // @ts-expect-error renamed Form in 4.0.0
+        type Removed = import('@/index').DynamicForm;
+        expectTypeOf<Removed>().toBeAny();
     });
 });
 

@@ -34,6 +34,15 @@ describe('makeForm / getForm', () => {
         expect(form.getId()).toBe('registered');
     });
 
+    it('exposes only the methods of the Form, not its state (#72)', () => {
+        mountForm('sealed', '<input name="a">');
+        const form = createForm({ id: 'sealed', debug: true });
+
+        expect(Object.keys(form)).toEqual([]);
+        expect((form as any).fieldsMap).toBeUndefined();
+        expect((form as any).debug).toBeUndefined();
+    });
+
     it('throws when a form with the same id still exists (#47)', () => {
         mountForm('twice', '<input name="a">');
         makeForm({ id: 'twice' });
