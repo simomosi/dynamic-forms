@@ -249,6 +249,26 @@ describe('makeForm / getForm', () => {
         expect(() => createForm({ id: 'f', ...config })).toThrow(`Invalid form configuration "f":\n- ${error}`);
     });
 
+    it('throws for an Observer select with nowhere to load its Options from (#62)', () => {
+        mountForm('f', '<input name="country">' + selectHtml('city') + selectHtml('district'));
+
+        expect(() => createForm({ id: 'f', rules: [{ name: 'country', update: ['city', 'district'] }] })).toThrow([
+            'Invalid form configuration "f":',
+            '- field "city": an Observer select needs fetch.makeUrl, select.loadOptions or behavior.updateStatus to load its Options',
+            '- field "district": an Observer select needs fetch.makeUrl, select.loadOptions or behavior.updateStatus to load its Options',
+        ].join('\n'));
+    });
+
+    it.each([
+        ['fetch.makeUrl', { fetch: { makeUrl: () => '/cities' } }],
+        ['select.loadOptions', { select: { loadOptions: () => [] } }],
+        ['behavior.updateStatus', { behavior: { updateStatus: () => {} } }],
+    ])('accepts an Observer select loading its Options with %s (#62)', (_, cityConfig) => {
+        mountForm('f', '<input name="country">' + selectHtml('city'));
+
+        expect(() => createForm({ id: 'f', fields: [{ name: 'city', ...cityConfig }], rules: [{ name: 'country', update: ['city'] }] })).not.toThrow();
+    });
+
     it('lists every unknown field name in one error', () => {
         mountForm('f', '<input name="a"><input name="b">');
         const config = {
@@ -797,6 +817,15 @@ describe('initialisation', () => {
             await form.notify('a');
             expect(probe.updates).toHaveLength(2);
         });
+    });
+
+    it('sets the init value of a select with nowhere to load its Options from, keeping its html Options (#62)', async () => {
+        mountForm('f', selectHtml('country', { it: 'Italia', fr: 'France' }));
+
+        await createForm({ id: 'f', init: [{ name: 'country', value: 'it' }] }).ready();
+
+        expect(optionValues('country')).toEqual(['', 'it', 'fr']);
+        expect(field<HTMLSelectElement>('country').value).toBe('it');
     });
 
     it('resolves ready() and calls beforeInit/afterInit even without init rules', async () => {

@@ -63,6 +63,9 @@ class DynamicSelect extends DynamicElement {
     * @returns a Promise in fulfilled state when data has been updated
     */
     protected async standardUpdateStatus(data: UpdateData, subjectName: string|null, signal: AbortSignal): Promise<void> {
+        if (!this.select.loadOptions && !this.fetch.makeUrl) {
+            return; // nowhere to load the Options from: the select keeps those of its html (an Observer select can't, makeForm rejects it)
+        }
         const loaded = this.select.loadOptions
             ? await this.select.loadOptions(this.htmlElement, data, subjectName, signal, () => this.remoteCall(data, signal))
             : await this.remoteCall(data, signal);

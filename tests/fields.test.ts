@@ -131,7 +131,7 @@ describe('select', () => {
     });
 
     it('keeps only the empty options on cascade clear', async () => {
-        await clearViaCascade('s', selectHtml('s', { '1': 'One', '2': 'Two' }));
+        await clearViaCascade('s', selectHtml('s', { '1': 'One', '2': 'Two' }), { fetch: { makeUrl: () => '/s' } });
 
         expect(optionValues('s')).toEqual(['']);
     });
@@ -343,7 +343,7 @@ describe('the Standard Behaviour a Field Hook replaces', () => {
     });
 
     it('is given to behavior.clear, the one of the field kind', async () => {
-        await clearViaCascade('s', selectHtml('s', { '1': 'One' }), { behavior: { clear: (el: NodeListOf<HTMLSelectElement>, standard: () => void) => { standard(); el[0].dataset.cleared = 'yes'; } } });
+        await clearViaCascade('s', selectHtml('s', { '1': 'One' }), { fetch: { makeUrl: () => '/s' }, behavior: { clear: (el: NodeListOf<HTMLSelectElement>, standard: () => void) => { standard(); el[0].dataset.cleared = 'yes'; } } });
 
         expect(optionValues('s')).toEqual(['']);
         expect(field('s').dataset.cleared).toBe('yes');
