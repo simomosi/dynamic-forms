@@ -18,7 +18,7 @@
         <link rel="prev" href="../../configurations/init-rules/">
       
       
-        <link rel="next" href="../todo_changelog/">
+        <link rel="next" href="../architecture/">
       
       
         
@@ -593,6 +593,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../../form/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Form
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../configurations/form-configuration/" class="md-nav__link">
         
   
@@ -897,6 +925,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../todo_changelog/" class="md-nav__link">
         
   
@@ -1039,7 +1095,7 @@
 
 <h1 id="contribute">Contribute<a class="headerlink" href="#contribute" title="Permanent link">#</a></h1>
 <p>Help me develop DynamicForms!</p>
-<p>Remember to work on <code>src/*.ts</code> files, and test them building the bundle and importing it (<code>import { makeForm } from '@dist/dynamic-forms.js';</code> for prod build, <code>import { makeForm } from '@';</code> for dev mode).</p>
+<p>Remember to work on <code>src/*.ts</code> files (see the <a href="../architecture/">Architecture</a>), and test them building the bundle and importing it (<code>import { makeForm } from '@dist/dynamic-forms.js';</code> for prod build, <code>import { makeForm } from '@';</code> for dev mode).</p>
 <p>Building needs Node 22.18 or later (see <code>.nvmrc</code>: <code>nvm use</code>).</p>
 <p>Useful commands:</p>
 <ul>
@@ -1055,7 +1111,7 @@
 <h2 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">#</a></h2>
 <p>Tests live in the <code>tests</code> folder and run with <a href="https://vitest.dev">Vitest</a> in a <a href="https://github.com/jsdom/jsdom">jsdom</a> environment, which simulates the browser DOM inside Node.</p>
 <ul>
-<li>Test through the public API (<code>makeForm</code>, <code>getForm</code> and the returned <code>DynamicForm</code>) on a real html form mounted with <code>mountForm</code> (see <code>tests/helpers.ts</code>)</li>
+<li>Test through the public API (<code>makeForm</code>, <code>getForm</code> and the returned <a href="../../form/"><code>Form</code></a>) on a real html form mounted with <code>mountForm</code> (see <code>tests/helpers.ts</code>)</li>
 <li>Never call the network: stub remote calls with <code>stubFetch</code></li>
 <li>Known bugs are tracked with <code>it.fails</code> tests describing the expected behavior: fixing the bug makes them fail, so turn them into plain <code>it</code> tests</li>
 </ul>
@@ -1068,85 +1124,6 @@
 <h2 id="issuessuggestions">Issues/Suggestions<a class="headerlink" href="#issuessuggestions" title="Permanent link">#</a></h2>
 <p>If you have trouble using DynamicForms open an issue, I'll be glad to help you. Suggestions are also welcome!</p>
 <p>It will be useful if you pass me some code to try: you can use tools like CodePen, PasteBin etc.</p>
-<h1 id="project-structure">Project Structure<a class="headerlink" href="#project-structure" title="Permanent link">#</a></h1>
-<p>Here is the UML Class Diagram to help you understand the project structure. Types are not specified for space reasons: the diagram is created using Mermaid which places elements automatically.</p>
-<pre class="mermaid"><code>classDiagram
-
-    class DynamicForm {
-        ResolvedFormConfiguration config
-        HTMLFormElement htmlElement
-        Map❬String DynamicElement❭ entities
-        boolean debug
-        boolean enabled
-        json elementToClassMapping
-
-        +ready() Promise❬void❭
-        +notify(subjectName) Promise❬void❭
-        -fetchAllParameters(rule) UpdateData
-        -clearCascade(currentSubject) Promise❬void❭
-        +manualUpdate(data, subjectName) Promise❬void❭
-        +destroy() void
-        -getField(name) DynamicElement
-        +getId() string
-        +setEnabled() void
-        +isEnabled() boolean
-    }
-
-    class dynamicForms {
-        -Map❬String DynamicForm❭ formCollection
-        +makeForm(formConfiguration) DynamicForm
-        +getForm(id) DynamicForm
-    }
-
-    note for dynamicForms "Library entrypoint"
-
-    class resolveConfiguration {
-        +resolveConfiguration(formHtmlElement, formConfiguration) ResolvedFormConfiguration
-    }
-
-    note for resolveConfiguration "Checks the configuration and completes every Form and Field default, Discovered Fields included"
-
-    class FieldBuilder {
-        +createFieldsMap(fieldsCollection, htmlForm)
-    }
-
-    class DynamicElement {
-        -ResolvedFieldConfiguration config
-        -NodeList htmlElement
-        -string name
-        +get() string
-        +set(value) string
-        +clear()
-        +update(data, subjectName)
-        #canUpdate(data, subjectName) boolean
-        #standardGet() string
-        #standardSet(value)
-        #standardClear()
-        #standardUpdateStatus(data, subjectName) Promise❬void❭
-    }
-
-    note for DynamicElement "Public methods use the Field Hook if given, else the standard behaviour; subclasses override only the standard behaviours"
-
-    class DynamicSelect {
-        -string method
-        #canUpdate(data, subjectName) boolean
-        #standardClear()
-        #standardUpdateStatus(data, subjectName, signal) Promise❬void❭
-        -remoteCall(data, signal) Promise❬any❭
-        #postProcessData(data) SelectOption[]
-        #saveData(data) void
-    }
-
-    dynamicForms --&gt; resolveConfiguration
-    dynamicForms --&gt; FieldBuilder
-
-    DynamicForm &lt;-- dynamicForms
-    DynamicForm o-- DynamicElement
-
-    DynamicElement &lt;|-- DynamicSelect
-    DynamicElement &lt;|-- DynamicCheckbox
-    DynamicElement &lt;|-- DynamicRadio
-</code></pre>
 
 
 
@@ -1199,13 +1176,13 @@
         
         
           
-          <a href="../todo_changelog/" class="md-footer__link md-footer__link--next" aria-label="Next: ToDo &amp; Changelog">
+          <a href="../architecture/" class="md-footer__link md-footer__link--next" aria-label="Next: Architecture">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                ToDo & Changelog
+                Architecture
               </div>
             </div>
             <div class="md-footer__button md-icon">

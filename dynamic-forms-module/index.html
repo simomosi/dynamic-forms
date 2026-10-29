@@ -18,7 +18,7 @@
         <link rel="prev" href="../tutorial/initial_status/">
       
       
-        <link rel="next" href="../configurations/form-configuration/">
+        <link rel="next" href="../form/">
       
       
         
@@ -689,17 +689,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#destroy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        destroy ()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#fields-added-after-makeform" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -719,6 +708,34 @@
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../form/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Form
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -953,6 +970,34 @@
   
   
     <li class="md-nav__item">
+      <a href="../dev/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../dev/todo_changelog/" class="md-nav__link">
         
   
@@ -1098,17 +1143,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#destroy" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        destroy ()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#fields-added-after-makeform" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1187,19 +1221,18 @@
 <span class="p">};</span>
 <span class="nx">makeForm</span><span class="p">(</span><span class="nx">configuration</span><span class="p">);</span>
 </code></pre></div></td></tr></table></div>
-<p>Exported types: <code>FormConfiguration</code>, <code>FormHooks</code>, <code>UpdateRule</code>, <code>InitialisationRule</code>, <code>FieldConfiguration</code>, <code>FieldIoHooks</code>, <code>FieldFetchConfiguration</code>, <code>FieldHooks</code>, <code>SelectConfiguration</code>, <code>SelectOption</code>, <code>CheckboxConfiguration</code>, <code>FieldElement</code>, <code>UpdateData</code> and <code>DynamicForm</code> (a type only: forms are created by <code>makeForm</code>). The package also exports the <code>RemoteCallError</code> class, the error of a <a href="../configurations/fields-configuration/#fetch">failed remote call</a>.</p>
+<p>Exported types: <code>FormConfiguration</code>, <code>FormHooks</code>, <code>UpdateRule</code>, <code>InitialisationRule</code>, <code>FieldConfiguration</code>, <code>FieldIoHooks</code>, <code>FieldFetchConfiguration</code>, <code>FieldHooks</code>, <code>SelectConfiguration</code>, <code>SelectOption</code>, <code>CheckboxConfiguration</code>, <code>FieldElement</code>, <code>UpdateData</code> and <code>Form</code>, the type of the <a href="../form/">Form</a> returned by <code>makeForm</code> (a type only: forms are created by <code>makeForm</code>). The package also exports the <code>RemoteCallError</code> class, the error of a <a href="../configurations/fields-configuration/#fetch">failed remote call</a>.</p>
 <h2 id="properties">Properties<a class="headerlink" href="#properties" title="Permanent link">#</a></h2>
 <h3 id="makeform-formconfiguration"><code>makeForm (formConfiguration)</code><a class="headerlink" href="#makeform-formconfiguration" title="Permanent link">#</a></h3>
-<p>Creates a form. An html form has at most one Form at a time: <code>makeForm</code> throws <code>Form "id" already exists</code> when the previous Form for that id has not been destroyed (see <a href="#destroy"><code>destroy</code></a>).</p>
-<p>The form starts with its <a href="../tutorial/initial_status/#wait-for-complete-initialisation">Initialisation</a>: until <code>form.ready()</code> settles, the fields' changes are ignored and <code>notify()</code> and <code>manualUpdate()</code> reject. Wait for it (<code>await form.ready()</code> or <code>form.ready().then(...)</code>) before calling them.</p>
-<p><code>notify(name)</code> and <code>manualUpdate(data, name)</code> throw at once, before returning their promise, when the form has no field with that name: <code>Form "id" has no field "name"</code>.</p>
+<p>Creates a form. An html form has at most one Form at a time: <code>makeForm</code> throws <code>Form "id" already exists</code> when the previous Form for that id has not been destroyed (see <a href="../form/#destroy"><code>destroy</code></a>).</p>
+<p>The form starts with its <a href="../tutorial/initial_status/#wait-for-complete-initialisation">Initialisation</a>: until <code>form.ready()</code> settles, the fields' changes are ignored and <code>notify()</code> and <code>manualUpdate()</code> reject. Wait for it (<code>await form.ready()</code> or <code>form.ready().then(...)</code>) before calling them. The <a href="../form/">Form</a> page describes the methods of the form and when they fail.</p>
 <p>Parameters</p>
 <ul>
 <li>{<code>object</code>} <code>formConfiguration</code>: the Form Configuration</li>
 </ul>
 <p>Returns</p>
 <ul>
-<li>{<code>DynamicForm</code>} the form</li>
+<li>{<code>Form</code>} the <a href="../form/">form</a></li>
 </ul>
 <h3 id="getform-id"><code>getForm (id)</code><a class="headerlink" href="#getform-id" title="Permanent link">#</a></h3>
 <p>Returns the form with the given id, if it exists.</p>
@@ -1209,13 +1242,10 @@
 </ul>
 <p>Returns</p>
 <ul>
-<li>{<code>DynamicForm | null</code>} the form, or null if it does not exist</li>
+<li>{<code>Form | undefined</code>} the <a href="../form/">form</a>, or <code>undefined</code> if it does not exist</li>
 </ul>
-<h3 id="destroy"><code>destroy ()</code><a class="headerlink" href="#destroy" title="Permanent link">#</a></h3>
-<p>A method of the Form returned by <code>makeForm</code>. It removes the Form's listeners, so the fields no longer update each other, unregisters it from <code>getForm</code>, and aborts its remote calls in progress. Destroying it again does nothing.</p>
-<p>A <code>notify()</code>, <code>manualUpdate()</code> or <code>ready()</code> still pending rejects with <code>Form "id" was destroyed</code>, and so do <code>notify()</code> and <code>manualUpdate()</code> called afterwards. A custom <a href="../configurations/fields-configuration/#updatestatus-htmlelement-data-subjectname-signal-standard"><code>updateStatus</code></a> Field Hook receives the abort signal, to stop its own remote calls.</p>
 <h3 id="fields-added-after-makeform">Fields added after <code>makeForm</code><a class="headerlink" href="#fields-added-after-makeform" title="Permanent link">#</a></h3>
-<p>Fields are discovered when the Form is created. To pick up fields added to the html form later, destroy the Form and create it again:</p>
+<p>Fields are discovered when the Form is created. To pick up fields added to the html form later, <a href="../form/#destroy">destroy</a> the Form and create it again:</p>
 <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span>
@@ -1281,13 +1311,13 @@
         
         
           
-          <a href="../configurations/form-configuration/" class="md-footer__link md-footer__link--next" aria-label="Next: Form configuration">
+          <a href="../form/" class="md-footer__link md-footer__link--next" aria-label="Next: Form">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Form configuration
+                Form
               </div>
             </div>
             <div class="md-footer__button md-icon">
