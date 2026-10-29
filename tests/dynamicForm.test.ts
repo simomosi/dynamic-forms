@@ -638,6 +638,19 @@ describe('remote call configuration', () => {
 });
 
 describe('form behavior', () => {
+    it.each([
+        ['notify()', (form: ReturnType<typeof createForm>) => form.notify('ghost')],
+        ['manualUpdate()', (form: ReturnType<typeof createForm>) => form.manualUpdate({}, 'ghost')],
+    ])('throws at once for %s of a name which is not a field, naming it', async (_, call) => {
+        const beforeUpdate = vi.fn(() => true);
+        mountForm('f', '<input name="a">');
+        const form = createForm({ id: 'f', behavior: { beforeUpdate } });
+        await form.ready();
+
+        expect(() => call(form)).toThrow('Form "f" has no field "ghost"');
+        expect(beforeUpdate).not.toHaveBeenCalled();
+    });
+
     it('calls beforeUpdate and afterUpdate around the updates of a subject', async () => {
         const calls: string[] = [];
         const probe = probeField();
