@@ -188,15 +188,19 @@ class DynamicForm {
     * Method to notify the change of the subject to all its observers (Observer Design Pattern).
     * @param {string} subjectName the name of the field who changed
     * @returns {Promise<void>} promise resolved when all updates are completed
+    * @throws at once, before returning the promise, when the form has no field with that name
     */
-    public async notify(subjectName: string): Promise<void> {
+    public notify(subjectName: string): Promise<void> {
+        this.getField(subjectName); // a programming error: thrown at the call site, not as a rejection
+        return this.notifyField(subjectName);
+    }
+
+    private async notifyField(subjectName: string): Promise<void> {
         this.destruction.signal.throwIfAborted();
         this.throwIfInitialising();
         if (this.isEnabled() === false) {
             return;
         }
-        //const subject = this.getField(subjectName);
-        //const subjectValue = subject.get();
         if (this.debug) {
             console.log(`-\n${new Date()}\n> [${subjectName}] Changed. Notifying observers...\n-`);
         }
@@ -296,8 +300,14 @@ class DynamicForm {
     * @param {UpdateData} data data useful to the element's status change
     * @param {string} subjectName name of the changed subject
     * @returns a Promise in fulfilled state when element status has been updated
+    * @throws at once, before returning the promise, when the form has no field with that name
     */
-    public async manualUpdate(data: UpdateData, subjectName: string): Promise<void> {
+    public manualUpdate(data: UpdateData, subjectName: string): Promise<void> {
+        this.getField(subjectName); // a programming error: thrown at the call site, not as a rejection
+        return this.manualUpdateField(data, subjectName);
+    }
+
+    private async manualUpdateField(data: UpdateData, subjectName: string): Promise<void> {
         this.destruction.signal.throwIfAborted();
         this.throwIfInitialising();
         return this.updateField(data, subjectName);
@@ -333,7 +343,7 @@ class DynamicForm {
     private getField(name: string): DynamicElement {
         const element = this.fieldsMap.get(name);
         if (!element) {
-            throw new Error("Unknown element")
+            throw new Error(`Form "${this.id}" has no field "${name}"`);
         }
         return element;
     }

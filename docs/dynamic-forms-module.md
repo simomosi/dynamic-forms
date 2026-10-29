@@ -43,6 +43,8 @@ Creates a form. An html form has at most one Form at a time: `makeForm` throws `
 
 The form starts with its [Initialisation](./tutorial/initial_status.md#wait-for-complete-initialisation): until `form.ready()` settles, the fields' changes are ignored and `notify()` and `manualUpdate()` reject. Wait for it (`await form.ready()` or `form.ready().then(...)`) before calling them.
 
+`notify(name)` and `manualUpdate(data, name)` throw at once, before returning their promise, when the form has no field with that name: `Form "id" has no field "name"`.
+
 Parameters
 
 - {`object`} `formConfiguration`: the Form Configuration
