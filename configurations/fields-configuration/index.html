@@ -1933,7 +1933,7 @@ The library does not check these types against the html: `FieldConfiguration&lt;
 <ul>
 <li>{<code>NodeList</code>} <code>htmlElement</code>: the html nodes with the field name, where data will be saved</li>
 <li>{<code>{ value: string | number, text: string }[]</code>} <code>data</code>: the options returned by <code>postProcessData</code>, or the data retrieved from the remote call or by <code>loadOptions</code> when there is no <code>postProcessData</code></li>
-<li>{<code>() =&gt; void</code>} <code>standard</code>: saves the options the way the library does</li>
+<li>{<code>() =&gt; void</code>} <code>standard</code>: saves the options the way the library does: it empties the select with the library's own clear, not with a <a href="#clear-htmlelement-standard"><em>clear</em></a> Field Hook, then writes an <em>option</em> for each one</li>
 </ul>
 <p>Returns</p>
 <ul>
