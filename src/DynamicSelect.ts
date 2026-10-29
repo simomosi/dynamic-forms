@@ -134,7 +134,7 @@ class DynamicSelect extends DynamicElement {
     * @param {SelectOption[]} data the Options to save
     */
     private standardSaveData(data: SelectOption[]): void {
-        this.clear();
+        this.standardClear(); // the library's own Clear: a behavior.clear field hook is not part of the Standard Behaviour
         if (this.htmlElement.length == 1) {
             // Add empty option
             const firstElement = this.htmlElement[0] as HTMLSelectElement;
