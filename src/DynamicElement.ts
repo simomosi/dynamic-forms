@@ -223,7 +223,7 @@ class DynamicElement {
      * Method to update the field status, through the behavior.updateStatus field hook if given
      * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
-     * @param {AbortSignal} signal aborted when the form is destroyed
+     * @param {AbortSignal} signal aborted when the form is destroyed or a newer Update of the field replaces this one
      */
     private async updateStatus(data: UpdateData, subjectName: string|null, signal: AbortSignal): Promise<void> {
         const standard = () => this.standardUpdateStatus(data, subjectName, signal);
@@ -234,13 +234,14 @@ class DynamicElement {
      * Standard update of the field status, replaced by the behavior.updateStatus field hook: nothing
      * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
-     * @param {AbortSignal} signal aborted when the form is destroyed
+     * @param {AbortSignal} signal aborted when the form is destroyed or a newer Update of the field replaces this one
      */
     protected async standardUpdateStatus(_data: UpdateData, _subjectName: string|null, _signal: AbortSignal): Promise<void> {
     }
 
     /**
-     * Calls the behavior.afterUpdate field hook, if given, after the status update. It is executed also if the update is aborted.
+     * Calls the behavior.afterUpdate field hook, if given, after the status update. It is executed also when canUpdate or beforeUpdate stopped the update,
+     * but not when the update failed or was replaced by a newer one.
      * @param {UpdateData} data data useful to the element's status change
      * @param {string|null} subjectName name of the changed subject
      */

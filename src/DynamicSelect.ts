@@ -58,7 +58,7 @@ class DynamicSelect extends DynamicElement {
     * loads the data with select.loadOptions, or with a remote call, then turns it into Options and saves them
     * @param {UpdateData} data data to send with the http request
     * @param {string|null} subjectName name of the subject who changed
-    * @param {AbortSignal} signal aborted when the form is destroyed, which aborts the remote call
+    * @param {AbortSignal} signal aborted when the form is destroyed or a newer Update of the select replaces this one, which aborts the remote call
     *
     * @returns a Promise in fulfilled state when data has been updated
     */
@@ -76,7 +76,7 @@ class DynamicSelect extends DynamicElement {
     /**
     * Makes the remote call of the select, replaced by the select.loadOptions field hook
     * @param {UpdateData} data data to send with the http request
-    * @param {AbortSignal} signal aborted when the form is destroyed, which aborts the remote call
+    * @param {AbortSignal} signal aborted when the form is destroyed or a newer Update of the select replaces this one, which aborts the remote call
     * @returns the response parsed as json
     */
     private async remoteCall(data: UpdateData, signal: AbortSignal): Promise<any> {

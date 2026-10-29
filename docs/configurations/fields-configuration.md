@@ -64,7 +64,7 @@ Here's a complete Field Configuration. You just need to specify the attributes y
             clear: (htmlElement, standard) => { }, // Clear the field's value
             beforeUpdate: (htmlElement, data, subjectName) => { return true; }, // Executed before the remote call. Return false to block the update
             updateStatus: (htmlElement, data, subjectName, signal, standard) => { },
-            afterUpdate: (htmlElement, data, subjectName) => { } // Executed after the remote call
+            afterUpdate: (htmlElement, data, subjectName) => { } // Executed after the update, also when beforeUpdate stopped it
         }
     };
     ```
@@ -304,7 +304,7 @@ Returns
 - {`Promise<void>`}
 
 ### `afterUpdate (htmlElement, data, subjectName)`
-Field Hook called after the field's update, also when the update was aborted.
+Field Hook called after the field's update, also when the update was stopped before loading anything: by [*beforeUpdate*](#beforeupdate-htmlelement-data-subjectname) returning *false*, or by [*clearOnParentVoid*](#clearonparentvoid). It is not called when the update fails, nor for an update replaced by a newer one of the same field (see [Update Rules](./update-rules.md#update)), whose result is discarded.
 
 Parameters
 
