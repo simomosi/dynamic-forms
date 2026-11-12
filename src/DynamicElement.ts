@@ -1,5 +1,5 @@
-import { anySignal } from './anySignal';
 import { FieldHooks, FieldElement, FieldFetchConfiguration, FieldIoHooks, ResolvedFieldConfiguration, UpdateData } from './FieldConfigurationTypes';
+import { LatestUpdate } from './LatestUpdate';
 
 /**
  * This class represents a generic Input in a form.
@@ -30,8 +30,8 @@ class DynamicElement {
     /** @param {number} writing - how many writes of the library to the field are in progress, during which its changes are ignored */
     private writing = 0;
 
-    /** @param {object|null} latestUpdate - the newest Update of the field: aborting its controller replaces it, and settled settles with the newest one */
-    private latestUpdate: { controller: AbortController, settled: Promise<void> } | null = null;
+    /** @param {LatestUpdate} updates - the newest Update of the field, which a newer Update replaces and a Cascade Clear discards */
+    private readonly updates: LatestUpdate;
 
     /**
     * Class constructor
@@ -46,6 +46,7 @@ class DynamicElement {
         this.event = config.io.event;
         this.htmlElement = htmlElement;
         this.name = config.name;
+        this.updates = new LatestUpdate(config.name);
     }
 
     /**
@@ -100,14 +101,10 @@ class DynamicElement {
 
     /**
     * Clears the field in a Cascade Clear: its Value is no longer valid, and neither is the data a pending Update is loading,
-    * so the pending Update is discarded, and settles as the field is cleared
+    * so the pending Update is discarded: it writes nothing, and resolves once its work ends
     */
     public cascadeClear(): void {
-        const pending = this.latestUpdate;
-        if (pending) {
-            this.latestUpdate = { controller: new AbortController(), settled: Promise.resolve() };
-            pending.controller.abort(new Error(`Update of "${this.name}" discarded by a Cascade Clear`));
-        }
+        this.updates.discard();
         this.clear();
     }
 
@@ -158,7 +155,8 @@ class DynamicElement {
     }
 
     /**
-    * Method which updates the element (observer) status after a change on the observed subject
+    * Method which updates the element (observer) status after a change on the observed subject.
+    * It replaces the pending Update of the field, and settles with the newest one (see LatestUpdate).
     * @param {UpdateData} data data useful to the element's status change
     * @param {string|null} subjectName name of the changed subject
     * @param {AbortSignal} signal aborted when the form is destroyed
@@ -168,19 +166,7 @@ class DynamicElement {
     * @async
     */
     public update(data: UpdateData, subjectName: string|null, signal: AbortSignal): Promise<void> {
-        // A newer Update replaces the pending one: its signal is aborted and its result discarded
-        this.latestUpdate?.controller.abort(new Error(`Update of "${this.name}" replaced by a newer one`));
-        const controller = new AbortController();
-        const updateSignal = anySignal([signal, controller.signal]);
-        const run = this.runUpdate(data, subjectName, updateSignal.signal).finally(() => updateSignal.release());
-        // A replaced Update settles with the newest one, so that awaiting it ends when the field shows the latest data
-        const update: { controller: AbortController, settled: Promise<void> } = { controller, settled: run };
-        update.settled = run.then(
-            () => this.latestUpdate === update ? undefined : this.latestUpdate!.settled,
-            (error) => this.latestUpdate === update ? Promise.reject(error) : this.latestUpdate!.settled,
-        );
-        this.latestUpdate = update;
-        return update.settled;
+        return this.updates.start(updateSignal => this.runUpdate(data, subjectName, updateSignal), signal);
     }
 
     /**
