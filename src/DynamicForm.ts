@@ -65,8 +65,8 @@ class DynamicForm implements Form {
                 }
             });
         });
-        const initialisation = this.#handleInitialisation(this.#fieldsMap, formConfiguration.init, this.#behavior)
-            .finally(() => { this.#initialising = false; });
+        // Started once the constructor returns, so that makeForm has registered the form when beforeInit runs
+        const initialisation = Promise.resolve().then(() => this.#initialise(formConfiguration.init));
         this.#initPromise = this.#untilDestroyed(initialisation);
     }
     
@@ -80,48 +80,34 @@ class DynamicForm implements Form {
         return fieldUpdateRules;
     }
     
-    #handleInitialisation(fieldsCollection: Map<string, DynamicElement>, initFields: InitialisationRule[] = [], behavior: FormHooks): Promise<void> {
-        if (!initFields) {
-            return Promise.resolve();
-        }
-        return Promise.resolve()
-            .then(() => behavior.beforeInit())
-            .then(() => this.#initialiseFields(fieldsCollection, initFields))
-            .then(() => behavior.afterInit());
-    }
-    
-    async #initialiseFields(fieldsMap: Map<string, DynamicElement>, initFields: InitialisationRule[]): Promise<void> {
-        // Create an object which holds the form's initial status
-        const initialStatus = new Map<string, any>(); // TODO: use a map for better performance
-        initFields
-        .filter(x => x.value !== undefined)
-        .forEach(element => initialStatus.set(element.name, element.value));
-        
-        // Initialize "init" fields
-        if (this.#debug) {
-            console.log(`==init==> `, initFields.reduce((acc, curr) => acc + `[${curr.name}] `, ''));
-            console.log(`Parameters:`, initialStatus);
-        }
+    /**
+     * The Initialisation: beforeInit, an Update of each initialised field with all the init Values as Update Data,
+     * the init Values written, the observers of the initialised fields updated leaving those untouched, afterInit.
+     * Until it settles, field events are ignored and notify() and manualUpdate() reject.
+     * @param {InitialisationRule[]} init the Initialisation Rules
+     */
+    async #initialise(init: InitialisationRule[]): Promise<void> {
+        try {
+            await this.#behavior.beforeInit();
 
-        const tmpInitialStatusAsObject = Object.fromEntries(initialStatus); // Evaluate if using maps instead of objects makes the module harder to use
-        const initPromises: Promise<void>[] = initFields
-        .filter(x => fieldsMap.get(x.name) !== undefined)
-        .map(field => this.#updateField(tmpInitialStatusAsObject, field.name));
-        
-        await Promise.all(initPromises);
-        
-        // Set initial values in initialised fields
-        for (const [name, value] of initialStatus) {
-            const field = fieldsMap.get(name);
-            if (field) {
-                field.set(value);
+            const initialisedNames = init.map(rule => rule.name);
+            const initValues = new Map<string, any>(init.filter(rule => rule.value !== undefined).map(rule => [rule.name, rule.value]));
+            if (this.#debug) {
+                console.log(`==init==> `, initialisedNames.reduce((acc, name) => acc + `[${name}] `, ''));
+                console.log(`Parameters:`, initValues);
             }
+
+            const data = Object.fromEntries(initValues);
+            await Promise.all(initialisedNames.map(name => this.#getField(name).update(data, null, this.#destruction.signal)));
+            initValues.forEach((value, name) => this.#getField(name).set(value));
+            await this.#propagate(initialisedNames, new Set(initialisedNames));
+
+            await this.#behavior.afterInit();
+        } finally {
+            this.#initialising = false;
         }
-        
-        // Update the observers of the initialised fields, leaving the initialised fields untouched
-        const initialisedFieldsNames = initFields.map(f => f.name).filter(name => fieldsMap.get(name) !== undefined);
-        await this.#propagate(initialisedFieldsNames, new Set(initialisedFieldsNames));
     }
+
     /**
      * Destroys the form, so that a new one can be created for the same html form: removes its listeners,
      * unregisters it from getForm and aborts its remote calls in progress. Destroying it again does nothing.
@@ -189,9 +175,7 @@ class DynamicForm implements Form {
     }
 
     async #notifyField(subjectName: string): Promise<void> {
-        this.#destruction.signal.throwIfAborted();
-        this.#throwIfInitialising();
-        this.#throwIfDisabled();
+        this.#throwIfCannotUpdate();
         if (this.#debug) {
             console.log(`-\n${new Date()}\n> [${subjectName}] Changed. Notifying observers...\n-`);
         }
@@ -299,43 +283,24 @@ class DynamicForm implements Form {
     }
 
     async #manualUpdateField(data: UpdateData, subjectName: string): Promise<void> {
-        this.#destruction.signal.throwIfAborted();
-        this.#throwIfInitialising();
-        this.#throwIfDisabled();
-        return this.#updateField(data, subjectName);
+        this.#throwIfCannotUpdate();
+        return this.#untilDestroyed(this.#getField(subjectName).update(data, null, this.#destruction.signal));
     }
 
     /**
-     * Throws while the form is initialising: the application calls notify() and manualUpdate() once ready() settles
+     * Throws when the form can't run an Update, with the first reason that applies:
+     * destroyed, then initialising, then disabled (the order documented by Form)
      */
-    #throwIfInitialising(): void {
+    #throwIfCannotUpdate(): void {
+        this.#destruction.signal.throwIfAborted();
         if (this.#initialising) {
             throw new Error(`Form "${this.#id}" is initialising: await ready() first`);
         }
-    }
-
-    /**
-     * Throws while the form is disabled: a Disabled Form runs no Update until setEnabled(true)
-     */
-    #throwIfDisabled(): void {
         if (!this.#enabled) {
             throw new Error(`Form "${this.#id}" is disabled: call setEnabled(true) first`);
         }
     }
 
-    /**
-    * Updates a single field with the given data, as a Manual Update: neither its observers nor the form hooks are involved
-    * @param {UpdateData} data data useful to the element's status change
-    * @param {string} subjectName name of the field to update
-    */
-    async #updateField(data: UpdateData, subjectName: string): Promise<void> {
-        const field = this.#getField(subjectName);
-        if (field) {
-            return this.#untilDestroyed(field.update(data, null, this.#destruction.signal));
-        }
-        return;
-    }
-    
     /**
     * Method to fetch a single dynamic field instance
     * @param {string} name name of dynamic field instance to retrieve
