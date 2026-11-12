@@ -1217,7 +1217,7 @@
 <img alt="GitHub deployments" src="https://img.shields.io/github/deployments/simomosi/dynamic-forms/github-pages" />
 <img alt="GitHub User's stars" src="https://img.shields.io/github/stars/simomosi?style=social" /></p>
 <h2 id="what-is-it-and-what-can-i-do-with-it">What is it and what can I do with it<a class="headerlink" href="#what-is-it-and-what-can-i-do-with-it" title="Permanent link">#</a></h2>
-<p>DynamicForms is a client library to automate Progressive Filtering and the initialisation of dynamic fields in an easy and fast way.</p>
+<p>DynamicForms is a client library to automate Progressive Filtering (also known as cascading or dependent dropdowns) and the initialisation of dynamic fields in an easy and fast way.</p>
 <p>It supports the developer in managing and centralizing all forms interactions.</p>
 <p>It's written in <em>typescript</em> and built with <em>tsdown</em></p>
 <p>Here's some examples.</p>
@@ -1237,7 +1237,8 @@
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <strong>Easy to use</strong>: DynamicForms works in a declarative way; no code for the standard behaviour, just a simple configuration!</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <strong>Modern javascript</strong>: works on Chrome and Edge 111+, Firefox 114+ and Safari 16.4+, with no polyfills</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <strong>Lightweight</strong>: having no dependencies, you can integrate it everywhere!</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <strong>Automate repetitive and boring operations</strong>: read values, fetch data making async remote calls, update fields' status, clear other fields, hide/show sections... even listing them is BORING!</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <strong>Automate repetitive and boring operations</strong>: read values, fetch data making async remote calls, update fields' status, hide/show sections... even listing them is BORING!</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <strong>Progressive Filtering, fully automated</strong>: when a field changes, the fields depending on it are updated with fresh data from your server, and the fields beyond them are cleared on cascade, since their value is no longer valid. If the user changes their mind while a field is still loading, or a field still loading gets cleared, its remote call is aborted and its late response thrown away: every field always shows the data of the latest choice, without a line of code from you. <a href="configurations/update-rules/#update">How it works</a></li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> <strong>Highly customizable</strong>: are you using an external library with custom html elements? Don't worry as you can specify your own functions to read/write data</li>
 </ul>
 <h2 id="support">Support<a class="headerlink" href="#support" title="Permanent link">#</a></h2>
