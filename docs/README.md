@@ -5,7 +5,7 @@
 ![GitHub User's stars](https://img.shields.io/github/stars/simomosi?style=social)
 
 ## What is it and what can I do with it
-DynamicForms is a client library to automate Progressive Filtering and the initialisation of dynamic fields in an easy and fast way.
+DynamicForms is a client library to automate Progressive Filtering (also known as cascading or dependent dropdowns) and the initialisation of dynamic fields in an easy and fast way.
 
 It supports the developer in managing and centralizing all forms interactions.
 
@@ -38,7 +38,8 @@ Got your attention? Try it!
 - [x] **Easy to use**: DynamicForms works in a declarative way; no code for the standard behaviour, just a simple configuration!
 - [x] **Modern javascript**: works on Chrome and Edge 111+, Firefox 114+ and Safari 16.4+, with no polyfills
 - [x] **Lightweight**: having no dependencies, you can integrate it everywhere!
-- [x] **Automate repetitive and boring operations**: read values, fetch data making async remote calls, update fields' status, clear other fields, hide/show sections... even listing them is BORING!
+- [x] **Automate repetitive and boring operations**: read values, fetch data making async remote calls, update fields' status, hide/show sections... even listing them is BORING!
+- [x] **Progressive Filtering, fully automated**: when a field changes, the fields depending on it are updated with fresh data from your server, and the fields beyond them are cleared on cascade, since their value is no longer valid. If the user changes their mind while a field is still loading, or a field still loading gets cleared, its remote call is aborted and its late response thrown away: every field always shows the data of the latest choice, without a line of code from you. [How it works](./configurations/update-rules.md#update)
 - [x] **Highly customizable**: are you using an external library with custom html elements? Don't worry as you can specify your own functions to read/write data
 
 ## Support
