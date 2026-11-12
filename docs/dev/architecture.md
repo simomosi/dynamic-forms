@@ -63,6 +63,13 @@ classDiagram
 
     note for DynamicElement "Public methods use the Field Hook if given, else the Standard Behaviour; subclasses override only the Standard Behaviours"
 
+    class LatestUpdate {
+        +start(work, formSignal) Promise❬void❭
+        +discard() void
+    }
+
+    note for LatestUpdate "The newest Update of a Field: a newer Update replaces it, a Cascade Clear discards it, destroying the Form aborts it; a replaced Update settles with the newest one"
+
     class DynamicSelect {
         +string method
         +SelectConfiguration select
@@ -92,6 +99,7 @@ classDiagram
 
     Form <|.. DynamicForm
     DynamicForm o-- DynamicElement
+    DynamicElement *-- LatestUpdate
     createFields ..> DynamicElement
 
     DynamicElement <|-- DynamicSelect

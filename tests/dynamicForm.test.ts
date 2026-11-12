@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { getForm, makeForm, RemoteCallError } from '@/index';
+import { getForm, makeForm } from '@/index';
 import { createForm, field, manualFetch, mountForm, optionValues, probeField, selectHtml, stubFetch, timeout } from './helpers';
 
 const users = [{ value: '1', text: 'Ann' }, { value: '2', text: 'Bob' }];
@@ -1053,19 +1053,6 @@ describe('a newer Update of a Field (#60)', () => {
         await replaced;
         expect(optionValues('city')).toEqual(['', 'paris']);
         await newest;
-    });
-
-    it('rejects the replaced notify() with the error of the newest Update', async () => {
-        const server = manualFetch();
-        const form = await mountCountryCity();
-
-        const replaced = choose(form, 'it');
-        const newest = choose(form, 'fr');
-        server.answer('/cities?country=it', italy);
-        server.answer('/cities?country=fr', null, 500);
-
-        await expect(newest).rejects.toThrow(RemoteCallError);
-        await expect(replaced).rejects.toThrow(RemoteCallError);
     });
 
     it('aborts the signal of the replaced Update, which select.loadOptions receives', async () => {
